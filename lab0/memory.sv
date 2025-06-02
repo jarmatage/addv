@@ -4,6 +4,7 @@ module memory #(
 ) (
     input  logic                  wclk,
     input  logic                  wen,
+    input  logic                  full,
     input  logic [ADDR_WIDTH-1:0] waddr,
     input  logic [ADDR_WIDTH-1:0] raddr,
     input  logic [DATA_WIDTH-1:0] wdata,
@@ -20,6 +21,6 @@ module memory #(
 
     // Write to memory synchronously
     always_ff @(posedge wclk)
-        if (wen) mem[waddr] <= wdata;
+        if (wen && !full) mem[waddr] <= wdata;
    
 endmodule
