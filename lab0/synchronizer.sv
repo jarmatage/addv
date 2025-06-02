@@ -2,6 +2,7 @@ module synchronizer #(
     parameter int WIDTH = 8
 ) (
     input  logic             clk,
+    input  logic             rst_n,
     input  logic [WIDTH-1:0] async_data,
     output logic [WIDTH-1:0] sync_data
 );
@@ -9,8 +10,13 @@ module synchronizer #(
     logic [WIDTH-1:0] unstable_data;
 
     always_ff @(posedge clk) begin
-        unstable_data <= async_data;
-        sync_data <= unstable_data;
+        if (!rst_n) begin
+            unstable_data <= WIDTH'(0);
+            sync_data <= WIDTH'(0);
+        end else begin
+            unstable_data <= async_data;
+            sync_data <= unstable_data;
+        end
     end
 
 endmodule
