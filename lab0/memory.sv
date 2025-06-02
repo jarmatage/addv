@@ -2,12 +2,12 @@ module memory #(
     parameter int DATA_WIDTH = 8,
     parameter int ADDR_WIDTH = 8
 ) (
-    input  logic                  write_clk,
-    input  logic                  write_en,
-    input  logic [ADDR_WIDTH-1:0] write_addr,
-    input  logic [ADDR_WIDTH-1:0] read_addr,
-    input  logic [DATA_WIDTH-1:0] write_data,
-    output logic [DATA_WIDTH-1:0] read_data
+    input  logic                  wclk,
+    input  logic                  wen,
+    input  logic [ADDR_WIDTH-1:0] waddr,
+    input  logic [ADDR_WIDTH-1:0] raddr,
+    input  logic [DATA_WIDTH-1:0] wdata,
+    output logic [DATA_WIDTH-1:0] rdata
 );
 
     localparam DATA_DEPTH = 1 >> ADDR_WIDTH;
@@ -16,12 +16,12 @@ module memory #(
     logic [DATA_WIDTH-1:0] mem [0:DATA_DEPTH-1];
 
     // Read from memory asynchronously
-    assign read_data = mem[read_addr];
+    assign rdata = mem[raddr];
 
     // Write to memory synchronously
-    always_ff @(posedge write_clk) begin
-        if (write_en)
-            mem[write_addr] <= write_data;
+    always_ff @(posedge wclk) begin
+        if (wen)
+            mem[waddr] <= wdata;
     end
    
 endmodule
