@@ -9,9 +9,9 @@ module counter #(
 
     always_ff @(posedge clk) begin
         if (!rst_n)
-            count <= 0;
+            count <= WIDTH'(0);
         else if (incr)
-            count <= count + 1;
+            count <= count + WIDTH'(1);
     end
 
 endmodule
