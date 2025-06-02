@@ -3,16 +3,16 @@ module async_fifo #(
     parameter int ADDR_WIDTH = 8
 ) (
     // Push interface
-    input  logic                  write_clk,
-    input  logic                  write_en,
-    input  logic [DATA_WIDTH-1:0] write_data,
+    input  logic                  wclk,
+    input  logic                  wen,
+    input  logic [DATA_WIDTH-1:0] wdata,
     output logic                  full,
     output logic                  almost_full,
 
     // Pop interface
-    input  logic                  read_clk,
-    input  logic                  read_en,
-    output logic [DATA_WIDTH-1:0] read_data,
+    input  logic                  rclk,
+    input  logic                  ren,
+    output logic [DATA_WIDTH-1:0] rdata,
     output logic                  empty,
     output logic                  almost_empty,
 
@@ -20,60 +20,96 @@ module async_fifo #(
     input  logic                  rst_n
 );
 
-    // Internal signals
-    logic [ADDR_WIDTH:0] read_ptr;        // binary pointers
-    logic [ADDR_WIDTH:0] write_ptr;
-    logic [ADDR_WIDTH:0] read_ptr_gray;   // gray pointers
-    logic [ADDR_WIDTH:0] write_ptr_gray;
-    logic [ADDR_WIDTH:0] read_addr;       // synchronized gray pointers
-    logic [ADDR_WIDTH:0] write_addr;
+    // Internal signals for status flags
+    logic next_full;
+    logic next_empty;
+    logic next_almost_full;
+    logic next_almost_empty;
+
+    // Internal signals for read/write pointers
+    logic [ADDR_WIDTH:0] waddr;     // binary memory addresses
+    logic [ADDR_WIDTH:0] raddr;
+    logic [ADDR_WIDTH:0] next_wptr; // next gray pointers
+    logic [ADDR_WIDTH:0] next_rptr; 
+    logic [ADDR_WIDTH:0] wptr;      // gray pointers
+    logic [ADDR_WIDTH:0] rptr;       
+    logic [ADDR_WIDTH:0] wptr_sync; // synchronized gray pointers
+    logic [ADDR_WIDTH:0] rptr_sync;
 
     // Use counters for the binary pointers
-    counter #(ADDR_WIDTH+1) read_count(
-        .clk(read_clk),
-        .rst_n,
-        .incr(read_en),
-        .count(read_ptr)
+    gray_counter #(ADDR_WIDTH+1) wcount(
+        .clk(wclk),
+        .rst_n(rst_n),
+        .incr(wen && !full),
+        .count(waddr),
+        .next_count_gray(next_wptr),
+        .count_gray(wptr)
     );
-    counter #(ADDR_WIDTH+1) write_count(
-        .clk(write_clk),
-        .rst_n,
-        .incr(write_en),
-        .count(write_ptr)
+    gray_counter #(ADDR_WIDTH+1) rcount(
+        .clk(rclk),
+        .rst_n(rst_n),
+        .incr(ren && !empty),
+        .count(raddr),
+        .next_count_gray(next_rptr),
+        .count_gray(rptr)
     );
 
-    // Convert the binary pointers into gray code
-    assign read_ptr_gray  = read_ptr  ^ (read_ptr >> 1);
-    assign write_ptr_gray = write_ptr ^ (write_ptr >> 1);
-
-    // Synchronize the gray pointers with clock domain crossing
-    synchronizer #(ADDR_WIDTH+1) read_sync(
-        .clk(write_clk),
-        .async_data(read_ptr_gray),
-        .sync_data(read_addr)
+    // Synchronize the pointers with clock domain crossing
+    synchronizer #(ADDR_WIDTH+1) wsync(
+        .clk(rclk),
+        .rst_n(rst_n),
+        .async_data(wptr),
+        .sync_data(wptr_sync)
     );
-    synchronizer #(ADDR_WIDTH+1) write_sync(
-        .clk(read_clk),
-        .async_data(write_ptr_gray),
-        .sync_data(write_addr)
+    synchronizer #(ADDR_WIDTH+1) rsync(
+        .clk(wclk),
+        .rst_n(rst_n),
+        .async_data(rptr),
+        .sync_data(rptr_sync)
     );
 
     // Create memory block
-    memory #(DATA_WIDTH, ADDR_WIDTH) m1(
-        .write_clk,
-        .write_en,
-        .write_addr(write_addr[ADDR_WIDTH-1:0]),
-        .read_addr(read_addr[ADDR_WIDTH-1:0]),
-        .write_data,
-        .read_data
+    memory #(DATA_WIDTH, ADDR_WIDTH) mem1(
+        .wclk(wclk),
+        .wen(wen && !full),
+        .waddr(waddr[ADDR_WIDTH-1:0]),
+        .raddr(raddr[ADDR_WIDTH-1:0]),
+        .wdata(wdata),
+        .rdata(rdata)
     );
 
-    // Compute the empty/full status flags
-    assign full = (write_ptr_gray[ADDR_WIDTH] != read_addr[ADDR_WIDTH]) && (write_ptr_gray[ADDR_WIDTH-1:0] == read_addr[ADDR_WIDTH-1:0]);
-    assign empty = (read_ptr_gray == write_addr);
-    
-    // TODO: compute the almost empty/full status flags
-    assign almost_full = 1'b0;
-    assign almost_empty = 1'b0;
+    // Compute empty
+    assign next_empty = (next_rptr == wptr_sync);
+
+    always_ff @(posedge rclk) begin
+        if (!rst_n) empty <= 1'b1;
+        else        empty <= next_empty;
+    end
+
+    // Compute full
+    assign next_full = (
+        next_wptr == {~rptr_sync[ADDR_WIDTH:ADDR_WIDTH-1], rptr_sync[ADDR_WIDTH-2:0]}
+    );
+
+    always_ff @(posedge rclk) begin
+        if (!rst_n) full <= 1'b0;
+        else        full <= next_full;
+    end
+
+    // Compute almost empty
+    assign next_almost_empty = 1'b0;
+
+    always_ff @(posedge rclk) begin
+        if (!rst_n) almost_empty <= 1'b1;
+        else        almost_empty <= next_almost_empty;
+    end
+
+    // Compute almost full
+    assign next_almost_full = 1'b0;
+
+    always_ff @(posedge rclk) begin
+        if (!rst_n) almost_full <= 1'b0;
+        else        almost_full <= next_almost_full;
+    end
 
 endmodule
