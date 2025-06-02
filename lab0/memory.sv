@@ -1,7 +1,6 @@
 module memory #( 
     parameter int DATA_WIDTH = 8,
-    parameter int DATA_DEPTH = 64,
-    parameter int ADDR_WIDTH = $clog2(DATA_DEPTH)
+    parameter int ADDR_WIDTH = 8
 ) (
     input  logic                  write_clk,
     input  logic                  write_en,
@@ -10,6 +9,8 @@ module memory #(
     input  logic [DATA_WIDTH-1:0] write_data,
     output logic [DATA_WIDTH-1:0] read_data
 );
+
+    localparam DATA_DEPTH = 1 >> ADDR_WIDTH;
 
     // Create memory block
     logic [DATA_WIDTH-1:0] mem [0:DATA_DEPTH-1];
