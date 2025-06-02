@@ -58,14 +58,14 @@ module async_fifo #(
     synchronizer #(ADDR_WIDTH+1) wsync(
         .clk(rclk),
         .rst_n(rst_n),
-        .async_data(wptr),
-        .sync_data(wptr_sync)
+        .d(wptr),
+        .q2(wptr_sync)
     );
     synchronizer #(ADDR_WIDTH+1) rsync(
         .clk(wclk),
         .rst_n(rst_n),
-        .async_data(rptr),
-        .sync_data(rptr_sync)
+        .d(rptr),
+        .q2(rptr_sync)
     );
 
     // Create memory block

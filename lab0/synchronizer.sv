@@ -3,20 +3,15 @@ module synchronizer #(
 ) (
     input  logic             clk,
     input  logic             rst_n,
-    input  logic [WIDTH-1:0] async_data,
-    output logic [WIDTH-1:0] sync_data
+    input  logic [WIDTH-1:0] d,
+    output logic [WIDTH-1:0] q2
 );
 
-    logic [WIDTH-1:0] unstable_data;
+    logic [WIDTH-1:0] q1;
 
-    always_ff @(posedge clk) begin
-        if (!rst_n) begin
-            unstable_data <= WIDTH'(0);
-            sync_data <= WIDTH'(0);
-        end else begin
-            unstable_data <= async_data;
-            sync_data <= unstable_data;
-        end
+    always_ff @(posedge clk or negedge rst_n) begin
+        if (!rst_n) {q2, q1} <= 0;
+        else        {q2, q1} <= {q1, d};
     end
 
 endmodule

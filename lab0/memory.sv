@@ -19,9 +19,7 @@ module memory #(
     assign rdata = mem[raddr];
 
     // Write to memory synchronously
-    always_ff @(posedge wclk) begin
-        if (wen)
-            mem[waddr] <= wdata;
-    end
+    always_ff @(posedge wclk)
+        if (wen) mem[waddr] <= wdata;
    
 endmodule
