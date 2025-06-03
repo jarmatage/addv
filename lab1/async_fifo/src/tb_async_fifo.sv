@@ -50,15 +50,15 @@ module tb_async_fifo;
     .DATA_WIDTH (DATA_WIDTH),
     .ADDR_WIDTH (ADDR_WIDTH)
   ) dut (
-    .write_clk    (write_clk),
-    .write_en     (write_en),
-    .write_data   (write_data),
+    .wclk         (write_clk),
+    .wen          (write_en),
+    .wdata        (write_data),
     .full         (full),
     .almost_full  (almost_full),
 
-    .read_clk     (read_clk),
-    .read_en      (read_en),
-    .read_data    (read_data),
+    .rclk         (read_clk),
+    .ren          (read_en),
+    .rdata        (read_data),
     .empty        (empty),
     .almost_empty (almost_empty),
 
