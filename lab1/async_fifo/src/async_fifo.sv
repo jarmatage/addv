@@ -32,49 +32,49 @@ module async_fifo #(
 
     // Create memory block
     memory #(DATA_WIDTH, ADDR_WIDTH) mem1(
-        .wclk(wif.clk),
-        .wen(wif.en),
-        .full(wif.full),
+        .wclk(wclk),
+        .wen(wen),
+        .full(full),
         .waddr(waddr[ADDR_WIDTH-1:0]),
         .raddr(raddr[ADDR_WIDTH-1:0]),
-        .wdata(wif.data),
-        .rdata(rif.data)
+        .wdata(wdata),
+        .rdata(rdata)
     );
 
     // Compute the read pointer and empty status flags
     read_pointer #(ADDR_WIDTH+1) rptr_empty(
-        .rclk(rif.clk),
-        .rst_n(rif.rst_n),
-        .ren(rif.en),
+        .rclk(rclk),
+        .rst_n(rst_n),
+        .ren(ren),
         .wptr_sync(wptr_sync),
         .raddr(raddr),
         .rptr(rptr),
-        .empty(rif.empty),
-        .almost_empty(rif.almost_empty)
+        .empty(empty),
+        .almost_empty(almost_empty)
     );
 
     // Compute the write pointer and full status flags
     write_pointer #(ADDR_WIDTH+1) wptr_full(
-        .wclk(wif.clk),
-        .rst_n(wif.rst_n),
-        .wen(wif.en),
+        .wclk(wclk),
+        .rst_n(rst_n),
+        .wen(wen),
         .rptr_sync(rptr_sync),
         .waddr(waddr),
         .wptr(wptr),
-        .full(wif.full),
-        .almost_full(wif.almost_full)
+        .full(full),
+        .almost_full(almost_full)
     );
 
     // Synchronize the pointers with clock domain crossing
     synchronizer #(ADDR_WIDTH+1) rsync(
-        .clk(wif.clk),
-        .rst_n(wif.rst_n),
+        .clk(wclk),
+        .rst_n(rst_n),
         .d(rptr),
         .q2(rptr_sync)
     );
     synchronizer #(ADDR_WIDTH+1) wsync(
-        .clk(rif.clk),
-        .rst_n(rif.rst_n),
+        .clk(rclk),
+        .rst_n(rst_n),
         .d(wptr),
         .q2(wptr_sync)
     );
