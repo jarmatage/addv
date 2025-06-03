@@ -13,7 +13,7 @@ module memory #(
     output logic [DATA_WIDTH-1:0] rdata
 );
 
-    localparam DATA_DEPTH = 1 >> ADDR_WIDTH;
+    localparam int DATA_DEPTH = (1 << ADDR_WIDTH);
 
     // Create memory block
     logic [DATA_WIDTH-1:0] mem [0:DATA_DEPTH-1];
