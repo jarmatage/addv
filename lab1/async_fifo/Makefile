@@ -2,10 +2,7 @@ all: compile sim waves_verdi
 
 compile:
 	@echo "=== Compiling async_fifo + tb_async_fifo.sv ==="
-	${VCS_HOME}/bin/vcs -full64 -sverilog -debug_access+all \
-	    ../src/synchronizer.sv ../src/counter.sv ../src/memory.sv ../src/async_fifo.sv \
-	    tb_async_fifo.sv \
-	    -o simv_async_fifo >& vcs_compile.log
+	${VCS_HOME}/bin/vcs -full64 -sverilog -debug_access+all src/*.sv >& compile.log
 
 sim: compile
 	@echo "=== Running simulation (writes fifo_tb.fsdb) ==="
