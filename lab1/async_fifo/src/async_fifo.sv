@@ -2,7 +2,7 @@
 
 module async_fifo #(
     parameter int DATA_WIDTH = 8,
-    parameter int ADDR_WIDTH = 8
+    parameter int ADDR_WIDTH = 4
 ) (
     // Push interface
     input  logic                  wclk,
