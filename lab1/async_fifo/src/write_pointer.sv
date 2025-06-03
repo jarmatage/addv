@@ -13,14 +13,15 @@ module write_pointer #(
     output logic             almost_full
 );
 
-    // Almost full threshold
-    localparam logic [WIDTH-1:0] THRESHOLD = 1 >> (WIDTH - 2);
+    // Almost full threshold (-1 to get address size, -2 to divide by 4)
+    localparam [WIDTH-1:0] THRESHOLD = WIDTH'(1 << (WIDTH - 3));
 
     // Internal signals
     logic [WIDTH-1:0] next_waddr;
     logic [WIDTH-1:0] next_wptr;
     logic             next_full;
     logic             next_almost_full;
+    logic [WIDTH-1:0] raddr_sync;
 
     // Add the increment (0 or 1) to the current count
     assign next_waddr = waddr + {(WIDTH)'(0), (wen && !full)};
@@ -35,7 +36,7 @@ module write_pointer #(
     end
 
     // Compute the next empty flag
-    assign next_full = (next_wptr == {~rptr_sync[WIDTH:WIDTH-1], rptr_sync[WIDTH-2:0]});
+    assign next_full = (next_wptr == {~rptr_sync[WIDTH-1:WIDTH-2], rptr_sync[WIDTH-3:0]});
 
     // Gray to binary
     function automatic logic [WIDTH-1:0] gray2bin(input logic [WIDTH-1:0] gray);
@@ -47,7 +48,11 @@ module write_pointer #(
     endfunction
 
     // Compute the next almost_empty flag
-    assign next_almost_full = gray2bin(rptr_sync) <= (next_waddr + THRESHOLD);
+    assign raddr_sync = gray2bin(rptr_sync);
+    assign next_almost_full = (
+        (next_waddr + THRESHOLD) >= raddr_sync &&
+        next_waddr[WIDTH-1] != raddr_sync[WIDTH-1]
+    );
 
     // Latch the empty and almost_empty flags
     always_ff @(posedge wclk or negedge rst_n) begin
