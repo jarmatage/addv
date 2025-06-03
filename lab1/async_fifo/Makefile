@@ -1,4 +1,4 @@
-all: sim verdi
+all: sim synth verdi
 
 compile:
 	@echo "=== Compiling async_fifo + tb_async_fifo.sv ==="
@@ -12,8 +12,15 @@ verdi:
 	@echo "=== Launching Verdi on fifo_tb.fsdb ==="
 	${VERDI_HOME}/bin/verdi -dbdir ./simv.daidir -ssf novas.fsdb -nologo &
 
-clean:
-	rm -rf simv csrc simv.daidir fifo_tb.fsdb novas* *.key *.log
+synth:
+	@echo "=== Launching Design Compiler ==="
+	dc_shell-t -f compile_dc.tcl |& tee synth.log
 
-.PHONY: all compile sim waves_verdi clean
+clean_synth:
+	rm -rf *.syn *.pvl *.mr *.svf command.log  WORK rpt
+
+clean: clean_synth
+	rm -rf simv csrc simv.daidir fifo_tb.fsdb novas* *.key *.log verdi*
+
+.PHONY: all clean clean_synth compile sim synth verdi
 
