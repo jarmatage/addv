@@ -13,14 +13,16 @@ module read_pointer #(
     output logic             almost_empty
 );
 
-    // Almost empty threshold
-    localparam logic [WIDTH-1:0] THRESHOLD = 1 >> (WIDTH - 2);
+    // Almost empty threshold (-1 to get address size, -2 to divide by 4)
+    localparam [WIDTH-1:0] THRESHOLD = WIDTH'(1 << (WIDTH - 3));
 
     // Internal signals
     logic [WIDTH-1:0] next_raddr;
     logic [WIDTH-1:0] next_rptr;
     logic             next_empty;
     logic             next_almost_empty;
+    logic [WIDTH-1:0] waddr_sync;
+    logic [WIDTH-1:0] diff;
 
     // Add the increment (0 or 1) to the current count
     assign next_raddr = raddr + {(WIDTH)'(0), (ren && !empty)};
@@ -47,7 +49,9 @@ module read_pointer #(
     endfunction
 
     // Compute the next almost_empty flag
-    assign next_almost_empty = gray2bin(wptr_sync) <= (next_raddr + THRESHOLD);
+    assign waddr_sync = gray2bin(wptr_sync);
+    assign diff = waddr_sync - next_raddr;
+    assign next_almost_empty = diff <= THRESHOLD;
 
     // Latch the empty and almost_empty flags
     always_ff @(posedge rclk or negedge rst_n) begin
