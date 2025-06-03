@@ -1,18 +1,25 @@
-all: clean sim waves_verdi
+all: sim synth verdi
 
 compile:
 	@echo "=== Compiling even_odd_ac + tb_even_odd_ac.sv ==="
-	${VCS_HOME}/bin/vcs -full64 -sverilog -debug_access+all src/*.sv |& tee compile.log
+	${VCS_HOME}/bin/vcs -full64 -sverilog -debug_access+all src/*.sv -kdb -lca |& tee compile.log
 
 sim: compile
-	@echo "=== Running simulation (writes even_odd_ac_tb.fsdb) ==="
+	@echo "=== Running simulation (writes fsdb) ==="
 	./simv
 
-waves_verdi:
-	@echo "=== Launching Verdi on even_odd_ac_tb.fsdb ==="
-	${VERDI_HOME}/bin/verdi -ssf even_odd_ac_tb.fsdb &
+verdi:
+	@echo "=== Launching Verdi on fsdb ==="
+	${VERDI_HOME}/bin/verdi -dbdir ./simv.daidir -ssf novas.fsdb -nologo &
 
-clean:
-	rm -rf simv csrc simv.daidir even_odd_ac_tb.fsdb novas* *.key *.log verdiLog
+synth:
+	@echo "=== Launching Design Compiler ==="
+	dc_shell-t -f compile_dc.tcl |& tee synth.log
 
-.PHONY: all compile sim waves_verdi clean
+clean_synth:
+	rm -rf *.syn *.pvl *.mr *.svf command.log  WORK rpt
+
+clean: clean_synth
+	rm -rf simv csrc simv.daidir fifo_tb.fsdb novas* *.key *.log verdi*
+
+.PHONY: all clean clean_synth compile sim synth verdi
