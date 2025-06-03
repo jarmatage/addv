@@ -11,6 +11,11 @@ interface read_if #(
     logic                  empty;
     logic                  almost_empty;
 
+    modport dut (
+        input clk, rst_n, en,
+        output data, empty, almost_empty
+    );
+
 endinterface
 
 interface write_if #(
@@ -23,5 +28,10 @@ interface write_if #(
     logic [DATA_WIDTH-1:0] data;
     logic                  full;
     logic                  almost_full;
+
+    modport dut (
+        input clk, rst_n, en, data,
+        output full, almost_full
+    );
 
 endinterface
