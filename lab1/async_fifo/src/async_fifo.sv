@@ -4,8 +4,22 @@ module async_fifo #(
     parameter int DATA_WIDTH = 8,
     parameter int ADDR_WIDTH = 8
 ) (
-    read_if.dut #(DATA_WIDTH) rif,
-    write_if.dut #(DATA_WIDTH) wif
+    // Push interface
+    input  logic                  wclk,
+    input  logic                  wen,
+    input  logic [DATA_WIDTH-1:0] wdata,
+    output logic                  full,
+    output logic                  almost_full,
+
+    // Pop interface
+    input  logic                  rclk,
+    input  logic                  ren,
+    output logic [DATA_WIDTH-1:0] rdata,
+    output logic                  empty,
+    output logic                  almost_empty,
+
+    // Global reset
+    input  logic                  rst_n
 );
 
     // Internal signals for read/write pointers
