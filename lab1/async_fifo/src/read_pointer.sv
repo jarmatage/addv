@@ -13,6 +13,9 @@ module read_pointer #(
     output logic             almost_empty
 );
 
+    // Almost empty threshold
+    localparam logic [WIDTH-1:0] THRESHOLD = 1 >> (WIDTH - 2);
+
     // Internal signals
     logic [WIDTH-1:0] next_raddr;
     logic [WIDTH-1:0] next_rptr;
@@ -34,8 +37,17 @@ module read_pointer #(
     // Compute the next empty flag
     assign next_empty = (next_rptr == wptr_sync);
 
+    // Gray to binary
+    function automatic logic [WIDTH-1:0] gray2bin(input logic [WIDTH-1:0] gray);
+        logic [WIDTH-1:0] bin;
+        bin[WIDTH-1] = gray[WIDTH-1];
+        for (int i = WIDTH-2; i >= 0; i--)
+            bin[i] = bin[i+1] ^ gray[i];
+        return bin;
+    endfunction
+
     // Compute the next almost_empty flag
-    assign next_almost_empty = 1'b0;
+    assign next_almost_empty = gray2bin(wptr_sync) <= (next_raddr + THRESHOLD);
 
     // Latch the empty and almost_empty flags
     always_ff @(posedge rclk or negedge rst_n) begin
