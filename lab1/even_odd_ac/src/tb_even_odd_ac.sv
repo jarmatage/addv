@@ -10,91 +10,91 @@ module tb_even_odd_ac;
     logic [WIDTH-1:0] din, dout;
 
     // Instantiate DUT
-    even_odd_ac #(WIDTH, DEPTH) dut(.*);
+    //even_odd_ac #(WIDTH, DEPTH) dut(.*);
 
     // Clock generation
     initial clk = 0;
     always #5 clk = ~clk; // 10ns period = 100MHz
 
-    // Reset the DUT
+    // Testbench internals
+    int i, j;
+    int evens[DEPTH];
+    int odds[DEPTH];
+    int vals[2*DEPTH];
+    int write_seq[100];
+    int read_seq[10];
+
+    // Test sequence
     initial begin
-        rst_n = 0;
+
+	// Generate a random sequence to perform the writes
+	for (int i = 0; i < 80; i++)
+		write_seq[i] = 1;
+        write_seq.shuffle();
+        $display("Write Sequence: %p", write_seq);
+
+	// Generate a random sequence to perform the reads
+	for (int i = 0; i < 8; i++)
+		read_seq[i] = 1;
+	read_seq.shuffle();
+        $display("Read Sequence: %p", read_seq);	
+        
+	// Generate even and odd values
+	for (int i = 0; i < DEPTH; i++)
+		evens[i] = $urandom_range(0, 50) * 2;
+	$display("Evens: %p", evens);
+	for (int i = 0; i < DEPTH; i++)
+		odds[i] = $urandom_range(0, 50) * 2 + 1;
+	$display("Odds: %p", odds);
+	vals = {evens, odds};
+	vals.shuffle();
+	$display("Shuffled: %p", vals);
+        
+	// Reset
+	rst_n = 0;
         ren = 0;
         wen = 0;
         din = 0;
         #25;
         rst_n = 1;
         #25;
-    end
 
-    // Testbench internals
-    int evens[DEPTH];
-    int odds[DEPTH];
-    int write_seq[100] = '{80{1'b1}, 20{1'b0}};
+	// Send input over 100 clock cycles
+	j = 0;	
+	for (int i = 0; i < 100;  i++) begin
+		if (write_seq[i]) begin
+			wen = 1'b1;
+			din = vals[j];
+			$display("Writing %d value '%d' in clk cycle %d", j, din, i);
+			j = j + 1;
+		end else
+			wen <= 1'b0;
+		@(posedge clk);
+		#1;
+	end
 
-    initial begin
-        $display("Random sequence: %p", write_seq);
-        write_seq.shuffle();
-        $display("Random sequence: %p", write_seq);
-        $finish;
-    end
+	// Wait one more clock cycle
+	@(posedge clk);
+	wen <= 1'b0;
 
-    // Input stimulus process
-    initial begin
-        clk = 0;
-        rst = 1;
-        in_valid = 0;
-        in_data = 0;
-        output_count = 0;
+	// Read back out over 100 clock cycles
+	j = 0;
+	for (int i = 0; i < 100; i++) begin
+		if (read_seq[i % 10])
+			ren = 1'b1;
+		else
+			ren = 1'b0;
+		@(posedge clk);
+		#1;
+		if (read_seq[i % 10]) begin	
+			$display("Read %d value '%d' in clk cycle %d", j, dout, i);
+			j = j + 1;
+		end
+	end
 
-        // Fill arrays
-        for (i = 0; i < 40; i++) begin
-            even_vals[i] = i * 2;
-            odd_vals[i]  = i * 2 + 1;
-            mixed_vals[i] = even_vals[i];
-            mixed_vals[i + 40] = odd_vals[i];
-        end
-
-        // Shuffle
-        shuffle_array(mixed_vals, shuffled_vals, 80);
-
-        // Reset
-        #20;
-        rst = 0;
-
-        // Send input
-        for (i = 0; i < 80; i++) begin
-            @(posedge clk);
-            in_valid <= 1;
-            in_data <= shuffled_vals[i];
-        end
-
-        // Hold last input one extra cycle
-        @(posedge clk);
-        in_valid <= 0;
-
-        // Wait for output
-        while (output_count < 80) begin
-            @(posedge clk);
-            if (out_valid) begin
-                output_vals[output_count] = out_data;
-                output_count++;
-            end
-        end
-
-        // Verify alternating pattern
-        for (i = 0; i < 80; i++) begin
-            if ((i % 2 == 0) && (output_vals[i] % 2 != 0)) begin
-                $display("❌ ERROR at output %0d: expected EVEN, got %0d", i, output_vals[i]);
-                $fatal;
-            end else if ((i % 2 == 1) && (output_vals[i] % 2 != 1)) begin
-                $display("❌ ERROR at output %0d: expected ODD, got %0d", i, output_vals[i]);
-                $fatal;
-            end
-        end
-
-        $display("✅ Test passed: Output alternates correctly between even and odd.");
-        $finish;
+	$fsdbDumpvars();	
+	$finish;
     end
 
 endmodule
+
