@@ -1,0 +1,18 @@
+There are two folders in the project:
+  - async_fifo for part 1
+  - even_odd_ac for part 2
+
+Both folders have Makefiles, simply running `make` will run everything end 2 end. This includes:
+  1. Compiling the system verilog
+  2. Simulating the testbench
+  3. Synthesizing the desing (available for both designs)
+  4. Launching Verdi
+
+The targets in both Makefiles are as follows:
+  - all : for running everything
+  - compile : for running VCS
+  - sim : for running the simv executable
+  - verdi : for launching Verdi
+  - synth : for running DC compiler
+  - clean_synth : for cleaning the synthesis files
+  - clean : for cleaning everything (including synthesis)
