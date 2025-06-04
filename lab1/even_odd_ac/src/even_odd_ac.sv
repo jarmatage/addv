@@ -1,20 +1,23 @@
-module even_odd_fifo_wrapper (
+`timescale 1ns / 1ps
 
-    input  logic        clk,
-    input  logic        reset_n,
+module even_odd_ac #(
+    parameter int DATA_W = 8,
+    parameter int DEPTH = 40
+) (
+    input  logic             clk,
+    input  logic             rst_n,
 
     // write interface
-    input  logic [7:0]  data_in,
-    input  logic        write_en_in,
+    input  logic             wen,
+    input  logic [DATA_W-1:0] din,
 
     // read interface
-    input  logic        read_en_in,
-    output logic [7:0]  data_out,
-    output logic        valid_out
+    input  logic             ren,
+    output logic [DATA_W-1:0] dout
 );
+    
+    localparam int ADDR_W = $clog2(DEPTH);
 
-    localparam int DATA_W = 8;
-    localparam int ADDR_W = 3;
 
     logic              even_wr_en, odd_wr_en;
     logic [DATA_W-1:0] even_wr_data, odd_wr_data;
@@ -47,10 +50,10 @@ module even_odd_fifo_wrapper (
     end
 
     sync_fifo #(
-	.DATA_WIDTH(DATA_W),
-	.ADDR_WIDTH(ADDR_W)
+        .DATA_WIDTH(DATA_W),
+        .ADDR_WIDTH(ADDR_W)
     ) even_fifo (
-	.clk	(clk),
+        .clk    (clk),
         .reset_n  (reset_n),
         .wr_en    (even_wr_en),
         .wr_data  (even_wr_data),
@@ -143,3 +146,4 @@ module even_odd_fifo_wrapper (
 
 
 endmodule
+

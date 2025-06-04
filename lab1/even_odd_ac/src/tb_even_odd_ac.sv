@@ -10,7 +10,7 @@ module tb_even_odd_ac;
     logic [WIDTH-1:0] din, dout;
 
     // Instantiate DUT
-    //even_odd_ac #(WIDTH, DEPTH) dut(.*);
+    even_odd_ac #(WIDTH, DEPTH) dut(.*);
 
     // Clock generation
     initial clk = 0;
