@@ -26,8 +26,8 @@ link
 uniquify
 
 # Create read and write clocks
-create_clock -period 1.2 rclk
-create_clock -period 2.0 wclk
+create_clock -period 0.6 rclk; # 1.667 GHz
+create_clock -period 0.6 wclk; # 1.667 GHz
 
 # Set the driving cell for all input ports
 set_driving_cell -lib_cell INVX1 [all_inputs]
