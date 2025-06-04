@@ -8,62 +8,44 @@ module even_odd_ac #(
     input  logic             rst_n,
 
     // write interface
-    input  logic             wen,
+    input  logic              wen,
     input  logic [DATA_W-1:0] din,
 
     // read interface
-    input  logic             ren,
+    input  logic              ren,
     output logic [DATA_W-1:0] dout
 );
     
     localparam int ADDR_W = $clog2(DEPTH);
 
-
-    logic              even_wr_en, odd_wr_en;
+    // Internal signals
+    logic even_full;
+    logic odd_full;
+    logic even_empty;
+    logic odd_empty;
+    logic even_wr_en;
+    logic odd_wr_en;
+    logic even_rd_en;
+    logic odd_rd_en;
     logic [DATA_W-1:0] even_wr_data, odd_wr_data;
-    logic              even_full, odd_full;
+    logic [DATA_W-1:0] even_rd_data, odd_rd_data;
 
-
-    always_comb begin
-        even_wr_en   = 1'b0;
-        odd_wr_en    = 1'b0;
-        even_wr_data = '0;
-        odd_wr_data  = '0;
-
-
-
-        if (write_en_in) begin
-            if (data_in[0] == 1'b0) begin
-                // route to even FIFO if not full
-                if (!even_full) begin
-                    even_wr_en   = 1'b1;
-                    even_wr_data = data_in;
-                end
-            end else begin
-                // route to odd FIFO if not full
-                if (!odd_full) begin
-                    odd_wr_en   = 1'b1;
-                    odd_wr_data = data_in;
-                end
-            end
-        end
-    end
-
+    // Create even FIFO
     sync_fifo #(
         .DATA_WIDTH(DATA_W),
         .ADDR_WIDTH(ADDR_W)
     ) even_fifo (
-        .clk    (clk),
-        .reset_n  (reset_n),
+        .clk      (clk),
+        .reset_n  (rst_n),
         .wr_en    (even_wr_en),
         .wr_data  (even_wr_data),
         .full     (even_full),
-        .rd_en    (),            // driven by read logic below
-        .rd_data  (),            // we capture it in even_fifo_dout
-        .empty    ()             // we capture in even_fifo_empty
+        .rd_en    (even_rd_en),
+        .rd_data  (even_rd_data),
+        .empty    (even_empty)    
     );
 
-
+    // Create odd FIFO
     sync_fifo #(
         .DATA_WIDTH(DATA_W),
         .ADDR_WIDTH(ADDR_W)
@@ -73,77 +55,52 @@ module even_odd_ac #(
         .wr_en    (odd_wr_en),
         .wr_data  (odd_wr_data),
         .full     (odd_full),
-        .rd_en    (),            // driven by read logic below
-        .rd_data  (),            // we capture it in odd_fifo_dout
-        .empty    ()             // we capture in odd_fifo_empty
+        .rd_en    (odd_rd_en),
+        .rd_data  (odd_rd_data),
+        .empty    (odd_empty)
     );
 
+    // Determine which FIFO to write to
+    assign even_wr_en = wen && !din[0];
+    assign odd_wr_en  = wen && din[0];
 
-    // Capture each FIFO’s empty flag and rd_data output.
-    logic              even_fifo_empty, odd_fifo_empty;
-    logic [DATA_W-1:0] even_fifo_dout, odd_fifo_dout;
+    // Setup FSM for reading
+    typedef enum logic {EVEN_NEXT, ODD_NEXT} state_t;
+    state_t state, next_state;
 
-
-    assign even_fifo_empty = even_fifo.empty;
-    assign odd_fifo_empty  = odd_fifo.empty;
-    assign even_fifo_dout  = even_fifo.rd_data;
-    assign odd_fifo_dout   = odd_fifo.rd_data;
-
-    typedef enum logic {READ_EVEN = 1'b0, READ_ODD = 1'b1} read_sel_t;
-    read_sel_t curr_sel;
-
-
-    always_ff @(posedge clk or negedge reset_n) begin
-        if (!reset_n) begin
-            curr_sel <= READ_EVEN;
-        end else begin
-            if (valid_out) begin
-                curr_sel <= (curr_sel == READ_EVEN) ? READ_ODD : READ_EVEN;
-            end
-        end
+    // Add a reset for the FSM
+    always_ff @(posedge clk or negedge rst_n) begin
+        if (!rst_n)
+            state <= EVEN_NEXT;
+        else
+            state <= next_state;
     end
 
-
-    logic even_fifo_rd_en, odd_fifo_rd_en;
 
     always_comb begin
-        even_fifo_rd_en = 1'b0;
-        odd_fifo_rd_en  = 1'b0;
-        data_out        = '0;
-        valid_out       = 1'b0;
+        // Default values
+        even_rd_en = 1'b0;
+        odd_rd_en  = 1'b0;
+        dout       = (DATA_W)'(0);
+        next_state = state;
 
-
-        if (read_en_in) begin
-            if (curr_sel == READ_EVEN) begin
-                if (!even_fifo_empty) begin
-                    even_fifo_rd_en = 1'b1;
-                    data_out        = even_fifo_dout;
-                    valid_out       = 1'b1;
-                end else if (!odd_fifo_empty) begin
-                    odd_fifo_rd_en  = 1'b1;
-                    data_out        = odd_fifo_dout;
-                    valid_out       = 1'b1;
+        case (state)
+            EVEN_NEXT: begin
+                if (ren && !even_empty) begin
+                    even_rd_en = 1'b1;
+                    dout       = even_rd_data;
+                    next_state = ODD_NEXT;
                 end
-
-            end else begin  // curr_sel == READ_ODD
-                if (!odd_fifo_empty) begin
-                    odd_fifo_rd_en = 1'b1;
-                    data_out       = odd_fifo_dout;
-                    valid_out      = 1'b1;
-                end else if (!even_fifo_empty) begin
-                    even_fifo_rd_en = 1'b1;
-                    data_out        = even_fifo_dout;
-                    valid_out       = 1'b1;
-                end
-                // if both empty, valid_out remains 0
             end
-        end
+
+            ODD_NEXT: begin
+                if (ren && !odd_empty) begin
+                    odd_rd_en  = 1'b1;
+                    dout       = odd_rd_data;
+                    next_state = EVEN_NEXT;
+                end
+            end
+        endcase
     end
 
-
-    assign even_fifo.rd_en = even_fifo_rd_en;
-    assign odd_fifo.rd_en  = odd_fifo_rd_en;
-
-
 endmodule
-
