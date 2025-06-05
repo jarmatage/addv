@@ -96,6 +96,7 @@ module tb_even_odd_ac;
 			j = j + 1;
 		end
 	end
+	ren = 0;
 
 	$finish;
     end
