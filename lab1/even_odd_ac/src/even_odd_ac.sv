@@ -29,6 +29,7 @@ module even_odd_ac #(
     logic odd_rd_en;
     logic [DATA_W-1:0] even_rd_data;
     logic [DATA_W-1:0] odd_rd_data;
+    logic state;
 
     // Create even FIFO
     sync_fifo #(
@@ -51,7 +52,7 @@ module even_odd_ac #(
         .ADDR_WIDTH(ADDR_W)
     ) odd_fifo (
         .clk      (clk),
-        .reset_n  (reset_n),
+        .reset_n  (rst_n),
         .wr_en    (odd_wr_en),
         .wr_data  (din),
         .full     (odd_full),
@@ -64,43 +65,18 @@ module even_odd_ac #(
     assign even_wr_en = wen && !din[0];
     assign odd_wr_en  = wen && din[0];
 
-    // Setup FSM for reading
-    typedef enum logic {EVEN_NEXT, ODD_NEXT} state_t;
-    state_t state, next_state;
+    // Determine which FIFO to read from
+    assign even_rd_en = ren && !state;
+    assign odd_rd_en  = ren && state;
+    assign dout = state ? even_rd_data: odd_rd_data;
 
-    // Add a reset for the FSM
+    // Alternate between even and odd reading
     always_ff @(posedge clk or negedge rst_n) begin
-        if (!rst_n)
-            state <= EVEN_NEXT;
-        else
-            state <= next_state;
-    end
-
-
-    always_comb begin
-        // Default values
-        even_rd_en = 1'b0;
-        odd_rd_en  = 1'b0;
-        dout       = (DATA_W)'(0);
-        next_state = state;
-
-        case (state)
-            EVEN_NEXT: begin
-                if (ren && !even_empty) begin
-                    even_rd_en = 1'b1;
-                    dout       = even_rd_data;
-                    next_state = ODD_NEXT;
-                end
-            end
-
-            ODD_NEXT: begin
-                if (ren && !odd_empty) begin
-                    odd_rd_en  = 1'b1;
-                    dout       = odd_rd_data;
-                    next_state = EVEN_NEXT;
-                end
-            end
-        endcase
+	if (!rst_n)
+		state <= 1'b0;
+	else if (ren)
+		state <= !state;
     end
 
 endmodule
+
