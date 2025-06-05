@@ -27,8 +27,8 @@ module even_odd_ac #(
     logic odd_wr_en;
     logic even_rd_en;
     logic odd_rd_en;
-    logic [DATA_W-1:0] even_wr_data, odd_wr_data;
-    logic [DATA_W-1:0] even_rd_data, odd_rd_data;
+    logic [DATA_W-1:0] even_rd_data;
+    logic [DATA_W-1:0] odd_rd_data;
 
     // Create even FIFO
     sync_fifo #(
@@ -38,7 +38,7 @@ module even_odd_ac #(
         .clk      (clk),
         .reset_n  (rst_n),
         .wr_en    (even_wr_en),
-        .wr_data  (even_wr_data),
+        .wr_data  (din),
         .full     (even_full),
         .rd_en    (even_rd_en),
         .rd_data  (even_rd_data),
@@ -53,7 +53,7 @@ module even_odd_ac #(
         .clk      (clk),
         .reset_n  (reset_n),
         .wr_en    (odd_wr_en),
-        .wr_data  (odd_wr_data),
+        .wr_data  (din),
         .full     (odd_full),
         .rd_en    (odd_rd_en),
         .rd_data  (odd_rd_data),
