@@ -22,7 +22,8 @@ module tb_even_odd_ac;
     int odds[DEPTH];
     int vals[2*DEPTH];
     int write_seq[100];
-    int read_seq[10];
+    int read_seq[100];
+    int read_snippet[10];
 
     // Test sequence
     initial begin
@@ -36,9 +37,13 @@ module tb_even_odd_ac;
 
 	// Generate a random sequence to perform the reads
 	for (int i = 0; i < 8; i++)
-		read_seq[i] = 1;
-	read_seq.shuffle();
-        $display("Read Sequence: %p", read_seq);	
+		read_snippet[i] = 1;
+	for (int i = 0; i < 10; i++) begin
+		read_snippet.shuffle();
+		$display("Read Sequence %0d: %p", i, read_snippet);
+		for (int j = 0; j < 10; j++)
+			read_seq[10*i + j] = read_snippet[j];
+	end
         
 	// Generate even and odd values
 	for (int i = 0; i < DEPTH; i++)
@@ -66,7 +71,7 @@ module tb_even_odd_ac;
 		if (write_seq[i]) begin
 			wen = 1'b1;
 			din = vals[j];
-			$display("Writing %d value '%d' in clk cycle %d", j, din, i);
+			$display("Writing %0d value '%d' in clk cycle %0d", j, din, i);
 			j = j + 1;
 		end else
 			wen <= 1'b0;
@@ -75,20 +80,19 @@ module tb_even_odd_ac;
 	end
 
 	// Wait one more clock cycle
-	@(posedge clk);
+	din = 0;
 	wen <= 1'b0;
+	@(posedge clk);
+	#1;
 
 	// Read back out over 100 clock cycles
 	j = 0;
 	for (int i = 0; i < 100; i++) begin
-		if (read_seq[i % 10])
-			ren = 1'b1;
-		else
-			ren = 1'b0;
+		ren = read_seq[i];
 		@(posedge clk);
 		#1;
-		if (read_seq[i % 10]) begin	
-			$display("Read %d value '%d' in clk cycle %d", j, dout, i);
+		if (read_seq[i]) begin
+			$display("Read %0d value '%d' in clk cycle %0d", j, dout, i);
 			j = j + 1;
 		end
 	end
