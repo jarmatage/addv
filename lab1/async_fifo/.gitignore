@@ -1,0 +1,14 @@
+simv
+csrc/
+simv.daidir/
+novas*
+*.key
+*.log
+verdi*
+*.syn
+*.pvl
+*.mr
+*.svf
+WORK/
+rpt/
+
