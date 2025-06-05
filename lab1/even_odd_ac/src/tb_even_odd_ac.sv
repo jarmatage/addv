@@ -26,6 +26,7 @@ module tb_even_odd_ac;
 
     // Test sequence
     initial begin
+	$fsdbDumpvars();
 
 	// Generate a random sequence to perform the writes
 	for (int i = 0; i < 80; i++)
@@ -92,7 +93,6 @@ module tb_even_odd_ac;
 		end
 	end
 
-	$fsdbDumpvars();	
 	$finish;
     end
 
