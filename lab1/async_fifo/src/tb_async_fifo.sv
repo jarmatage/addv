@@ -39,6 +39,7 @@ module tb_async_fifo;
 
     // Main test sequence
     initial begin
+        $fsdbDumpvars(); // Create a waveform FSDB for Verdi
         reset();
         check_reset();
         fill_fifo();
@@ -47,7 +48,6 @@ module tb_async_fifo;
         check_reset();
         simultaneous_rw();
         #40;
-        $fsdbDumpvars(); // Create a waveform FSDB for Verdi
         $finish;
     end
 
