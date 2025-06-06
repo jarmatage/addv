@@ -5,6 +5,7 @@ novas*
 *.key
 *.log
 verdi*
+Verdi*
 *.syn
 *.pvl
 *.mr
