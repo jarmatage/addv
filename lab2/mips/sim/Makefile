@@ -3,9 +3,8 @@ all: sim verdi
 compile: clean
 	@echo "=== Compiling async_fifo + tb_async_fifo.sv ==="
 	${VCS_HOME}/bin/vcs -full64 -sverilog -debug_access+all -kdb -lca \
-		../src/controller.v \
-		../src/datapath.v \
-		../src/top.v \
+		../src/*.v \
+		../top.v \
 		../mips_tb.v \
 	|& tee compile.log
 
