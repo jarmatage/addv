@@ -5,7 +5,7 @@ compile: clean
 	${VCS_HOME}/bin/vcs -full64 -sverilog -debug_access+all -kdb -lca \
 		../src/controller.v \
 		../src/datapath.v \
-		../src/top.v \
+		../src/top_with_sram.v \
 		../mips_tb.v \
 	|& tee compile.log
 
