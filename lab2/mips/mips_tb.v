@@ -27,7 +27,9 @@ module MIPS_Testbench ();
         .dataadr(dataadr),
         .memwrite(memwrite)
     );
-    
+
+    initial $fsdbDumpvars();
+
     // Initialize expected data and addresses
     initial begin
         expected_data[1] = 32'h7;
