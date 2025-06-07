@@ -1,91 +1,59 @@
-#/**************************************************/
-#/* Compile Script for Synopsys                    */
-#/*                                                */
-#/* dc_shell-t -f compile_dc.tcl                   */
-#/*                                                */
-#/* OSU FreePDK 45nm                               */
-#/**************************************************/
+# Async Fifo Design Compiler Run Script
+puts "tcl = $tcl_patchLevel"
 
-#/* All verilog files, separated by spaces         */
-set my_verilog_files [list <Add paths to your verilog files here>]
+# Point to OSU 45nm PDK
+set osu_freepdk [file join $::env(PDK_DIR) osu_soc lib files]
+lappend search_path $osu_freepdk
+set alib_library_analysis_path $osu_freepdk
 
-#/* Top-level Module                               */
-set my_toplevel   top
+# Set libraries
+set link_library [list gscl45nm.db dw_foundation.sldb]
+set target_library [list gscl45nm.db]
 
-#/* The name of the clock pin. If no clock-pin     */
-#/* exists, pick anything                          */
-set my_clock_pin clk
-
-#/* Target frequency in MHz for optimization       */
-set my_clk_freq_MHz 1000
-
-#/* Delay of input signals (Clock-to-Q, Package etc.)  */
-set my_input_delay_ns 0.1
-
-#/* Reserved time for output signals (Holdtime etc.)   */
-set my_output_delay_ns 0.1
-
-
-#/**************************************************/
-#/* No modifications needed below                  */
-#/**************************************************/
-set OSU_FREEPDK [format "%s%s"  [getenv "PDK_DIR"] "/osu_soc/lib/files"]
-set search_path [concat  $search_path $OSU_FREEPDK]
-set alib_library_analysis_path $OSU_FREEPDK
-
-# Make sure you add correct paths in the following two lines
-set link_library [set target_library [concat  [list gscl45nm.db] [list dw_foundation.sldb] [list "<ADD PATH TO THE .db FILE>/SRAM_32x64_1rw.db"]]]
-set target_library "gscl45nm.db <ADD PATH TO THE .db FILE>/SRAM_32x64_1rw.db"
-
-
+# Configure tool
 define_design_lib WORK -path ./WORK
 set verilogout_show_unconnected_pins "true"
-set_ultra_optimization true
-set_ultra_optimization -force
 
-analyze -f verilog $my_verilog_files
+# Read verilog
+set files [glob -type f {../src/*}]
+lappend files "../top.v"
+analyze -format sverilog $files
 
-elaborate $my_toplevel
-
-current_design $my_toplevel
-
+# Convert the design into lib cells
+elaborate "top"
+current_design "top"
 link
 uniquify
 
-set my_period [expr 1000 / $my_clk_freq_MHz]
+# Configure tool settings
+set_wire_load_model -name typical
+set_max_area 0
+set_max_delay 2.0
+set_optimize_registers true
 
-set find_clock [ find port [list $my_clock_pin] ]
-if {  $find_clock != [list] } {
-   set clk_name $my_clock_pin
-   create_clock -period $my_period $clk_name
-} else {
-   set clk_name vclk
-   create_clock -period $my_period -name $clk_name
-}
+# Create read and write clocks
+create_clock -period 1.10 clk; # 0.909 GHz
 
-set_driving_cell  -lib_cell INVX1  [all_inputs]
-set_input_delay $my_input_delay_ns -clock $clk_name [remove_from_collection [all_inputs] $my_clock_pin]
-set_output_delay $my_output_delay_ns -clock $clk_name [all_outputs]
+# Set the driving cell for all input ports
+set_driving_cell -lib_cell INVX1 [all_inputs]
 
-compile -ungroup_all -map_effort medium
+# Set delay on the ports
+set_input_delay  0.1 -clock clk [remove_from_collection [all_inputs] clk]
+set_output_delay 0.1 -clock clk [all_outputs]
 
-compile -incremental_mapping -map_effort medium
+# Compile
+compile -ungroup_all -map_effort high
+compile_ultra -incremental -timing
 
+# Validate
 check_design
-report_constraint -all_violators
 
-#set filename [format "%s%s"  $my_toplevel ".vh"]
-#write -f verilog -output $filename
+# Generate reports
+file mkdir rpt
+redirect [file join rpt constraint.rpt] { report_constraint -sig 6 -all_violators }
+redirect [file join rpt timing.rpt]     { report_timing }
+redirect [file join rpt cell.rpt]       { report_cell }
+redirect [file join rpt power.rpt]      { report_power }
+redirect [file join rpt area.rpt]       { report_area }
 
-#set filename [format "%s%s"  $my_toplevel ".sdc"]
-#write_sdc $filename
-
-#set filename [format "%s%s"  $my_toplevel ".db"]
-#write -f db -hier -output $filename -xg_force_db
-
-redirect timing.rep { report_timing }
-redirect cell.rep { report_cell }
-redirect power.rep { report_power }
-redirect area.rep { report_area }
-
-quit
+exit
