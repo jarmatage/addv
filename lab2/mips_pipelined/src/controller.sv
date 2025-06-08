@@ -1,14 +1,12 @@
 module controller (
     input  logic [5:0] op, funct,
-    input  logic       zero,
     output logic       memtoreg, memwrite,
-    output logic       pcsrc, alusrc,
+    output logic       branch, alusrc,
     output logic       regdst, regwrite,
     output logic       jump,
     output logic [2:0] alucontrol
 );
     wire [1:0] aluop;
-    wire branch;
     
     maindec md(
         .op,
@@ -26,8 +24,6 @@ module controller (
         .aluop,
         .alucontrol
     );
-    
-    assign pcsrc = branch & zero;
 endmodule
 
 
