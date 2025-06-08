@@ -20,7 +20,7 @@ set verilogout_show_unconnected_pins "true"
 
 # Read verilog
 set files [glob -type f {../src/*}]
-lappend files "../top_with_sram.v"
+lappend files "../top_with_sram.sv"
 analyze -format sverilog $files
 
 # Convert the design into lib cells

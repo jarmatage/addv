@@ -3,9 +3,9 @@ all: sim verdi
 compile: clean
 	@echo "=== Compiling ==="
 	${VCS_HOME}/bin/vcs -full64 -sverilog -debug_access+all -kdb -lca \
-		../src/*.v \
-		../top.v \
-		../mips_tb.v \
+		../src/*.sv \
+		../top.sv \
+		../mips_tb.sv \
 	|& tee compile.log
 
 sim: compile
