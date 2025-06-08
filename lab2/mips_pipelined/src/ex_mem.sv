@@ -24,17 +24,18 @@ module ex_mem(
     output logic [31:0] pcbranch_out,
     output logic [4:0]  destReg_out
 );
+
     always_ff @(posedge clk or posedge reset) begin
         if (reset) begin
-            memtoreg_out <= 0;
-            memwrite_out <= 0;
-            regwrite_out <= 0;
-            branch_out   <= 0;
-            zero_out     <= 0;
-            aluout_out   <= 0;
-            rt_data_out  <= 0;
-            pcbranch_out <= 0;
-            destReg_out  <= 0;
+            memtoreg_out <= '0;
+            memwrite_out <= '0;
+            regwrite_out <= '0;
+            branch_out   <= '0;
+            zero_out     <= '0;
+            aluout_out   <= '0;
+            rt_data_out  <= '0;
+            pcbranch_out <= '0;
+            destReg_out  <= '0;
         end else begin
             memtoreg_out <= memtoreg_in;
             memwrite_out <= memwrite_in;
