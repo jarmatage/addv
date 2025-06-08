@@ -54,7 +54,7 @@ module mips (
     input  logic [31:0] readdata
 );
 
-    wire memtoreg, branch, alusrc, regdst, regwrite, jump;
+    wire memtoreg, branch, alusrc, regdst, regwrite, jump, pcsrc, zero;
     wire [2:0] alucontrol;
 
     controller c(
