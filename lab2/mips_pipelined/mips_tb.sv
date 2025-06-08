@@ -28,7 +28,12 @@ module MIPS_Testbench ();
         .memwrite(memwrite)
     );
 
-    initial $fsdbDumpvars();
+    initial begin
+        $fsdbDumpvars();
+        #1_000_000;
+        $display("ERROR: Timeout");
+        $finish;
+    end
     
     // Initialize expected data and addresses
     initial begin
