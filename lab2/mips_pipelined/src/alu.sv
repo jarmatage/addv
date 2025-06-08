@@ -5,7 +5,7 @@ module alu(
     output logic        zero
 );
     always_comb begin
-        unique case(control)
+        case(control)
             3'b000: result = a & b;                     // AND
             3'b001: result = a | b;                     // OR
             3'b010: result = a + b;                     // ADD
