@@ -35,28 +35,23 @@ module id_ex(
     output logic [4:0]  rt_out,
     output logic [4:0]  rd_out
 );
-    task automatic bubble();
-        memtoreg_out  = 0;
-        memwrite_out  = 0;
-        alusrc_out    = 0;
-        regdst_out    = 0;
-        regwrite_out  = 0;
-        branch_out    = 0;
-        alucontrol_out= 3'd0;
-        pc4_out       = 32'd0;
-        rs_data_out   = 32'd0;
-        rt_data_out   = 32'd0;
-        signext_out   = 32'd0;
-        rs_out        = 5'd0;
-        rt_out        = 5'd0;
-        rd_out        = 5'd0;
-    endtask
 
     always_ff @(posedge clk or posedge reset) begin
-        if (reset) begin
-            bubble();
-        end else if (stall) begin
-            bubble();
+        if (reset || stall) begin
+            memtoreg_out   <= '0;
+            memwrite_out   <= '0;
+            alusrc_out     <= '0;
+            regdst_out     <= '0;
+            regwrite_out   <= '0;
+            branch_out     <= '0;
+            alucontrol_out <= '0;
+            pc4_out        <= '0;
+            rs_data_out    <= '0;
+            rt_data_out    <= '0;
+            signext_out    <= '0;
+            rs_out         <= '0;
+            rt_out         <= '0;
+            rd_out         <= '0;
         end else begin
             memtoreg_out  <= memtoreg_in;
             memwrite_out  <= memwrite_in;
