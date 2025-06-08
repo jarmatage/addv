@@ -3,10 +3,10 @@ all: sim verdi
 compile: clean
 	@echo "=== Compiling async_fifo + tb_async_fifo.sv ==="
 	${VCS_HOME}/bin/vcs -full64 -sverilog -debug_access+all -kdb -lca \
-		../src/*.v \
+		../src/*.sv \
 		../../sram_32x64/SRAM_32x64_1rw.v \
-		../top_with_sram.v \
-		../mips_tb.v \
+		../top_with_sram.sv \
+		../mips_tb.sv \
 	|& tee compile.log
 
 sim: compile
