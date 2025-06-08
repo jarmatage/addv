@@ -2,6 +2,7 @@ module datapath(
     input logic clk, reset,
 
     // Control signals
+    output logic [31:0] instr_ID,
     input  logic        memtoreg_ID,
     input  logic        memwrite_ID,
     input  logic        alusrc_ID,
@@ -23,7 +24,7 @@ module datapath(
 
     // Internal signals
     wire [31:0] pcnext_IF, pcplus4_IF;
-    wire [31:0] pcplus4_ID, instr_ID, signimm_ID, srca_ID, writedata_ID;
+    wire [31:0] pcplus4_ID, signimm_ID, srca_ID, writedata_ID;
     wire memtoreg_EX, memwrite_EX, alusrc_EX, regdst_EX, regwrite_EX, branch_EX;
     wire [2:0] alucontrol_EX;
     wire [31:0] pcplus4_EX, srca_EX, writedata_EX, signimm_EX, instr_EX;

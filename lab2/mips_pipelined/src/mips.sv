@@ -9,10 +9,11 @@ module mips (
 
     wire memtoreg, branch, alusrc, regdst, regwrite, jump, memwrite_ID;
     wire [2:0] alucontrol;
+    wire [31:0] instr_ID;
 
     controller c(
-        .op(instr[31:26]),
-        .funct(instr[5:0]),
+        .op(instr_ID[31:26]),
+        .funct(instr_ID[5:0]),
         .branch,
         .memtoreg,
         .memwrite(memwrite_ID),
@@ -26,6 +27,7 @@ module mips (
     datapath dp(
         .clk,
         .reset,
+        .instr_ID(instr_ID),
         .memtoreg_ID(memtoreg),
         .memwrite_ID(memwrite_ID),
         .alusrc_ID(alusrc),
