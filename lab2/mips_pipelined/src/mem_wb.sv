@@ -2,33 +2,33 @@ module mem_wb(
     input  logic        clk,
     input  logic        reset,
     // Control in
-    input  logic        memtoreg_in,
-    input  logic        regwrite_in,
+    input  logic        memtoreg_MEM,
+    input  logic        regwrite_MEM,
     // Data in
-    input  logic [31:0] aluout_in,
-    input  logic [31:0] readdata_in,
-    input  logic [4:0]  destReg_in,
+    input  logic [31:0] aluout_MEM,
+    input  logic [31:0] readdata_MEM,
+    input  logic [4:0]  destReg_MEM,
     // outputs
-    output logic        memtoreg_out,
-    output logic        regwrite_out,
-    output logic [31:0] aluout_out,
-    output logic [31:0] readdata_out,
-    output logic [4:0]  destReg_out
+    output logic        memtoreg_WB,
+    output logic        regwrite_WB,
+    output logic [31:0] aluout_WB,
+    output logic [31:0] readdata_WB,
+    output logic [4:0]  destReg_WB
 );
 
     always_ff @(posedge clk or posedge reset) begin
         if (reset) begin
-            memtoreg_out <= '0;
-            regwrite_out <= '0;
-            aluout_out   <= '0;
-            readdata_out <= '0;
-            destReg_out  <= '0;
+            memtoreg_WB <= '0;
+            regwrite_WB <= '0;
+            aluout_WB   <= '0;
+            readdata_WB <= '0;
+            destReg_WB  <= '0;
         end else begin
-            memtoreg_out <= memtoreg_in;
-            regwrite_out <= regwrite_in;
-            aluout_out   <= aluout_in;
-            readdata_out <= readdata_in;
-            destReg_out  <= destReg_in;
+            memtoreg_WB <= memtoreg_MEM;
+            regwrite_WB <= regwrite_MEM;
+            aluout_WB   <= aluout_MEM;
+            readdata_WB <= readdata_MEM;
+            destReg_WB  <= destReg_MEM;
         end
     end
 endmodule

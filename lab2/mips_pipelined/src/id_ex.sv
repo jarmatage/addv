@@ -3,70 +3,70 @@ module id_ex(
     input  logic        reset,
     input  logic        stall,
     // Control in
-    input  logic        memtoreg_in,
-    input  logic        memwrite_in,
-    input  logic        alusrc_in,
-    input  logic        regdst_in,
-    input  logic        regwrite_in,
-    input  logic        branch_in,
-    input  logic [2:0]  alucontrol_in,
+    input  logic        memtoreg_ID,
+    input  logic        memwrite_ID,
+    input  logic        alusrc_ID,
+    input  logic        regdst_ID,
+    input  logic        regwrite_ID,
+    input  logic        branch_ID,
+    input  logic [2:0]  alucontrol_ID,
     // Data in
-    input  logic [31:0] pc4_in,
-    input  logic [31:0] rs_data_in,
-    input  logic [31:0] rt_data_in,
-    input  logic [31:0] signext_in,
-    input  logic [4:0]  rs_in,
-    input  logic [4:0]  rt_in,
-    input  logic [4:0]  rd_in,
+    input  logic [31:0] pc4_ID,
+    input  logic [31:0] rs_data_ID,
+    input  logic [31:0] rt_data_ID,
+    input  logic [31:0] signext_ID,
+    input  logic [4:0]  rs_ID,
+    input  logic [4:0]  rt_ID,
+    input  logic [4:0]  rd_ID,
     // Control out
-    output logic        memtoreg_out,
-    output logic        memwrite_out,
-    output logic        alusrc_out,
-    output logic        regdst_out,
-    output logic        regwrite_out,
-    output logic        branch_out,
-    output logic [2:0]  alucontrol_out,
+    output logic        memtoreg_EX,
+    output logic        memwrite_EX,
+    output logic        alusrc_EX,
+    output logic        regdst_EX,
+    output logic        regwrite_EX,
+    output logic        branch_EX,
+    output logic [2:0]  alucontrol_EX,
     // Data out
-    output logic [31:0] pc4_out,
-    output logic [31:0] rs_data_out,
-    output logic [31:0] rt_data_out,
-    output logic [31:0] signext_out,
-    output logic [4:0]  rs_out,
-    output logic [4:0]  rt_out,
-    output logic [4:0]  rd_out
+    output logic [31:0] pc4_EX,
+    output logic [31:0] rs_data_EX,
+    output logic [31:0] rt_data_EX,
+    output logic [31:0] signext_EX,
+    output logic [4:0]  rs_EX,
+    output logic [4:0]  rt_EX,
+    output logic [4:0]  rd_EX
 );
 
     always_ff @(posedge clk or posedge reset) begin
         if (reset || stall) begin
-            memtoreg_out   <= '0;
-            memwrite_out   <= '0;
-            alusrc_out     <= '0;
-            regdst_out     <= '0;
-            regwrite_out   <= '0;
-            branch_out     <= '0;
-            alucontrol_out <= '0;
-            pc4_out        <= '0;
-            rs_data_out    <= '0;
-            rt_data_out    <= '0;
-            signext_out    <= '0;
-            rs_out         <= '0;
-            rt_out         <= '0;
-            rd_out         <= '0;
+            memtoreg_EX   <= '0;
+            memwrite_EX   <= '0;
+            alusrc_EX     <= '0;
+            regdst_EX     <= '0;
+            regwrite_EX   <= '0;
+            branch_EX     <= '0;
+            alucontrol_EX <= '0;
+            pc4_EX        <= '0;
+            rs_data_EX    <= '0;
+            rt_data_EX    <= '0;
+            signext_EX    <= '0;
+            rs_EX         <= '0;
+            rt_EX         <= '0;
+            rd_EX         <= '0;
         end else begin
-            memtoreg_out  <= memtoreg_in;
-            memwrite_out  <= memwrite_in;
-            alusrc_out    <= alusrc_in;
-            regdst_out    <= regdst_in;
-            regwrite_out  <= regwrite_in;
-            branch_out    <= branch_in;
-            alucontrol_out<= alucontrol_in;
-            pc4_out       <= pc4_in;
-            rs_data_out   <= rs_data_in;
-            rt_data_out   <= rt_data_in;
-            signext_out   <= signext_in;
-            rs_out        <= rs_in;
-            rt_out        <= rt_in;
-            rd_out        <= rd_in;
+            memtoreg_EX   <= memtoreg_ID;
+            memwrite_EX   <= memwrite_ID;
+            alusrc_EX     <= alusrc_ID;
+            regdst_EX     <= regdst_ID;
+            regwrite_EX   <= regwrite_ID;
+            branch_EX     <= branch_ID;
+            alucontrol_EX <= alucontrol_ID;
+            pc4_EX        <= pc4_ID;
+            rs_data_EX    <= rs_data_ID;
+            rt_data_EX    <= rt_data_ID;
+            signext_EX    <= signext_ID;
+            rs_EX         <= rs_ID;
+            rt_EX         <= rt_ID;
+            rd_EX         <= rd_ID;
         end
     end
 endmodule

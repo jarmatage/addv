@@ -2,18 +2,18 @@ module if_id(
     input  logic        clk,
     input  logic        reset,
     input  logic        stall,
-    input  logic [31:0] pc_plus4_in,
-    input  logic [31:0] instr_in,
-    output logic [31:0] pc_plus4_out,
-    output logic [31:0] instr_out
+    input  logic [31:0] pcplus4_IF,
+    input  logic [31:0] instr_IF,
+    output logic [31:0] pcplus4_ID,
+    output logic [31:0] instr_ID
 );
     always_ff @(posedge clk or posedge reset) begin
         if (reset) begin
-            pc_plus4_out <= '0;
-            instr_out    <= '0;
+            pcplus4_ID <= '0;
+            instr_ID   <= '0;
         end else if (!stall) begin
-            pc_plus4_out <= pc_plus4_in;
-            instr_out    <= instr_in;
+            pcplus4_ID <= pcplus4_IF;
+            instr_ID   <= instr_IF;
         end
     end
 endmodule
