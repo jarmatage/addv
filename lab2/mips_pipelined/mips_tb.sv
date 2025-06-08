@@ -30,7 +30,7 @@ module MIPS_Testbench ();
 
     initial begin
         $fsdbDumpvars();
-        #1_000_000;
+        #1_000;
         $display("ERROR: Timeout");
         $finish;
     end
