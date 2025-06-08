@@ -1,7 +1,7 @@
 all: sim verdi
 
 compile: clean
-	@echo "=== Compiling async_fifo + tb_async_fifo.sv ==="
+	@echo "=== Compiling ==="
 	${VCS_HOME}/bin/vcs -full64 -sverilog -debug_access+all -kdb -lca \
 		../src/*.v \
 		../../sram_32x64/SRAM_32x64_1rw.v \
@@ -10,11 +10,11 @@ compile: clean
 	|& tee compile.log
 
 sim: compile
-	@echo "=== Running simulation (writes fifo_tb.fsdb) ==="
+	@echo "=== Running simulation ==="
 	./simv
 
 verdi:
-	@echo "=== Launching Verdi on fifo_tb.fsdb ==="
+	@echo "=== Launching Verdi ==="
 	${VERDI_HOME}/bin/verdi -dbdir ./simv.daidir -ssf novas.fsdb -nologo &
 
 clean:
