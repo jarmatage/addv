@@ -23,7 +23,8 @@ module datapath(
 );
 
     // Internal signals
-    wire [31:0] pcnext_IF, pcplus4_IF;
+    logic [31:0] pcnext_IF;
+    wire [31:0] pcplus4_IF;
     wire [31:0] pcplus4_ID, signimm_ID, srca_ID, writedata_ID;
     wire memtoreg_EX, memwrite_EX, alusrc_EX, regdst_EX, regwrite_EX, branch_EX;
     wire [2:0] alucontrol_EX;
@@ -41,12 +42,16 @@ module datapath(
     wire stall;
 
     // IF
-    mux2 #(32) pcbrmux(
-        .d0(pcplus4_IF),
-        .d1(pcbranch_MEM),
-        .s(pcsrc_MEM),
-        .y(pcnext_IF)
-    );
+    always_comb begin
+        if (stall)
+            pcnext_IF = pc_IF;
+        else if (jump_ID)
+            pcnext_IF = {pcplus4_IF[31:28], instr_ID[25:0], 2'b00};
+        else if (pcsrc_MEM)
+            pcnext_IF = pcbranch_MEM;
+        else
+            pcnext_IF = pcplus4_IF;
+    end
     flopr #(32) pcreg(.clk(clk), .reset(reset), .d(pcnext_IF), .q(pc_IF));
     adder pcadd1(.a(pc_IF), .b(32'd4), .y(pcplus4_IF));
 
