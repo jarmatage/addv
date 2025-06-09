@@ -35,31 +35,41 @@ module datapath(
     wire memtoreg_MEM, regwrite_MEM, branch_MEM, zero_MEM, pcsrc_MEM;
     wire [31:0] pcbranch_MEM;
     wire [4:0] writereg_MEM;
-    wire memtoreg_WB, regwrite_WB;
+    wire branch_WB, memtoreg_WB, regwrite_WB;
     wire [31:0] aluout_WB, readdata_WB;
     wire [4:0] writereg_WB;
     wire [31:0] result_WB;
-    wire stall;
+    wire stall_IF, stall_ID, stall_EX;
+    logic [31:0] pcnextbr, pcjump;
 
     // IF
-    always_comb begin
-        if (jump_ID)
-            pcnext_IF = {pcplus4_IF[31:28], instr_ID[25:0], 2'b00};
-        else if (branch_MEM)
-            pcnext_IF = pcsrc_MEM ? pcbranch_MEM : pcplus4_IF;
-        else if (stall)
-            pcnext_IF = pc_IF;
-        else
-            pcnext_IF = pcplus4_IF;
-    end
-    flopr #(32) pcreg(.clk(clk), .reset(reset), .d(pcnext_IF), .q(pc_IF));
+    mux2 #(32) pcbrmux(
+        .d0(pcplus4_IF),
+        .d1(pcbranch_MEM),
+        .s(pcsrc_MEM),
+        .y(pcnextbr)
+    );
+    assign pcjump = {pcplus4_IF[31:28], instr_ID[25:0], 2'b00};
+    mux2 #(32) pcmux(
+        .d0(pcnextbr),
+        .d1(pcjump),
+        .s(jump_ID),
+        .y(pcnext_IF)
+    );
+    flopr #(32) pcreg(
+        .clk(clk),
+        .reset(reset),
+        .en(stall_IF),
+        .d(pcnext_IF),
+        .q(pc_IF)
+    );
     adder pcadd1(.a(pc_IF), .b(32'd4), .y(pcplus4_IF));
 
     // IF/ID
     if_id if_id(
         .clk,
         .reset,
-        .stall,
+        .stall(stall_ID),
         .pcplus4_IF,
         .instr_IF,
         .pcplus4_ID,
@@ -83,7 +93,7 @@ module datapath(
     id_ex id_ex(
         .clk,
         .reset,
-        .stall,
+        .stall(stall_EX),
         .memtoreg_ID,
         .memwrite_ID,
         .alusrc_ID,
@@ -164,11 +174,13 @@ module datapath(
     mem_wb mem_wb(
         .clk,
         .reset,
+        .branch_MEM,
         .memtoreg_MEM,
         .regwrite_MEM,
         .aluout_MEM,
         .readdata_MEM,
         .writereg_MEM,
+        .branch_WB,
         .memtoreg_WB,
         .regwrite_WB,
         .aluout_WB,
@@ -186,7 +198,9 @@ module datapath(
 
     // Hazard detection
     hazard_unit hazard_unit(
-        .stall,
+        .stall_IF,
+        .stall_ID,
+        .stall_EX,
         .jump_ID,
         .branch_ID,
         .rs_ID(instr_ID[25:21]),
@@ -199,6 +213,7 @@ module datapath(
         .memtoreg_MEM,
         .regwrite_MEM,
         .writereg_MEM,
+        .branch_WB,
         .memtoreg_WB,
         .regwrite_WB,
         .writereg_WB
