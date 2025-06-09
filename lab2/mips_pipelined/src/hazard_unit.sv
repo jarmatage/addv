@@ -2,15 +2,16 @@ module hazard_unit(
     output logic stall,
 
     // ID
+    input logic branch_ID,
     input logic [4:0] rs_ID,
     input logic [4:0] rt_ID,
 
     // EX
-    input logic memtoreg_EX, regwrite_EX,
+    input logic branch_EX, memtoreg_EX, regwrite_EX,
     input logic [4:0] writereg_EX,
 
     // MEM
-    input logic memtoreg_MEM, regwrite_MEM,
+    input logic branch_MEM, memtoreg_MEM, regwrite_MEM,
     input logic [4:0] writereg_MEM,
 
     // WB
@@ -29,6 +30,9 @@ module hazard_unit(
         (memtoreg_MEM && match_MEM) ||
         (regwrite_MEM && match_MEM) ||
         (memtoreg_WB  && match_WB)  ||
-        (regwrite_WB  && match_WB)
+        (regwrite_WB  && match_WB)  ||
+        branch_ID                   ||
+        branch_EX                   ||
+        branch_MEM
     );
 endmodule

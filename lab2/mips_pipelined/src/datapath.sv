@@ -187,11 +187,14 @@ module datapath(
     // Hazard detection
     hazard_unit hazard_unit(
         .stall,
+        .branch_ID,
         .rs_ID(instr_ID[25:21]),
         .rt_ID(instr_ID[20:16]),
+        .branch_EX,
         .memtoreg_EX, 
         .regwrite_EX,
         .writereg_EX,
+        .branch_MEM,
         .memtoreg_MEM,
         .regwrite_MEM,
         .writereg_MEM,
