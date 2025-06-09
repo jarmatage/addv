@@ -35,7 +35,7 @@ module MIPS_Testbench ();
         expected_data[1] = 32'h7;
         expected_addr[1] = 32'h50;
 
-        expected_data[2] = 32'h7;
+        expected_data[2] = 32'h13;
         expected_addr[2] = 32'h54;
     end
 
