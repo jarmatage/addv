@@ -33,13 +33,19 @@ module id_ex(
 );
 
     always_ff @(posedge clk or posedge reset) begin
+        if (reset)
+            branch_EX <= 1'b0;
+        else
+            branch_EX <= branch_ID;
+    end
+
+    always_ff @(posedge clk or posedge reset) begin
         if (reset || stall) begin
             memtoreg_EX   <= '0;
             memwrite_EX   <= '0;
             alusrc_EX     <= '0;
             regdst_EX     <= '0;
             regwrite_EX   <= '0;
-            branch_EX     <= '0;
             alucontrol_EX <= '0;
             pcplus4_EX    <= '0;
             srca_EX       <= '0;
@@ -52,7 +58,6 @@ module id_ex(
             alusrc_EX     <= alusrc_ID;
             regdst_EX     <= regdst_ID;
             regwrite_EX   <= regwrite_ID;
-            branch_EX     <= branch_ID;
             alucontrol_EX <= alucontrol_ID;
             pcplus4_EX    <= pcplus4_ID;
             srca_EX       <= srca_ID;
