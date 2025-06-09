@@ -32,7 +32,7 @@ module datapath(
     wire [31:0] srcb_EX, aluout_EX, signimmsh_EX, pcbranch_EX;
     wire [4:0] writereg_EX;
     wire zero_EX;
-    wire memtoreg_MEM, regwrite_MEM, branch_MEM, zero_MEM;
+    wire memtoreg_MEM, regwrite_MEM, branch_MEM, zero_MEM, pcsrc_MEM;
     wire [31:0] pcbranch_MEM;
     wire [4:0] writereg_MEM;
     wire memtoreg_WB, regwrite_WB;
