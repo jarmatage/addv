@@ -30,6 +30,7 @@ module datapath (
     wire [31:0] pcnext, pcnextbr, pcplus4, pcbranch, pcjump;
     wire [31:0] signimm, signimmsh;
     wire [31:0] srca, srcb;
+    wire [31:0] srcc; // Signal for MULADD
     wire [31:0] result;
     
     // next PC logic
@@ -47,18 +48,19 @@ module datapath (
         .we3(regwrite),
         .ra1(instr[25:21]),
         .ra2(instr[20:16]),
+        .ra3(instr[15:11]), //addend c
         .wa3(writereg),
         .wd3(result),
         .rd1(srca),
-        .rd2(writedata)
+        .rd2(writedata), .rd3(srcc)
     );
     mux2 #(5) wrmux(.d0(instr[20:16]), .d1(instr[15:11]), .s(regdst), .y(writereg));
     mux2 #(32) resmux(.d0(aluout), .d1(readdata), .s(memtoreg), .y(result));
     signext se(.a(instr[15:0]), .y(signimm));
     
-    // ALU logic
+    // ALU logic with .c(srrc)
     mux2 #(32) srcbmux(.d0(writedata), .d1(signimm), .s(alusrc), .y(srcb));
-    alu alu(.a(srca), .b(srcb), .control(alucontrol), .result(aluout), .zero(zero));
+    alu alu(.a(srca), .b(srcb), .c(srcc), .control(alucontrol), .result(aluout), .zero(zero)); 
 endmodule
 
 
@@ -66,11 +68,12 @@ endmodule
 // Register File Module
 //////////////////////////////////////////////////////////////////////
 module regfile (
-    input  logic clk,
-    input  logic we3,
-    input  logic [4:0] ra1, ra2, wa3,
+    input  logic        clk,
+    input  logic        we3,
+    input  logic [4:0]  ra1, ra2, ra3,    // 3 read-port-data
+    input  logic [4:0]  wa3,
     input  logic [31:0] wd3,
-    output logic [31:0] rd1, rd2
+    output logic [31:0] rd1, rd2, rd3     // 3 read-port-data
 );
     
     logic [31:0] rf[31:0];
@@ -83,6 +86,7 @@ module regfile (
 
     assign rd1 = (ra1 != 0) ? rf[ra1] : 0;
     assign rd2 = (ra2 != 0) ? rf[ra2] : 0;
+    assign rd3 = (ra3 != 0) ? rf[ra3] : 0;
 endmodule
 
 //////////////////////////////////////////////////////////////////////
@@ -91,6 +95,7 @@ endmodule
 module alu(
     input  logic [31:0] a,      // First operand
     input  logic [31:0] b,      // Second operand
+    input  logic [31:0] c,      // Third operand
     input  logic [2:0] control, // ALU control signal
     output logic [31:0] result, // ALU result
     output logic zero           // Zero flag
@@ -100,6 +105,7 @@ module alu(
     localparam [2:0] ALU_AND = 3'b000;
     localparam [2:0] ALU_OR  = 3'b001;
     localparam [2:0] ALU_ADD = 3'b010;
+    localparam [2:0] ALU_MULADD = 3'b101; // opcode for MULADD
     localparam [2:0] ALU_SUB = 3'b110;
     localparam [2:0] ALU_SLT = 3'b111;
     
@@ -109,6 +115,7 @@ module alu(
             ALU_AND: result = a & b;                     // AND
             ALU_OR:  result = a | b;                     // OR
             ALU_ADD: result = a + b;                     // ADD
+            ALU_MULADD: result = (a * b) + c;            // MULADD
             ALU_SUB: result = a - b;                     // SUB
             ALU_SLT: result = ($signed(a) < $signed(b)); // Set Less Than (signed)
             default: result = 32'bx;                     // Undefined operation
