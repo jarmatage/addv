@@ -13,6 +13,7 @@
 00e23822
 ac670044
 8c020050
-08000011
-20020001
-ac020054
+20040003   # a = 3, replaced the tail end to keep address 0x54 reserved for MULADD
+20050004   # b = 4
+00853819   # muladd $7,$4,$5   ; $7 = a*b + $7
+ac070054   # sw $7,0x54($0)    ; writes 0x13 (19 dec) 
