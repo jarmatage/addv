@@ -85,6 +85,7 @@ module aludec (
     always_comb begin
         case(funct) 
             6'b100000: rtype = 3'b010; // ADD
+            6'b011001: rtype = 3'b101; // MULADD
             6'b100010: rtype = 3'b110; // SUB
             6'b100100: rtype = 3'b000; // AND
             6'b100101: rtype = 3'b001; // OR
