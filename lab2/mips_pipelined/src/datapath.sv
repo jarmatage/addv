@@ -59,7 +59,7 @@ module datapath(
     flopr #(32) pcreg(
         .clk(clk),
         .reset(reset),
-        .en(stall_IF),
+        .en(!stall_IF),
         .d(pcnext_IF),
         .q(pc_IF)
     );
