@@ -2,7 +2,7 @@ module hazard_unit(
     output logic stall,
 
     // ID
-    input logic branch_ID,
+    input logic jump_ID, branch_ID,
     input logic [4:0] rs_ID,
     input logic [4:0] rt_ID,
 
@@ -31,6 +31,7 @@ module hazard_unit(
         (regwrite_MEM && match_MEM) ||
         (memtoreg_WB  && match_WB)  ||
         (regwrite_WB  && match_WB)  ||
+        jump_ID                     ||
         branch_ID                   ||
         branch_EX                   ||
         branch_MEM

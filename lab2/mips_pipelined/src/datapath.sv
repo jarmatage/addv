@@ -43,12 +43,12 @@ module datapath(
 
     // IF
     always_comb begin
-        if (stall)
-            pcnext_IF = pc_IF;
-        else if (jump_ID)
+        if (jump_ID)
             pcnext_IF = {pcplus4_IF[31:28], instr_ID[25:0], 2'b00};
-        else if (pcsrc_MEM)
-            pcnext_IF = pcbranch_MEM;
+        else if (branch_MEM)
+            pcnext_IF = pcsrc_MEM ? pcbranch_MEM : pcplus4_IF;
+        else if (stall)
+            pcnext_IF = pc_IF;
         else
             pcnext_IF = pcplus4_IF;
     end
@@ -187,6 +187,7 @@ module datapath(
     // Hazard detection
     hazard_unit hazard_unit(
         .stall,
+        .jump_ID,
         .branch_ID,
         .rs_ID(instr_ID[25:21]),
         .rt_ID(instr_ID[20:16]),
