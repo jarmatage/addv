@@ -1,12 +1,34 @@
 module hazard_unit(
-    input  logic       memtoreg_EX,
-    input  logic [4:0] rt_EX,
-    input  logic [4:0] rs_ID,
-    input  logic [4:0] rt_ID,
-    output logic       stall
+    output logic stall,
+
+    // ID
+    input logic [4:0] rs_ID,
+    input logic [4:0] rt_ID,
+
+    // EX
+    input logic memtoreg_EX, regwrite_EX,
+    input logic [4:0] writereg_EX,
+
+    // MEM
+    input logic memtoreg_MEM, regwrite_MEM,
+    input logic [4:0] writereg_MEM,
+
+    // WB
+    input logic memtoreg_WB, regwrite_WB,
+    input logic [4:0] writereg_WB
 );
 
-    always_comb begin
-        stall = memtoreg_EX && ((rt_EX == rs_ID) || (rt_EX == rt_ID));
-    end
+    logic match_EX, match_MEM, match_WB;
+    assign match_EX  = (writereg_EX  != 5'd0) && (rs_ID == writereg_EX  || rt_ID == writereg_EX);
+    assign match_MEM = (writereg_MEM != 5'd0) && (rs_ID == writereg_MEM || rt_ID == writereg_MEM);
+    assign match_WB  = (writereg_WB  != 5'd0) && (rs_ID == writereg_WB  || rt_ID == writereg_WB);
+
+    assign stall = (
+        (memtoreg_EX  && match_EX)  ||
+        (regwrite_EX  && match_EX)  ||
+        (memtoreg_MEM && match_MEM) ||
+        (regwrite_MEM && match_MEM) ||
+        (memtoreg_WB  && match_WB)  ||
+        (regwrite_WB  && match_WB)
+    );
 endmodule
