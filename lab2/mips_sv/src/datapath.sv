@@ -52,8 +52,7 @@ module datapath (
         .wa3(writereg),
         .wd3(result),
         .rd1(srca),
-        .rd2(writedata)
-        .rd3(srcc) // operation for MULADD only 
+        .rd2(writedata), .rd3(srcc)
     );
     mux2 #(5) wrmux(.d0(instr[20:16]), .d1(instr[15:11]), .s(regdst), .y(writereg));
     mux2 #(32) resmux(.d0(aluout), .d1(readdata), .s(memtoreg), .y(result));
