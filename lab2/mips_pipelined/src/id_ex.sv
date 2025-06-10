@@ -4,6 +4,7 @@ module id_ex(
     input  logic        stall,
     input  logic        flush_EX,
     // Control in
+    input  logic        readperf_ID,
     input  logic        memtoreg_ID,
     input  logic        memwrite_ID,
     input  logic        alusrc_ID,
@@ -18,6 +19,7 @@ module id_ex(
     input  logic [31:0] signimm_ID,
     input  logic [31:0] instr_ID,
     // Control out
+    output logic        readperf_EX,
     output logic        memtoreg_EX,
     output logic        memwrite_EX,
     output logic        alusrc_EX,
@@ -35,6 +37,7 @@ module id_ex(
 
     always_ff @(posedge clk or posedge reset) begin
         if (reset || stall || flush_EX) begin
+            readperf_EX   <= '0;
             memtoreg_EX   <= '0;
             memwrite_EX   <= '0;
             alusrc_EX     <= '0;
@@ -48,6 +51,7 @@ module id_ex(
             signimm_EX    <= '0;
             instr_EX      <= '0;
         end else begin
+            readperf_EX   <= readperf_ID;
             memtoreg_EX   <= memtoreg_ID;
             memwrite_EX   <= memwrite_ID;
             alusrc_EX     <= alusrc_ID;

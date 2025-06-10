@@ -19,3 +19,7 @@ ac020054    // 0x44 sw $2 84($0)        -> Mem[0 + 84] = $2 -> Mem[84] = 7
 20040003    // 0x48 addi $4 $0 3        -> $4 = 3
 00853819    // 0x4C muladd $7 $4 $5     -> $7 = 7 + 3 * 11 = 40
 ac070058    // 0x50 sw $7 88($0)        -> Mem[0 + 88] = $7 -> Mem[88] = 40
+fc080000    // 0x54 perfmon $8 0        -> $8 = clock cycle count
+fc090001    // 0x58 perfmon $9 1        -> $9 = instruction count
+ac08005c    // 0x5C sw $8 92($0)        -> Mem[92] = $8 = clock cycle count
+ac090060    // 0x60 sw $9 96($0)        -> Mem[96] = $9 = instruction count

@@ -1,5 +1,6 @@
 module controller (
     input  logic [5:0] op, funct,
+    output logic       readperf,
     output logic       memtoreg, memwrite,
     output logic       branch, alusrc,
     output logic       regdst, regwrite,
@@ -10,6 +11,7 @@ module controller (
     
     maindec md(
         .op,
+        .readperf,
         .memtoreg,
         .memwrite,
         .branch,
@@ -29,6 +31,7 @@ endmodule
 
 module maindec(
     input  logic [5:0] op,
+    output logic       readperf,
     output logic       memtoreg, memwrite,
     output logic       branch, alusrc,
     output logic       regdst, regwrite,
@@ -36,19 +39,20 @@ module maindec(
     output logic [1:0] aluop
 );
 
-    logic [8:0] controls;
+    logic [9:0] controls;
     
-    assign {regwrite, regdst, alusrc, branch, memwrite, memtoreg, jump, aluop} = controls;
+    assign {readperf, regwrite, regdst, alusrc, branch, memwrite, memtoreg, jump, aluop} = controls;
 
     always_comb begin
         case(op)
-            6'b000000: controls = 9'b110000010; //Rtyp
-            6'b100011: controls = 9'b101001000; //LW
-            6'b101011: controls = 9'b001010000; //SW
-            6'b000100: controls = 9'b000100001; //BEQ
-            6'b001000: controls = 9'b101000000; //ADDI
-            6'b000010: controls = 9'b000000100; //J
-            default:   controls = 9'bxxxxxxxxx; //???
+            6'b000000: controls = 10'b0110000010; //Rtyp
+            6'b100011: controls = 10'b0101001000; //LW
+            6'b101011: controls = 10'b0001010000; //SW
+            6'b000100: controls = 10'b0000100001; //BEQ
+            6'b001000: controls = 10'b0101000000; //ADDI
+            6'b000010: controls = 10'b0000000100; //J
+            6'b111111: controls = 10'b1100000000; //PERFMON
+            default:   controls = 10'bxxxxxxxxxx; //???
         endcase
     end
 endmodule

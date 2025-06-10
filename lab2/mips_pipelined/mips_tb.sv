@@ -15,7 +15,7 @@ module MIPS_Testbench ();
     integer j;
 
     // expected memory writes
-    parameter N = 3; 
+    parameter N = 5; 
     reg [31:0] expected_data[N:1];
     reg [31:0] expected_addr[N:1]; 
     
@@ -45,6 +45,12 @@ module MIPS_Testbench ();
 
         expected_data[3] = 32'h28; // = d40
         expected_addr[3] = 32'h58;
+
+        expected_data[4] = 32'h3b; // = 59
+        expected_addr[4] = 32'h5C;
+
+        expected_data[5] = 32'h16; // = d22
+        expected_addr[5] = 32'h60;
     end
 
     // Clock generation

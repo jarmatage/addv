@@ -10,6 +10,7 @@ module datapath(
     input  logic        regwrite_ID,
     input  logic        jump_ID,
     input  logic        branch_ID,
+    input  logic        readperf_ID,
     input  logic [2:0]  alucontrol_ID,
 
     // Instruction memory interface
@@ -23,29 +24,35 @@ module datapath(
 );
 
     // Internal signals
-    wire stall, flush_ID;
+    logic stall, flush_ID;
     logic flush_EX;
 
     logic [31:0] pcnextbr, pcjump;
     logic [31:0] pcnext_IF;
-    wire [31:0] pcplus4_IF;
+    logic [31:0] pcplus4_IF;
 
-    wire [31:0] pcplus4_ID, signimm_ID, srca_ID, writedata_ID, srcc_ID;
-    wire [31:0] signimmsh_ID, pcbranch_ID;
+    logic [31:0] pcplus4_ID, signimm_ID, srca_ID, writedata_ID, srcc_ID;
+    logic [31:0] signimmsh_ID, pcbranch_ID;
 
-    wire memtoreg_EX, memwrite_EX, alusrc_EX, regdst_EX, regwrite_EX;
-    wire [2:0] alucontrol_EX;
-    wire [31:0] pcplus4_EX, srca_EX, writedata_EX, signimm_EX, instr_EX;
-    wire [31:0] srcb_EX, srcc_EX, aluout_EX;
-    wire [4:0] writereg_EX;
+    logic memtoreg_EX, memwrite_EX, alusrc_EX, regdst_EX, regwrite_EX;
+    logic [2:0] alucontrol_EX;
+    logic [31:0] pcplus4_EX, srca_EX, writedata_EX, signimm_EX, instr_EX;
+    logic [31:0] srcb_EX, srcc_EX, aluout_EX;
+    logic [4:0] writereg_EX;
 
-    wire memtoreg_MEM, regwrite_MEM;
-    wire [4:0] writereg_MEM;
+    logic memtoreg_MEM, regwrite_MEM;
+    logic [4:0] writereg_MEM;
 
-    wire memtoreg_WB, regwrite_WB;
-    wire [31:0] aluout_WB, readdata_WB;
-    wire [4:0] writereg_WB;
-    wire [31:0] result_WB;
+    logic memtoreg_WB, regwrite_WB;
+    logic [31:0] aluout_WB, readdata_WB;
+    logic [4:0] writereg_WB;
+    logic [31:0] result_WB;
+
+    logic bubble_EX, bubble_MEM, bubble_WB;
+    logic perf_flag_EX, perf_flag_MEM, perf_flag_WB;
+    logic readperf_EX, readperf_MEM, readperf_WB;
+    logic [31:0] cycle_cnt, instr_cnt;
+    logic [31:0] reg_result_WB, perf_result_WB;
 
     // IF
     mux2 #(32) pcbrmux(
@@ -105,6 +112,7 @@ module datapath(
         .reset,
         .stall,
         .flush_EX,
+        .readperf_ID,
         .memtoreg_ID,
         .memwrite_ID,
         .alusrc_ID,
@@ -117,6 +125,7 @@ module datapath(
         .writedata_ID,
         .signimm_ID,
         .instr_ID,
+        .readperf_EX,
         .memtoreg_EX,
         .memwrite_EX,
         .alusrc_EX,
@@ -151,17 +160,25 @@ module datapath(
         .s(regdst_EX),
         .y(writereg_EX)
     );
+    assign bubble_EX = (instr_EX == 32'd0);
+    assign perf_flag_EX = instr_EX[0];
     
     // EX/MEM
     ex_mem ex_mem(
         .clk,
         .reset,
+        .bubble_EX,
+        .readperf_EX,
+        .perf_flag_EX,
         .memtoreg_EX,
         .memwrite_EX,
         .regwrite_EX,
         .aluout_EX,
         .writedata_EX,
         .writereg_EX,
+        .bubble_MEM,
+        .readperf_MEM,
+        .perf_flag_MEM,
         .memtoreg_MEM,
         .memwrite_MEM,
         .regwrite_MEM,
@@ -174,11 +191,17 @@ module datapath(
     mem_wb mem_wb(
         .clk,
         .reset,
+        .bubble_MEM,
+        .readperf_MEM,
+        .perf_flag_MEM,
         .memtoreg_MEM,
         .regwrite_MEM,
         .aluout_MEM,
         .readdata_MEM,
         .writereg_MEM,
+        .bubble_WB,
+        .readperf_WB,
+        .perf_flag_WB,
         .memtoreg_WB,
         .regwrite_WB,
         .aluout_WB,
@@ -187,10 +210,22 @@ module datapath(
     );
 
     // WB
-    mux2 #(32) resmux(
+    mux2 #(32) alumux(
         .d0(aluout_WB),
         .d1(readdata_WB),
         .s(memtoreg_WB),
+        .y(reg_result_WB)
+    );
+    mux2 #(32) perfmux(
+        .d0(cycle_cnt),
+        .d1(instr_cnt),
+        .s(perf_flag_WB),
+        .y(perf_result_WB)
+    );
+    mux2 #(32) resmux(
+        .d0(reg_result_WB),
+        .d1(perf_result_WB),
+        .s(readperf_WB),
         .y(result_WB)
     );
 
@@ -217,4 +252,13 @@ module datapath(
         if (reset) flush_EX <= 1'b0;
         else flush_EX <= flush_ID;
     end
+
+    // Performance monitor
+    performance_monitor performance_monitor(
+        .clk,
+        .reset,
+        .bubble_WB,
+        .cycle_cnt,
+        .instr_cnt
+    );
 endmodule

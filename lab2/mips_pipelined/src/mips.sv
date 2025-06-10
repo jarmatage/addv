@@ -7,13 +7,14 @@ module mips (
     input  logic [31:0] readdata
 );
 
-    wire memtoreg, branch, alusrc, regdst, regwrite, jump, memwrite_ID;
+    wire readperf, memtoreg, branch, alusrc, regdst, regwrite, jump, memwrite_ID;
     wire [2:0] alucontrol;
     wire [31:0] instr_ID;
 
     controller c(
         .op(instr_ID[31:26]),
         .funct(instr_ID[5:0]),
+        .readperf,
         .branch,
         .memtoreg,
         .memwrite(memwrite_ID),
@@ -28,6 +29,7 @@ module mips (
         .clk,
         .reset,
         .instr_ID(instr_ID),
+        .readperf_ID(readperf),
         .memtoreg_ID(memtoreg),
         .memwrite_ID(memwrite_ID),
         .alusrc_ID(alusrc),
