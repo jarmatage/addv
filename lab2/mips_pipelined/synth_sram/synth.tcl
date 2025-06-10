@@ -8,6 +8,7 @@ lappend search_path $osu_freepdk
 # Point to the SRAM
 set sram_path [file normalize "../../sram_32x64"]
 lappend search_path $sram_path
+set alib_library_analysis_path $sram_path
 
 # Set libraries
 set link_library [list gscl45nm.db dw_foundation.sldb SRAM_32x64_1rw.db]
