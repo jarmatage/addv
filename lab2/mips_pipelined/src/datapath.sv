@@ -23,7 +23,8 @@ module datapath(
 );
 
     // Internal signals
-    wire stall, flush;
+    wire stall, flush_ID;
+    logic flush_EX;
 
     logic [31:0] pcnextbr, pcjump;
     logic [31:0] pcnext_IF;
@@ -101,7 +102,7 @@ module datapath(
         .clk,
         .reset,
         .stall,
-        .flush,
+        .flush_EX,
         .memtoreg_ID,
         .memwrite_ID,
         .alusrc_ID,
@@ -191,11 +192,12 @@ module datapath(
     // Hazard detection
     hazard_unit hazard_unit(
         .stall,
-        .flush,
+        .flush_ID,
         .jump_ID,
         .pcsrc_ID,
         .rs_ID(instr_ID[25:21]),
         .rt_ID(instr_ID[20:16]),
+        .flush_EX,
         .memtoreg_EX, 
         .regwrite_EX,
         .writereg_EX,
@@ -206,4 +208,8 @@ module datapath(
         .regwrite_WB,
         .writereg_WB
     );
+    always_ff @(posedge clk or posedge reset) begin
+        if (reset) flush_EX <= 1'b0;
+        else flush_EX <= flush_ID;
+    end
 endmodule

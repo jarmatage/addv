@@ -1,5 +1,5 @@
 module hazard_unit(
-    output logic stall, flush,
+    output logic stall, flush_ID,
 
     // ID
     input logic jump_ID, pcsrc_ID,
@@ -7,7 +7,7 @@ module hazard_unit(
     input logic [4:0] rt_ID,
 
     // EX
-    input logic memtoreg_EX, regwrite_EX,
+    input logic flush_EX, memtoreg_EX, regwrite_EX,
     input logic [4:0] writereg_EX,
 
     // MEM
@@ -25,7 +25,7 @@ module hazard_unit(
     assign match_WB  = (writereg_WB  != 5'd0) && (rs_ID == writereg_WB  || rt_ID == writereg_WB);
 
     // Stall for read after write (RAW) hazards
-    assign stall = (
+    assign stall = !flush_ID && !flush_EX && (
         (memtoreg_EX  && match_EX)  ||
         (regwrite_EX  && match_EX)  ||
         (memtoreg_MEM && match_MEM) ||
@@ -35,6 +35,6 @@ module hazard_unit(
     );
 
     // Flush if a jump or branch was taken
-    assign flush = jump_ID || pcsrc_ID;
+    assign flush_ID = jump_ID || pcsrc_ID;
 
 endmodule
