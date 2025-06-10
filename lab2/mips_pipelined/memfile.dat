@@ -22,4 +22,5 @@ ac070058    // 0x50 sw $7 88($0)        -> Mem[0 + 88] = $7 -> Mem[88] = 40
 fc080000    // 0x54 perfmon $8 0        -> $8 = clock cycle count
 fc090001    // 0x58 perfmon $9 1        -> $9 = instruction count
 ac08005c    // 0x5C sw $8 92($0)        -> Mem[92] = $8 = clock cycle count
-ac090060    // 0x60 sw $9 96($0)        -> Mem[96] = $9 = instruction count
+20020005    // 0x60 addi $2 $0 5        -> $2 = 5 (don't do back to back memwrites so testbench works)
+ac090060    // 0x64 sw $9 96($0)        -> Mem[96] = $9 = instruction count
