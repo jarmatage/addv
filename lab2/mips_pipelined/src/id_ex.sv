@@ -2,13 +2,13 @@ module id_ex(
     input  logic        clk,
     input  logic        reset,
     input  logic        stall,
+    input  logic        flush,
     // Control in
     input  logic        memtoreg_ID,
     input  logic        memwrite_ID,
     input  logic        alusrc_ID,
     input  logic        regdst_ID,
     input  logic        regwrite_ID,
-    input  logic        branch_ID,
     input  logic [2:0]  alucontrol_ID,
     // Data in
     input  logic [31:0] pcplus4_ID,
@@ -22,7 +22,6 @@ module id_ex(
     output logic        alusrc_EX,
     output logic        regdst_EX,
     output logic        regwrite_EX,
-    output logic        branch_EX,
     output logic [2:0]  alucontrol_EX,
     // Data out
     output logic [31:0] pcplus4_EX,
@@ -33,13 +32,12 @@ module id_ex(
 );
 
     always_ff @(posedge clk or posedge reset) begin
-        if (reset || stall) begin
+        if (reset || stall || flush) begin
             memtoreg_EX   <= '0;
             memwrite_EX   <= '0;
             alusrc_EX     <= '0;
             regdst_EX     <= '0;
             regwrite_EX   <= '0;
-            branch_EX     <= '0;
             alucontrol_EX <= '0;
             pcplus4_EX    <= '0;
             srca_EX       <= '0;
@@ -52,7 +50,6 @@ module id_ex(
             alusrc_EX     <= alusrc_ID;
             regdst_EX     <= regdst_ID;
             regwrite_EX   <= regwrite_ID;
-            branch_EX     <= branch_ID;
             alucontrol_EX <= alucontrol_ID;
             pcplus4_EX    <= pcplus4_ID;
             srca_EX       <= srca_ID;

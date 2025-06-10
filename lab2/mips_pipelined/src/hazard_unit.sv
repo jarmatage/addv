@@ -2,7 +2,7 @@ module hazard_unit(
     output logic stall, flush,
 
     // ID
-    input logic jump_ID, psrc_ID,
+    input logic jump_ID, pcsrc_ID,
     input logic [4:0] rs_ID,
     input logic [4:0] rt_ID,
 
@@ -35,6 +35,6 @@ module hazard_unit(
     );
 
     // Flush if a jump or branch was taken
-    assign flush = jump_ID || psrc_ID;
+    assign flush = jump_ID || pcsrc_ID;
 
 endmodule

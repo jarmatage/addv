@@ -1,8 +1,7 @@
 module alu(
     input  logic [31:0] a, b,
     input  logic [2:0]  control,
-    output logic [31:0] result,
-    output logic        zero
+    output logic [31:0] result
 );
     always_comb begin
         case(control)
@@ -14,5 +13,4 @@ module alu(
             default: result = 'x;
         endcase
     end
-    assign zero = (result == 32'd0);
 endmodule
