@@ -1,21 +1,21 @@
 module hazard_unit(
-    output logic stall_IF, stall_ID, stall_EX,
+    output logic stall, flush,
 
     // ID
-    input logic jump_ID, branch_ID,
+    input logic jump_ID, psrc_ID,
     input logic [4:0] rs_ID,
     input logic [4:0] rt_ID,
 
     // EX
-    input logic branch_EX, memtoreg_EX, regwrite_EX,
+    input logic memtoreg_EX, regwrite_EX,
     input logic [4:0] writereg_EX,
 
     // MEM
-    input logic branch_MEM, memtoreg_MEM, regwrite_MEM,
+    input logic memtoreg_MEM, regwrite_MEM,
     input logic [4:0] writereg_MEM,
 
     // WB
-    input logic branch_WB, memtoreg_WB, regwrite_WB,
+    input logic memtoreg_WB, regwrite_WB,
     input logic [4:0] writereg_WB
 );
 
@@ -24,8 +24,8 @@ module hazard_unit(
     assign match_MEM = (writereg_MEM != 5'd0) && (rs_ID == writereg_MEM || rt_ID == writereg_MEM);
     assign match_WB  = (writereg_WB  != 5'd0) && (rs_ID == writereg_WB  || rt_ID == writereg_WB);
 
-    logic raw_hazard;
-    assign raw_hazard = (
+    // Stall for read after write (RAW) hazards
+    assign stall = (
         (memtoreg_EX  && match_EX)  ||
         (regwrite_EX  && match_EX)  ||
         (memtoreg_MEM && match_MEM) ||
@@ -34,8 +34,7 @@ module hazard_unit(
         (regwrite_WB  && match_WB)
     );
 
-    assign stall_IF = raw_hazard || (branch_ID && !branch_MEM);
-    assign stall_ID = raw_hazard || (branch_ID && !branch_WB);
-    assign stall_EX = raw_hazard;
+    // Flush if a jump or branch was taken
+    assign flush = jump_ID || psrc_ID;
 
 endmodule
