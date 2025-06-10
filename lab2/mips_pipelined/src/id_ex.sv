@@ -31,8 +31,14 @@ module id_ex(
     output logic [31:0] instr_EX
 );
 
+    logic flush_EX;
     always_ff @(posedge clk or posedge reset) begin
-        if (reset || stall || flush) begin
+        if (reset) flush_EX <= 1'b0;
+        else flush_EX <= flush;
+    end
+
+    always_ff @(posedge clk or posedge reset) begin
+        if (reset || stall || flush_EX) begin
             memtoreg_EX   <= '0;
             memwrite_EX   <= '0;
             alusrc_EX     <= '0;
