@@ -30,13 +30,13 @@ module datapath(
     logic [31:0] pcnext_IF;
     wire [31:0] pcplus4_IF;
 
-    wire [31:0] pcplus4_ID, signimm_ID, srca_ID, writedata_ID;
+    wire [31:0] pcplus4_ID, signimm_ID, srca_ID, writedata_ID, srcc_ID;
     wire [31:0] signimmsh_ID, pcbranch_ID;
 
     wire memtoreg_EX, memwrite_EX, alusrc_EX, regdst_EX, regwrite_EX;
     wire [2:0] alucontrol_EX;
     wire [31:0] pcplus4_EX, srca_EX, writedata_EX, signimm_EX, instr_EX;
-    wire [31:0] srcb_EX, aluout_EX;
+    wire [31:0] srcb_EX, srcc_EX, aluout_EX;
     wire [4:0] writereg_EX;
 
     wire memtoreg_MEM, regwrite_MEM;
@@ -87,10 +87,12 @@ module datapath(
         .we3(regwrite_WB),
         .ra1(instr_ID[25:21]),
         .ra2(instr_ID[20:16]),
+        .ra3(instr_ID[15:11]), // for MULADD
         .wa3(writereg_WB),
         .wd3(result_WB),
         .rd1(srca_ID),
-        .rd2(writedata_ID)
+        .rd2(writedata_ID),
+        .rd3(srcc_ID) // for MULADD
     );
     signext se(.a(instr_ID[15:0]), .y(signimm_ID));
     sl2 immsh(.a(signimm_ID), .y(signimmsh_ID));
@@ -111,6 +113,7 @@ module datapath(
         .alucontrol_ID,
         .pcplus4_ID,
         .srca_ID,
+        .srcc_ID,
         .writedata_ID,
         .signimm_ID,
         .instr_ID,
@@ -122,6 +125,7 @@ module datapath(
         .alucontrol_EX,
         .pcplus4_EX,
         .srca_EX,
+        .srcc_EX,
         .writedata_EX,
         .signimm_EX,
         .instr_EX
@@ -137,6 +141,7 @@ module datapath(
     alu alu(
         .a(srca_EX),
         .b(srcb_EX),
+        .c(srcc_EX), // for MULADD
         .control(alucontrol_EX),
         .result(aluout_EX)
     );

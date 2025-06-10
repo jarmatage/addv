@@ -13,6 +13,7 @@ module id_ex(
     // Data in
     input  logic [31:0] pcplus4_ID,
     input  logic [31:0] srca_ID,
+    input  logic [31:0] srcc_ID,
     input  logic [31:0] writedata_ID,
     input  logic [31:0] signimm_ID,
     input  logic [31:0] instr_ID,
@@ -26,6 +27,7 @@ module id_ex(
     // Data out
     output logic [31:0] pcplus4_EX,
     output logic [31:0] srca_EX,
+    output logic [31:0] srcc_EX,
     output logic [31:0] writedata_EX,
     output logic [31:0] signimm_EX,
     output logic [31:0] instr_EX
@@ -41,6 +43,7 @@ module id_ex(
             alucontrol_EX <= '0;
             pcplus4_EX    <= '0;
             srca_EX       <= '0;
+            srcc_EX       <= '0;
             writedata_EX  <= '0;
             signimm_EX    <= '0;
             instr_EX      <= '0;
@@ -53,6 +56,7 @@ module id_ex(
             alucontrol_EX <= alucontrol_ID;
             pcplus4_EX    <= pcplus4_ID;
             srca_EX       <= srca_ID;
+            srcc_EX       <= srcc_ID;
             writedata_EX  <= writedata_ID;
             signimm_EX    <= signimm_ID;
             instr_EX      <= instr_ID;
