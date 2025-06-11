@@ -255,6 +255,7 @@ module datapath(
         .stall,
         .flush_ID,
         .jump_ID,
+        .branch_ID,
         .pcsrc_ID,
         .rs_ID(instr_ID[25:21]),
         .rt_ID(instr_ID[20:16]),
