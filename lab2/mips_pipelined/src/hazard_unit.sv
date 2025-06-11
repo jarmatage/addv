@@ -1,6 +1,10 @@
 module hazard_unit(
     output logic stall, flush_ID,
 
+    // Forwarding
+    input  logic [2:0] alucontrol_ID,
+    output logic [1:0] forward_A, forward_B,
+
     // ID
     input logic jump_ID, pcsrc_ID,
     input logic [4:0] rs_ID,
@@ -37,4 +41,25 @@ module hazard_unit(
     // Flush if a jump or branch was taken
     assign flush_ID = jump_ID || pcsrc_ID;
 
+    // Forwarding logic
+    always_comb begin
+        if (alucontrol_EX != 3'b010)
+            forward_A = 2'b00;
+        else if (rs_ID == writereg_EX) 
+            forward_A = 2'b01;
+        else if (rs_ID == writereg_MEM)
+            forward_A = 2'b10;
+        else
+            forward_A = 2'b00;
+    end
+    always_comb begin
+        if (alucontrol_EX != 3'b010)
+            forward_B = 2'b00;
+        if (rt_ID == writereg_EX) 
+            forward_B = 2'b01;
+        else if (rt_ID == writereg_MEM)
+            forward_B = 2'b10;
+        else
+            forward_B = 2'b00;
+    end
 endmodule
