@@ -140,8 +140,6 @@ module datapath(
         .srcc_EX,
         .writedata_EX(writedata_regular),
         .signimm_EX,
-        .forward_A,
-        .forward_B,
         .instr_EX
     );
 
@@ -260,6 +258,8 @@ module datapath(
         .pcsrc_ID,
         .rs_ID(instr_ID[25:21]),
         .rt_ID(instr_ID[20:16]),
+        .rs_EX(instr_EX[25:21]),
+        .rt_EX(instr_EX[20:16]),
         .flush_EX,
         .memtoreg_EX, 
         .regwrite_EX,
@@ -269,7 +269,6 @@ module datapath(
         .writereg_MEM,
         .memtoreg_WB,
         .regwrite_WB,
-        .alucontrol_ID,
         .forward_A,
         .forward_B,
         .writereg_WB
