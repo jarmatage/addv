@@ -34,7 +34,7 @@ set_max_area 0
 set_optimize_registers true
 
 # Create read and write clocks
-create_clock -period 1.10 clk; # 0.909 GHz
+create_clock -period 1.8 clk;
 
 # Set the driving cell for all input ports
 set_driving_cell -lib_cell INVX1 [all_inputs]
