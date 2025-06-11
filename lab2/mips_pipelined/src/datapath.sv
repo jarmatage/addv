@@ -54,6 +54,9 @@ module datapath(
     logic [31:0] cycle_cnt, instr_cnt;
     logic [31:0] reg_result_WB, perf_result_WB;
 
+    logic [1:0] forward_A, forward_B;
+    logic [31:0] srca_regular, writedata_regular;
+
     // IF
     mux2 #(32) pcbrmux(
         .d0(pcplus4_IF),
@@ -133,12 +136,32 @@ module datapath(
         .regwrite_EX,
         .alucontrol_EX,
         .pcplus4_EX,
-        .srca_EX,
+        .srca_EX(srca_regular),
         .srcc_EX,
-        .writedata_EX,
+        .writedata_EX(writedata_regular),
         .signimm_EX,
+        .forward_A,
+        .forward_B,
         .instr_EX
     );
+
+    // Forwarding logic
+    always_comb begin
+        if (forward_A == 2'b01)
+            srca_EX = aluout_MEM; // Forward from MEM stage
+        else if (forward_A == 2'b10)
+            srca_EX = result_WB; // Forward from WB stage
+        else
+            srca_EX = srca_regular; // No forwarding
+    end
+    always_comb begin
+        if (forward_B == 2'b01)
+            writedata_EX = aluout_MEM; // Forward from MEM stage
+        else if (forward_B == 2'b10)
+            writedata_EX = result_WB; // Forward from WB stage
+        else
+            writedata_EX = writedata_regular; // No forwarding
+    end
 
     // EX
     mux2 #(32) srcbmux(
@@ -246,6 +269,9 @@ module datapath(
         .writereg_MEM,
         .memtoreg_WB,
         .regwrite_WB,
+        .alucontrol_ID,
+        .forward_A,
+        .forward_B,
         .writereg_WB
     );
     always_ff @(posedge clk or posedge reset) begin
