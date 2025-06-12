@@ -1,28 +1,9 @@
-`timescale 1ns / 1ps
-//////////////////////////////////////////////////////////////////////////////////
-//
-// Create Date:    16:05:07 09/07/2012
-// Module Name:    FBAddSub_NormalizeModule
-// Project Name: 	 Floating Point Project
-// Author:			 Fredrik Brosser
-//
-// Description:	 Determine the normalization shift amount and perform 16-shift
-//
-//////////////////////////////////////////////////////////////////////////////////
-
 module FPAddSub_NormalizeModule(
-		Sum,
-		Mmin,
-		Shift
-    );
+	input  logic [32:0] Sum,
+	output logic [32:0] Mmin,
+	output logic [4:0]  Shift
+);
 
-	// Input ports
-	input [32:0] Sum ;					// Mantissa sum including hidden 1 and GRS
-	
-	// Output ports
-	output [32:0] Mmin ;					// Mantissa after 16|0 shift
-	output [4:0] Shift ;					// Shift amount
-	
 	// Determine normalization shift amount by finding leading nought
 	assign Shift =  ( 
 		Sum[32] ? 5'b00000 :	 
@@ -53,14 +34,6 @@ module FPAddSub_NormalizeModule(
 		Sum[7] ? 5'b11001 : 5'b11010
 	);
 	
-	reg	  [32:0]		Lvl1 = 0;
-	
-	always @(*) begin
-		// Rotate by 16?
-		Lvl1 <= Shift[4] ? {Sum[16:0], 16'b0000000000000000} : Sum; 
-	end
-	
-	// Assign outputs
-	assign Mmin = Lvl1;						// Take out smaller mantissa
+    assign Mmin = Shift[4] ? Sum << 16 : Sum;
 
 endmodule
