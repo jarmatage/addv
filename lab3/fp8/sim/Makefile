@@ -2,14 +2,14 @@ all: sim verdi
 
 compile: clean
 	@echo "=== Compiling ==="
-	${VCS_HOME}/bin/vcs -full64 -sverilog +define+DUMP=1 -debug_access+all -kdb -lca \
-		../src/*.sv \
-		../fp8_tb.sv \
-	|& tee compile.log
+	${VCS_HOME}/bin/vcs -full64 -sverilog +define+DUMP=1 -debug_access+all -kdb -timescale=1ns/1ps \
+		../FPAddSub_tb.v \
+		../src/FPAdd*.v \
+	-l compile.log
 
 sim: compile
 	@echo "=== Running simulation ==="
-	./simv
+	./simv |& tee sim.log
 
 verdi:
 	@echo "=== Launching Verdi ==="
