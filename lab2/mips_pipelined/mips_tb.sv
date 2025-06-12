@@ -15,7 +15,7 @@ module MIPS_Testbench ();
     integer j;
 
     // expected memory writes
-    parameter N = 2; 
+    parameter N = 11; 
     reg [31:0] expected_data[N:1];
     reg [31:0] expected_addr[N:1]; 
     
@@ -27,14 +27,48 @@ module MIPS_Testbench ();
         .dataadr(dataadr),
         .memwrite(memwrite)
     );
+
+    initial begin
+        $fsdbDumpvars();
+        #1_000;
+        $display("ERROR: Timeout");
+        $finish;
+    end
     
     // Initialize expected data and addresses
     initial begin
-        expected_data[1] = 32'h7;
-        expected_addr[1] = 32'h50;
+        expected_data[1] = 32'd7;
+        expected_addr[1] = 32'd56;
 
-        expected_data[2] = 32'h7;
-        expected_addr[2] = 32'h54;
+        expected_data[2] = 32'd4;
+        expected_addr[2] = 32'd60;
+
+        expected_data[3] = 32'd11;
+        expected_addr[3] = 32'd64;
+
+        expected_data[4] = 32'd0;
+        expected_addr[4] = 32'd68;
+
+        expected_data[5] = 32'd7;
+        expected_addr[5] = 32'd80;  
+
+        expected_data[6] = 32'd7;
+        expected_addr[6] = 32'd76;
+
+        expected_data[7] = 32'd7;
+        expected_addr[7] = 32'd84;
+
+        expected_data[8] = 32'd40;
+        expected_addr[8] = 32'd88;
+
+        expected_data[9] = 32'd15;
+        expected_addr[9] = 32'd100;
+
+        expected_data[10] = 32'd59;
+        expected_addr[10] = 32'h5c;
+
+        expected_data[11] = 32'd33;
+        expected_addr[11] = 32'h60;
     end
 
     // Clock generation
