@@ -64,7 +64,7 @@ module fp8_mult (
             y_nan:   result = {sign, 3'd7, 4'hF};
             y_inf:   result = {sign, 3'd7, 4'h0};
             y_zero:  result = {sign, 3'd0, 4'h0};
-            default: result = {sign, norm_exp[2:0], norm_mant[3:0]};
+            default: result = {sign, norm_exp[2:0], rounded_mant[3:0]};
         endcase
     end
 
