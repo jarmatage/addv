@@ -5,72 +5,108 @@ typedef struct packed {
 } fp8_value;
 
 module fp8_addsub (
-    input  fp8_value a,
-    input  fp8_value b,
+    input  logic operation, // 1 = subtraction
+    input  fp8_value a, b,
     output fp8_value result,
-    input  logic     operation
+    output logic [4:0] flags
 );
 
     // Internal signals
-    logic [4:0] mant_a, mant_b;
-    logic [4:0] aligned_a, aligned_b;
-    logic [2:0] exp_diff, common_exp;
-    logic [4:0] norm_mant;
-    logic [5:0] mant_sum;
-    logic [2:0] norm_shift;
+    logic eff_sign;
+    logic a_nan, a_inf, a_zero;
+    logic b_nan, b_inf, b_zero;
+    logic y_nan, y_inf;
+    logic [2:0] exp_diff;
+    logic signed [3:0] norm_exp;
+    logic [9:0] ma_aligned, mb_aligned;
+    logic [10:0] sum_mant;
+    logic sign;
+    logic guard, round_bit, sticky, round_up, inexact;
+    logic [4:0] rounded_mant;
+    logic overflow, underflow;
 
-    // Add implicit 1 to mantissa if exponent is non-zero
-    assign mant_a = {(a.exp != '0), a.mant};
-    assign mant_b = {(b.exp != '0), b.mant};
+    // Check for input special values
+    assign a_nan = (&a.exp) && (|a.mant);
+    assign b_nan = (&b.exp) && (|b.mant);
+    assign a_inf = (&a.exp) && (~|a.mant);
+    assign b_inf = (&b.exp) && (~|b.mant);
+    assign a_zero = (~|a.exp) && (~|a.mant);
+    assign b_zero = (~|b.exp) && (~|b.mant);
 
+    // Compute the effective sign of b
+    assign eff_sign = operation ^ b.sign;
+
+    // Compute the rounding signals
+    assign guard = sum_mant[4];
+    assign round_bit = sum_mant[3];
+    assign sticky = |sum_mant[2:0];
+    assign round_up = guard && (round_bit || sticky || sum_mant[5]);
+    assign inexact = guard || round_bit || sticky;
+    assign rounded_mant = {1'b0, sum_mant[8:5]} + round_up;
+
+    // Check for overflow and underflow
+    assign overflow = norm_exp > 6;
+    assign underflow = norm_exp < 0;
+
+    // Compute if the result is a special value
+    assign y_nan = a_nan || b_nan || (a_inf && b_inf && (a.sign ^ eff_sign));
+    assign y_inf = a_inf || b_inf || overflow;
+    assign y_zero = (sum_mant == '0) || underflow;
+
+    // Main logic block
     always_comb begin
-        // Align exponents
+        // Align the mantissas
         if (a.exp > b.exp) begin
-            exp_diff   = a.exp - b.exp;
-            aligned_a  = mant_a;
-            aligned_b  = mant_b >> exp_diff;
-            common_exp = a.exp;
+            exp_diff = a.exp - b.exp;
+            norm_exp = {1'b0, a.exp};
+            ma_aligned = {1'b1, a.mant, 5'b0};
+            mb_aligned = {1'b1, b.mant, 5'b0} >> exp_diff;
         end else begin
-            exp_diff   = b.exp - a.exp;
-            aligned_a  = mant_a >> exp_diff;
-            aligned_b  = mant_b;
-            common_exp = b.exp;
+            exp_diff = b.exp - a.exp;
+            norm_exp = {1'b0, b.exp};
+            mb_aligned = {{1'b1, b.mant}, 5'b0};
+            ma_aligned = {{1'b1, a.mant}, 5'b0} >> exp_diff;
         end
 
-        // Add or subtract mantissas
-        if (a.sign == b.sign) begin
-            mant_sum    = aligned_a + aligned_b;
-            result.sign = a.sign;
-        end else if (aligned_a >= aligned_b) begin
-            mant_sum    = aligned_a - aligned_b;
-            result.sign = a.sign;
+        // Addition/Subtraction
+        if (a.sign == eff_sign) begin
+            sum_mant = ma_aligned + mb_aligned;
+            sign = a.sign;
+        end else if (ma_aligned >= mb_aligned) begin
+            sum_mant = ma_aligned - mb_aligned;
+            sign = a.sign;
         end else begin
-            mant_sum    = aligned_b - aligned_a;
-            result.sign = b.sign;
+            sum_mant = mb_aligned - ma_aligned;
+            sign = eff_sign;
         end
 
-        // Normalize
-        if (mant_sum[5]) begin
-            norm_mant = mant_sum[5:1];  // shift right 1
-            result.exp  = common_exp + 1;
+        // Normalization
+        if (sum_mant[10]) begin
+            norm_exp = norm_exp + 1;
+            sum_mant = sum_mant >> 1;
         end else begin
-            // Find leading 1 to normalize left
-            norm_shift = mant_sum[4] ? 0 :
-                mant_sum[3] ? 1 :
-                mant_sum[2] ? 2 :
-                mant_sum[1] ? 3 : 4;
-
-            norm_mant = mant_sum << norm_shift;
-            result.exp = common_exp > norm_shift ? common_exp - norm_shift : '0;
+            while (sum_mant[9] == 0 && sum_mant != 0) begin
+                sum_mant = sum_mant << 1;
+                norm_exp = norm_exp - 1;
+            end
         end
-        result.mant = norm_mant[3:0];
 
-        // Handle underflow/overflow
-        if (result.exp == '0 || mant_sum == '0) begin
-            result.sign = '0;
-            result.exp  = '0;
-            result.mant = '0;
-        end
+        // Rounding (round to nearest, ties to even)
+        norm_exp = norm_exp + rounded_mant[4];
     end
+
+    // Compute the final result
+    always_comb begin
+        priority case (1'b1)
+            y_nan:   result = {1'b0, 3'd7, 4'hF};
+            y_inf:   result = {a.sign, 3'd7, 4'h0};
+            b_zero:  result = a;
+            a_zero:  result = {eff_sign, b.exp, b.mant};
+            default: result = {sign, norm_exp[2:0], rounded_mant[3:0]};
+        endcase
+    end
+
+    // Compute flags (invalid op, div by zero, overflow, underflow, inexact)
+    assign flags = {y_nan, 1'b0, overflow, underflow, inexact};
 
 endmodule
