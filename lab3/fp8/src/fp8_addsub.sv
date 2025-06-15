@@ -1,13 +1,14 @@
 typedef struct packed {
-    logic sign;
+    logic       sign;
     logic [2:0] exp;
     logic [3:0] mant;
 } fp8_value;
 
-module fp8_adder (
+module fp8_addsub (
     input  fp8_value a,
     input  fp8_value b,
-    output fp8_value result
+    output fp8_value result,
+    input  logic     operation
 );
 
     // Internal signals
@@ -66,9 +67,9 @@ module fp8_adder (
 
         // Handle underflow/overflow
         if (result.exp == '0 || mant_sum == '0) begin
-            result.sign = 1'b0;
-            result.exp  = 3'd0;
-            result.mant = 4'd0;
+            result.sign = '0;
+            result.exp  = '0;
+            result.mant = '0;
         end
     end
 
