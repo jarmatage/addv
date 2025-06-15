@@ -23,16 +23,11 @@ module fp8_tb();
     timeprecision 100ps;
 
     // DUT signals
-    logic clk, reset;
     logic [7:0] a, b, result;
     logic [4:0] flags;
 
     // Instantiate the DUT
     fp8_mult dut(.*);
-
-    // Clock generation
-    initial clk = 1'b0;
-    always #5 clk = ~clk;
 
     // Main test sequence
     initial begin
@@ -43,20 +38,23 @@ module fp8_tb();
         reset_dut();
         a = 8'b0_100_0100;
         b = 8'b0_100_0000;
-        $display("a = %b = %f", a, fp8_to_real(a));
-        $display("b = %b = %f", b, fp8_to_real(b));
-        $display("y = %b = %f", result, fp8_to_real(result));
+        print_vals();
         reset_dut();
         $finish;
     end
 
     // Reset the DUT
     task automatic reset_dut();
-        reset = 1'b1;
         a = '0;
         b = '0;
-        #10;
-        reset = 1'b0;
-        #10;
+        #5;
+    endtask
+
+    // Print the current DUT signals 
+    task automatic print_vals();
+        $display("a = %b = %f", a, fp8_to_real(a));
+        $display("b = %b = %f", b, fp8_to_real(b));
+        $display("y = %b = %f", result, fp8_to_real(result));
+        #5;
     endtask
 endmodule
