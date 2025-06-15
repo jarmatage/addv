@@ -51,10 +51,10 @@ module fp8_mult (
 
     // Check for overflow and underflow
     assign overflow = norm_exp > 6;
-    assign underflow = norm_exp < 1 && norm_exp != 0;
+    assign underflow = norm_exp < 0;
 
     // Compute if the result is a special value
-    assign y_nan = a_nan || b_nan || (a_inf && b_zero ) || (b_inf && a_zero);
+    assign y_nan = a_nan || b_nan || (a_inf && b_zero) || (b_inf && a_zero);
     assign y_inf = a_inf || b_inf || overflow;
     assign y_zero = a_zero || b_zero || underflow;
 
