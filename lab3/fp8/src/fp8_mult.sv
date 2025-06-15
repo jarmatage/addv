@@ -35,7 +35,7 @@ module fp8_mult (
 
     // Multiply the mantissas and then normalize
     assign prod_mant = {6'd1, a.mant} * {6'd1, b.mant};
-    assign norm_mant = prod_mant[9] ? prod_mant[8:0] : {1'b0, prod_mant[7:0]};
+    assign norm_mant = prod_mant[9] ? prod_mant[8:0] : {prod_mant[7:0], 1'b0};
 
     // Round the mantissa (round to nearest, ties to even)
     assign guard = norm_mant[4];

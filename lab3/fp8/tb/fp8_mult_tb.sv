@@ -39,6 +39,14 @@ module fp8_tb();
         a = 8'b0_100_0100;
         b = 8'b0_100_0000;
         print_vals();
+
+        a = 8'b0_000_0001;
+        b = 8'b0_101_0111;
+        print_vals();
+
+        a = 8'b0_100_0100;
+        b = 8'b0_101_0111;
+        print_vals();
         reset_dut();
         $finish;
     end
@@ -52,9 +60,10 @@ module fp8_tb();
 
     // Print the current DUT signals 
     task automatic print_vals();
+        #1;
         $display("a = %b = %f", a, fp8_to_real(a));
         $display("b = %b = %f", b, fp8_to_real(b));
-        $display("y = %b = %f", result, fp8_to_real(result));
-        #5;
+        $display("y = %b = %f, (flags = %b)\n", result, fp8_to_real(result), flags);
+        #4;
     endtask
 endmodule
