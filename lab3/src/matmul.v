@@ -874,6 +874,25 @@ module seq_mac(a, b, out, reset, clk);
 
     reg [`DWIDTH-1:0] out;
     reg [`DWIDTH-1:0] a_flop, b_flop, mult;
+    logic [`DWITH-1:0] mul_result, add_result;
+    logic [4:0] mul_flags, add_flags;
+
+    // Instantiate the FP8 Multiplier
+    fp8_mult multiplier (
+        .a(a_flop),
+        .b(b_flop),
+        .result(mul_result),
+        .flags(mul_flags)
+    );
+
+    // Instantiate the FP8 Adder
+    fp8_addsub adder (
+        .a(mult),
+        .b(out),
+        .operation(1'b0), // Always addition
+        .result(add_result),
+        .flags(add_flags)
+    );
 
     always @(posedge clk)
     begin
@@ -889,8 +908,8 @@ module seq_mac(a, b, out, reset, clk);
             a_flop <= a;
             b_flop <= b;
 
-            mult <= a_flop * b_flop; 
-            out <= mult + out; 
+            mult <= mul_result;
+            out <= add_result;
         end
             
     end

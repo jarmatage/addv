@@ -12,7 +12,7 @@ module fp8_mac (
     logic [4:0] add_flags;
 
     // Instantiate the FP8 Multiplier
-    fp8_mul multiplier (
+    fp8_mult multiplier (
         .a(a),
         .b(b),
         .result(mul_result),
@@ -20,7 +20,7 @@ module fp8_mac (
     );
 
     // Instantiate the FP8 Adder
-    fp8_add adder (
+    fp8_addsub adder (
         .a(mul_result),
         .b(c),
         .operation(1'b0), // Always addition
