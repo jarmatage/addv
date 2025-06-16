@@ -56,6 +56,7 @@ module fp8_tb();
     task automatic reset_dut();
         a = '0;
         b = '0;
+        operation = 1'b0;
         #5;
     endtask
 
