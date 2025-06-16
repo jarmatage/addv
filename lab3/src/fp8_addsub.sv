@@ -100,6 +100,7 @@ module fp8_addsub (
         priority case (1'b1)
             y_nan:   result = {1'b0, 3'd7, 4'hF};
             y_inf:   result = {a.sign, 3'd7, 4'h0};
+            y_zero:  result = {sign, 3'd0, 4'h0};
             b_zero:  result = a;
             a_zero:  result = {eff_sign, b.exp, b.mant};
             default: result = {sign, norm_exp[2:0], rounded_mant[3:0]};
