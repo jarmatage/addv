@@ -1,4 +1,3 @@
-`timescale 1ns/1ns
 `define DWIDTH 8
 `define AWIDTH 10
 `define MEM_SIZE 1024
@@ -17,30 +16,30 @@
 
 //Design with memories
 module matrix_multiplication(
-  clk, 
-  resetn, 
-  pe_resetn,
-  address_mat_a,
-  address_mat_b,
-  address_mat_c,
-  address_stride_a,
-  address_stride_b,
-  address_stride_c,
-  bram_addr_a_ext,
-  bram_rdata_a_ext,
-  bram_wdata_a_ext,
-  bram_we_a_ext,
-  bram_addr_b_ext,
-  bram_rdata_b_ext,
-  bram_wdata_b_ext,
-  bram_we_b_ext,
-  bram_addr_c_ext,
-  bram_rdata_c_ext,
-  bram_wdata_c_ext,
-  bram_we_c_ext,
-  start, //starts the matmul operation
-  done  //asserts when matmul operation is complete
-);
+    clk, 
+    resetn, 
+    pe_resetn,
+    address_mat_a,
+    address_mat_b,
+    address_mat_c,
+    address_stride_a,
+    address_stride_b,
+    address_stride_c,
+    bram_addr_a_ext,
+    bram_rdata_a_ext,
+    bram_wdata_a_ext,
+    bram_we_a_ext,
+    bram_addr_b_ext,
+    bram_rdata_b_ext,
+    bram_wdata_b_ext,
+    bram_we_b_ext,
+    bram_addr_c_ext,
+    bram_rdata_c_ext,
+    bram_wdata_c_ext,
+    bram_we_c_ext,
+    start, //starts the matmul operation
+    done  //asserts when matmul operation is complete
+    );
 
 	input clk;
 	input resetn;
@@ -51,18 +50,18 @@ module matrix_multiplication(
 	input [`ADDR_STRIDE_WIDTH-1:0] address_stride_a;
 	input [`ADDR_STRIDE_WIDTH-1:0] address_stride_b;
 	input [`ADDR_STRIDE_WIDTH-1:0] address_stride_c;
-  input  [`AWIDTH-1:0] bram_addr_a_ext;
-  output [`MAT_MUL_SIZE*`DWIDTH-1:0] bram_rdata_a_ext;
-  input  [`MAT_MUL_SIZE*`DWIDTH-1:0] bram_wdata_a_ext;
-  input  [`MASK_WIDTH-1:0] bram_we_a_ext;
-  input  [`AWIDTH-1:0] bram_addr_b_ext;
-  output [`MAT_MUL_SIZE*`DWIDTH-1:0] bram_rdata_b_ext;
-  input  [`MAT_MUL_SIZE*`DWIDTH-1:0] bram_wdata_b_ext;
-  input  [`MASK_WIDTH-1:0] bram_we_b_ext;
-  input  [`AWIDTH-1:0] bram_addr_c_ext;
-  output [`MAT_MUL_SIZE*`DWIDTH-1:0] bram_rdata_c_ext;
-  input  [`MAT_MUL_SIZE*`DWIDTH-1:0] bram_wdata_c_ext;
-  input  [`MASK_WIDTH-1:0] bram_we_c_ext;
+    input  [`AWIDTH-1:0] bram_addr_a_ext;
+    output [`MAT_MUL_SIZE*`DWIDTH-1:0] bram_rdata_a_ext;
+    input  [`MAT_MUL_SIZE*`DWIDTH-1:0] bram_wdata_a_ext;
+    input  [`MASK_WIDTH-1:0] bram_we_a_ext;
+    input  [`AWIDTH-1:0] bram_addr_b_ext;
+    output [`MAT_MUL_SIZE*`DWIDTH-1:0] bram_rdata_b_ext;
+    input  [`MAT_MUL_SIZE*`DWIDTH-1:0] bram_wdata_b_ext;
+    input  [`MASK_WIDTH-1:0] bram_we_b_ext;
+    input  [`AWIDTH-1:0] bram_addr_c_ext;
+    output [`MAT_MUL_SIZE*`DWIDTH-1:0] bram_rdata_c_ext;
+    input  [`MAT_MUL_SIZE*`DWIDTH-1:0] bram_wdata_c_ext;
+    input  [`MASK_WIDTH-1:0] bram_we_c_ext;
 	input start;
 	output done;
   
@@ -179,33 +178,33 @@ module matrix_multiplication(
 
     wire c_data_available;
 
-//Connections for bram c (output matrix)
-//bram_addr_c -> connected to u_matmul_4x4 block
-//bram_rdata_c -> not used
-//bram_wdata_c -> connected to u_matmul_4x4 block
-//bram_we_c -> set to 1 when c_data is available
+    //Connections for bram c (output matrix)
+    //bram_addr_c -> connected to u_matmul_4x4 block
+    //bram_rdata_c -> not used
+    //bram_wdata_c -> connected to u_matmul_4x4 block
+    //bram_we_c -> set to 1 when c_data is available
 
     assign bram_we_c = (c_data_available) ? 4'b1111 : 4'b0000;  
 
-//Connections for bram a (first input matrix)
-//bram_addr_a -> connected to u_matmul_4x4
-//bram_rdata_a -> connected to u_matmul_4x4
-//bram_wdata_a -> hardcoded to 0 (this block only reads from bram a)
-//bram_we_a -> hardcoded to 0 (this block only reads from bram a)
+    //Connections for bram a (first input matrix)
+    //bram_addr_a -> connected to u_matmul_4x4
+    //bram_rdata_a -> connected to u_matmul_4x4
+    //bram_wdata_a -> hardcoded to 0 (this block only reads from bram a)
+    //bram_we_a -> hardcoded to 0 (this block only reads from bram a)
 
     assign bram_wdata_a = 32'b0;
     assign bram_we_a = 4'b0;
   
-//Connections for bram b (second input matrix)
-//bram_addr_b -> connected to u_matmul_4x4
-//bram_rdata_b -> connected to u_matmul_4x4
-//bram_wdata_b -> hardcoded to 0 (this block only reads from bram b)
-//bram_we_b -> hardcoded to 0 (this block only reads from bram b)
+    //Connections for bram b (second input matrix)
+    //bram_addr_b -> connected to u_matmul_4x4
+    //bram_rdata_b -> connected to u_matmul_4x4
+    //bram_wdata_b -> hardcoded to 0 (this block only reads from bram b)
+    //bram_we_b -> hardcoded to 0 (this block only reads from bram b)
 
     assign bram_wdata_b = 32'b0;
     assign bram_we_b = 4'b0;
   
-//NC (not connected) wires 
+    //NC (not connected) wires 
     wire [`BB_MAT_MUL_SIZE*`DWIDTH-1:0] a_data_out_NC;
     wire [`BB_MAT_MUL_SIZE*`DWIDTH-1:0] b_data_out_NC;
     wire [`BB_MAT_MUL_SIZE*`DWIDTH-1:0] a_data_in_NC;
@@ -215,7 +214,7 @@ module matrix_multiplication(
     assign reset = ~resetn;
     assign pe_reset = ~pe_resetn;
 
-//matmul instance
+    //matmul instance
     matmul_4x4_systolic u_matmul_4x4(
         .clk(clk),
         .reset(reset),
