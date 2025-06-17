@@ -40,13 +40,33 @@ module fp8_tb();
         print_vals();
 
         operation = 1'b0;
-        a = 8'b0_111_0100;
-        b = 8'b0_001_1111;
+        a = 8'b0_101_0110;
+        b = 8'b1_111_1111;
         print_vals();
 
         operation = 1'b0;
         a = 8'b0_111_0000;
         b = 8'b1_111_0000;
+        print_vals();
+
+        operation = 1'b0;
+        a = 8'b0_100_0100;
+        b = 8'b1_111_0000;
+        print_vals();
+
+        operation = 1'b1;
+        a = 8'b1_111_0000;
+        b = 8'b1_111_0000;
+        print_vals();
+
+        operation = 1'b1;
+        a = 8'b0_111_0000;
+        b = 8'b0_111_0000;
+        print_vals();
+
+        operation = 1'b1;
+        a = 8'b0_101_0000;
+        b = 8'b0_011_0110;
         print_vals();
 
         reset_dut();
@@ -66,9 +86,9 @@ module fp8_tb();
     task automatic print_vals();
         #1;
         if (operation)
-            $display("Subtraction:");
+            $display("\nSubtraction:");
         else
-            $display("Addition:");
+            $display("\nAddition:");
 
         $write("a = %b = ", a);
         display_fp8(a);
