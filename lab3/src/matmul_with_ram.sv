@@ -19,6 +19,7 @@ module matrix_multiplication(
 	input  logic                             clk,
 	input  logic                             resetn,
 	input  logic                             pe_resetn,
+    input  logic                             is_fp8,
 	input  logic [`AWIDTH-1:0]               address_mat_a,
 	input  logic [`AWIDTH-1:0]               address_mat_b,
 	input  logic [`AWIDTH-1:0]               address_mat_c,

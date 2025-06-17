@@ -645,8 +645,8 @@ module systolic_pe_matrix(
 
 	processing_element pe00(.reset(effective_rst), .clk(clk), .is_fp8(is_fp8), .in_a(a0),      .in_b(b0), .out_a(a00to01), .out_b(b00to10), .out_c(matrixC00));
 	processing_element pe01(.reset(effective_rst), .clk(clk), .is_fp8(is_fp8), .in_a(a00to01), .in_b(b1), .out_a(a01to02), .out_b(b01to11), .out_c(matrixC01));
-	processing_element pe02(.reset(effective_rst), .clk(clk), .in_a(a01to02), .in_b(b2), .out_a(a02to03), .out_b(b02to12), .out_c(matrixC02));
-	processing_element pe03(.reset(effective_rst), .clk(clk), .in_a(a02to03), .in_b(b3), .out_a(a03to04), .out_b(b03to13), .out_c(matrixC03));
+	processing_element pe02(.reset(effective_rst), .clk(clk), .is_fp8(is_fp8), .in_a(a01to02), .in_b(b2), .out_a(a02to03), .out_b(b02to12), .out_c(matrixC02));
+	processing_element pe03(.reset(effective_rst), .clk(clk), .is_fp8(is_fp8), .in_a(a02to03), .in_b(b3), .out_a(a03to04), .out_b(b03to13), .out_c(matrixC03));
 
 	processing_element pe10(.reset(effective_rst), .clk(clk), .is_fp8(is_fp8), .in_a(a1),      .in_b(b00to10), .out_a(a10to11), .out_b(b10to20), .out_c(matrixC10));
 	processing_element pe11(.reset(effective_rst), .clk(clk), .is_fp8(is_fp8), .in_a(a10to11), .in_b(b01to11), .out_a(a11to12), .out_b(b11to21), .out_c(matrixC11));
