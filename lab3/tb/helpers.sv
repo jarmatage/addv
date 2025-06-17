@@ -18,9 +18,13 @@ endfunction
 
 
 task display_fp8(input logic [7:0] fp);
+    real abs_fp;
+
     if (fp[7])
+        abs_fp = -fp8_to_real(fp);
         $write("-");
     else
+        abs_fp = fp8_to_real(fp);
         $write("+");
 
     if (fp[6:0] == 7'b1110000)
@@ -28,5 +32,5 @@ task display_fp8(input logic [7:0] fp);
     else if (fp[6:4] == 3'b111)
         $write("nan");
     else
-        $write("%f", $fabs(fp8_to_real(fp)));
+        $write("%f", abs_fp);
 endtask
