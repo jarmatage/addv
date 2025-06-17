@@ -14,83 +14,50 @@
 `define ADDR_STRIDE_WIDTH 8
 `define MAX_BITS_POOL 3
 
-module matmul_4x4_systolic(
-    clk,
-    reset,
-    pe_reset,
-    start_mat_mul,
-    done_mat_mul,
-    address_mat_a,
-    address_mat_b,
-    address_mat_c,
-    address_stride_a,
-    address_stride_b,
-    address_stride_c,
-    a_data,
-    b_data,
-    a_data_in, //Data values coming in from previous matmul - systolic connections
-    b_data_in,
-    c_data_in, //Data values coming in from previous matmul - systolic shifting
-    c_data_out, //Data values going out to next matmul - systolic shifting
-    a_data_out,
-    b_data_out,
-    a_addr,
-    b_addr,
-    c_addr,
-    c_data_available,
-    validity_mask_a_rows,
-    validity_mask_a_cols_b_rows,
-    validity_mask_b_cols,
-    final_mat_mul_size,
-    a_loc,
-    b_loc
+module matmul_4x4_systolic (
+    input  logic                             clk,
+    input  logic                             reset,
+    input  logic                             pe_reset,
+    input  logic                             start_mat_mul,
+    output logic                             done_mat_mul,
+    input  logic [`AWIDTH-1:0]               address_mat_a,
+    input  logic [`AWIDTH-1:0]               address_mat_b,
+    input  logic [`AWIDTH-1:0]               address_mat_c,
+    input  logic [`ADDR_STRIDE_WIDTH-1:0]    address_stride_a,
+    input  logic [`ADDR_STRIDE_WIDTH-1:0]    address_stride_b,
+    input  logic [`ADDR_STRIDE_WIDTH-1:0]    address_stride_c,
+    input  logic [`MAT_MUL_SIZE*`DWIDTH-1:0] a_data,
+    input  logic [`MAT_MUL_SIZE*`DWIDTH-1:0] b_data,
+    input  logic [`MAT_MUL_SIZE*`DWIDTH-1:0] a_data_in,
+    input  logic [`MAT_MUL_SIZE*`DWIDTH-1:0] b_data_in,
+    input  logic [`MAT_MUL_SIZE*`DWIDTH-1:0] c_data_in,
+    output logic [`MAT_MUL_SIZE*`DWIDTH-1:0] c_data_out,
+    output logic [`MAT_MUL_SIZE*`DWIDTH-1:0] a_data_out,
+    output logic [`MAT_MUL_SIZE*`DWIDTH-1:0] b_data_out,
+    output logic [`AWIDTH-1:0]               a_addr,
+    output logic [`AWIDTH-1:0]               b_addr,
+    output logic [`AWIDTH-1:0]               c_addr,
+    output logic                             c_data_available,
+    input  logic [`MASK_WIDTH-1:0]           validity_mask_a_rows,
+    input  logic [`MASK_WIDTH-1:0]           validity_mask_a_cols_b_rows,
+    input  logic [`MASK_WIDTH-1:0]           validity_mask_b_cols,
+    input  logic [7:0]                       final_mat_mul_size,
+    input  logic [7:0]                       a_loc,
+    input  logic [7:0]                       b_loc
     );
-
-    input clk;
-    input reset;
-    input pe_reset;
-    input start_mat_mul;
-    output done_mat_mul;
-    input [`AWIDTH-1:0] address_mat_a;
-    input [`AWIDTH-1:0] address_mat_b;
-    input [`AWIDTH-1:0] address_mat_c;
-    input [`ADDR_STRIDE_WIDTH-1:0] address_stride_a;
-    input [`ADDR_STRIDE_WIDTH-1:0] address_stride_b;
-    input [`ADDR_STRIDE_WIDTH-1:0] address_stride_c;
-    input [`MAT_MUL_SIZE*`DWIDTH-1:0] a_data;
-    input [`MAT_MUL_SIZE*`DWIDTH-1:0] b_data;
-    input [`MAT_MUL_SIZE*`DWIDTH-1:0] a_data_in;
-    input [`MAT_MUL_SIZE*`DWIDTH-1:0] b_data_in;
-    input [`MAT_MUL_SIZE*`DWIDTH-1:0] c_data_in;
-    output [`MAT_MUL_SIZE*`DWIDTH-1:0] c_data_out;
-    output [`MAT_MUL_SIZE*`DWIDTH-1:0] a_data_out;
-    output [`MAT_MUL_SIZE*`DWIDTH-1:0] b_data_out;
-    output [`AWIDTH-1:0] a_addr;
-    output [`AWIDTH-1:0] b_addr;
-    output [`AWIDTH-1:0] c_addr;
-    output c_data_available;
-    input [`MASK_WIDTH-1:0] validity_mask_a_rows;
-    input [`MASK_WIDTH-1:0] validity_mask_a_cols_b_rows;
-    input [`MASK_WIDTH-1:0] validity_mask_b_cols;
-    //7:0 is okay here. We aren't going to make a matmul larger than 128x128
-    //In fact, these will get optimized out by the synthesis tool, because
-    //we hardcode them at the instantiation level.
-    input [7:0] final_mat_mul_size;
-    input [7:0] a_loc;
-    input [7:0] b_loc;
 
     //////////////////////////////////////////////////////////////////////////
     // Logic for clock counting and when to assert done
     //////////////////////////////////////////////////////////////////////////
 
-    reg done_mat_mul;
+    logic done_mat_mul;
     //This is 7 bits because the expectation is that clock count will be pretty
     //small. For large matmuls, this will need to increased to have more bits.
     //In general, a systolic multiplier takes f(N)+P cycles, where N is the size 
     //of the matmul and P is the number of pipleine stages in the MAC block.
     //f(N) is a function describing the number of cycles taken to perform matmul
     //with a systolic array strcture.
-    reg [7:0] clk_cnt;
+    logic [7:0] clk_cnt;
     
     //Finding out number of cycles to assert matmul done.
     wire [7:0] clk_cnt_for_done;
@@ -100,22 +67,16 @@ module matmul_4x4_systolic(
     assign clk_cnt_for_done = (cycles_for_matmul + `NUM_CYCLES_IN_MAC) ;  
 
 
-    always @(posedge clk) 
-    begin
-        if (reset || ~start_mat_mul) 
-        begin
+    always_ff @(posedge clk) begin
+        if (reset || ~start_mat_mul) begin
             clk_cnt <= 0;
             done_mat_mul <= 0;
-        end
-        else if (clk_cnt == clk_cnt_for_done) 
-        begin
+        end else if (clk_cnt == clk_cnt_for_done) begin
             done_mat_mul <= 1;
             clk_cnt <= clk_cnt + 1;
-        end
-        else if (done_mat_mul == 0) 
+        end else if (done_mat_mul == 0) 
             clk_cnt <= clk_cnt + 1;   
-        else 
-        begin
+        else begin
             done_mat_mul <= 0;
             clk_cnt <= clk_cnt + 1;
         end
@@ -173,7 +134,7 @@ module matmul_4x4_systolic(
         .final_mat_mul_size(final_mat_mul_size),
         .a_loc(a_loc),
         .b_loc(b_loc)
-        );
+    );
 
 
     //////////////////////////////////////////////////////////////////////////
@@ -278,7 +239,7 @@ module matmul_4x4_systolic(
         .matrixC31(matrixC31),
         .matrixC32(matrixC32),
         .matrixC33(matrixC33)
-        );
+    );
 
     //////////////////////////////////////////////////////////////////////////
     // Instantiations of the actual PEs
@@ -314,7 +275,7 @@ module matmul_4x4_systolic(
         .matrixC33(matrixC33),
         .a_data_out(a_data_out),
         .b_data_out(b_data_out)
-        );
+    );
 
 endmodule
 
