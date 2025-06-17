@@ -68,6 +68,7 @@ module matmul_tb;
             $display("Dumping to FSDB");
             $fsdbDumpvars();
         `endif
+        set_matrices_int8();
         start = 1'b0;
         #115;
         start = 1'b1;
@@ -83,7 +84,7 @@ module matmul_tb;
     // 3 3 3 7   0 1 4 3   75 63 51 26    4B 3F 33 1A
     // 5 2 1 6   3 5 3 1   62 48 44 19    3E 30 2C 13
     // 9 1 0 5   9 6 3 2   54 40 46 13    36 28 2E 0D
-    initial begin
+    task automatic set_matrices_int8();
         //A is stored in ROW MAJOR format
         //A[0][0] (8'h08) should be the least significant byte of ram[0]
         //The first column of A should be read together. So, it needs to be 
@@ -102,7 +103,7 @@ module matmul_tb;
         u_matmul.matrix_B.ram[2]  = {8'h01, 8'h03, 8'h05, 8'h03};
         u_matmul.matrix_B.ram[1]  = {8'h03, 8'h04, 8'h01, 8'h00};
         u_matmul.matrix_B.ram[0]  = {8'h00, 8'h03, 8'h01, 8'h01};
-    end
+    endtask
 
     task automatic display_output();
         $display("\nOutput =");
