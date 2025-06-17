@@ -28,10 +28,12 @@ task display_fp8(input logic [7:0] fp);
         $write("+");
     end
 
-    if (fp[6:0] == 7'b1110000)
+    if (fp[6:0] == 7'b111_0000)
         $write("inf");
     else if (fp[6:4] == 3'b111)
         $write("nan");
+    else if (fp[6:0] == 7'b000_0000)
+        $write("0.000000");
     else
         $write("%f", abs_fp);
 endtask
