@@ -50,7 +50,6 @@ module matmul_4x4_systolic (
     // Logic for clock counting and when to assert done
     //////////////////////////////////////////////////////////////////////////
 
-    logic done_mat_mul;
     //This is 7 bits because the expectation is that clock count will be pretty
     //small. For large matmuls, this will need to increased to have more bits.
     //In general, a systolic multiplier takes f(N)+P cycles, where N is the size 
@@ -314,18 +313,13 @@ module output_logic (
     input logic [`DWIDTH-1:0] matrixC33
     );
 
-    wire row_latch_en;
-
     //////////////////////////////////////////////////////////////////////////
     // Logic to capture matrix C data from the PEs and shift it out
     //////////////////////////////////////////////////////////////////////////
     assign row_latch_en = ((clk_cnt == ((final_mat_mul_size<<2) - final_mat_mul_size -1 + `NUM_CYCLES_IN_MAC)));
     
-    logic c_data_available;
-    logic [`AWIDTH-1:0] c_addr;
     logic start_capturing_c_data;
     integer counter;
-    logic [`MAT_MUL_SIZE*`DWIDTH-1:0] c_data_out;
     logic [`MAT_MUL_SIZE*`DWIDTH-1:0] c_data_out_1;
     logic [`MAT_MUL_SIZE*`DWIDTH-1:0] c_data_out_2;
     logic [`MAT_MUL_SIZE*`DWIDTH-1:0] c_data_out_3;
@@ -423,11 +417,9 @@ module systolic_data_setup (
     input  logic [7:0]                       b_loc
     );
     
-    wire [`DWIDTH-1:0] a0_data;
     wire [`DWIDTH-1:0] a1_data;
     wire [`DWIDTH-1:0] a2_data;
     wire [`DWIDTH-1:0] a3_data;
-    wire [`DWIDTH-1:0] b0_data;
     wire [`DWIDTH-1:0] b1_data;
     wire [`DWIDTH-1:0] b2_data;
     wire [`DWIDTH-1:0] b3_data;
@@ -435,7 +427,6 @@ module systolic_data_setup (
     //////////////////////////////////////////////////////////////////////////
     // Logic to generate addresses to BRAM A
     //////////////////////////////////////////////////////////////////////////
-    logic [`AWIDTH-1:0] a_addr;
     logic a_mem_access; //flag that tells whether the matmul is trying to access memory or not
     
     always_ff @(posedge clk) 
@@ -483,12 +474,9 @@ module systolic_data_setup (
     assign a3_data = a_data[4*`DWIDTH-1:3*`DWIDTH] & {`DWIDTH{a_data_valid}} & {`DWIDTH{validity_mask_a_rows[3]}};
 
     //For larger matmuls, more such delaying flops will be needed
-    logic [`DWIDTH-1:0] a1_data_delayed_1;
     logic [`DWIDTH-1:0] a2_data_delayed_1;
-    logic [`DWIDTH-1:0] a2_data_delayed_2;
     logic [`DWIDTH-1:0] a3_data_delayed_1;
     logic [`DWIDTH-1:0] a3_data_delayed_2;
-    logic [`DWIDTH-1:0] a3_data_delayed_3;
     
     always_ff @(posedge clk) 
     begin
@@ -515,7 +503,6 @@ module systolic_data_setup (
     //////////////////////////////////////////////////////////////////////////
     // Logic to generate addresses to BRAM B
     //////////////////////////////////////////////////////////////////////////
-    logic [`AWIDTH-1:0] b_addr;
     logic b_mem_access; //flag that tells whether the matmul is trying to access memory or not
 
     always_ff @(posedge clk)
@@ -565,12 +552,9 @@ module systolic_data_setup (
     assign b3_data = b_data[4*`DWIDTH-1:3*`DWIDTH] & {`DWIDTH{b_data_valid}} & {`DWIDTH{validity_mask_b_cols[3]}};
 
     //For larger matmuls, more such delaying flops will be needed
-    logic [`DWIDTH-1:0] b1_data_delayed_1;
     logic [`DWIDTH-1:0] b2_data_delayed_1;
-    logic [`DWIDTH-1:0] b2_data_delayed_2;
     logic [`DWIDTH-1:0] b3_data_delayed_1;
     logic [`DWIDTH-1:0] b3_data_delayed_2;
-    logic [`DWIDTH-1:0] b3_data_delayed_3;
     
     always_ff @(posedge clk) 
     begin
