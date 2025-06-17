@@ -10,6 +10,7 @@ compile: clean
 		../src/output_logic.sv \
 		../src/ram.sv \
 		../src/fp8_mac.sv \
+		../src/seq_mac.sv \
 		../src/systolic_data_setup.sv \
 		../src/matmul.sv \
 		../tb/helpers.sv \
