@@ -52,8 +52,7 @@ module fp8_tb();
         display_fp8(b);
         $write("\ny = %b = ", result);
         display_fp8(result);
-        $display("flags = %b", flags);
+        $display(" (flags = %b)", flags);
         #4;
     endtask
-
 endmodule

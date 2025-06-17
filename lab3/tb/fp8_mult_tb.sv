@@ -1,22 +1,3 @@
-function real fp8_to_real(input logic [7:0] fp);
-    logic sign;
-    logic [2:0] exp;
-    logic [3:0] mant;
-    int unbiased_exp;
-    real r_mant;
-
-    sign = fp[7];
-    exp  = fp[6:4];
-    mant = fp[3:0];
-
-    if (exp == 0 && mant == 0) return 0.0;
-
-    unbiased_exp = exp - 3;
-    r_mant = 1.0 + mant / 16.0;
-    return (sign ? -1.0 : 1.0) * r_mant * (2.0 ** unbiased_exp);
-endfunction
-
-
 module fp8_tb();
     // Set the timescale
     timeunit 1ns;
@@ -58,12 +39,16 @@ module fp8_tb();
         #5;
     endtask
 
-    // Print the current DUT signals 
+    // Print the current DUT values
     task automatic print_vals();
         #1;
-        $display("a = %b = %f", a, fp8_to_real(a));
-        $display("b = %b = %f", b, fp8_to_real(b));
-        $display("y = %b = %f, (flags = %b)\n", result, fp8_to_real(result), flags);
+        $write("\na = %b = ", a);
+        display_fp8(a);
+        $write("\nb = %b = ", b);
+        display_fp8(b);
+        $write("\ny = %b = ", result);
+        display_fp8(result);
+        $display(" (flags = %b)", flags);
         #4;
     endtask
 endmodule
