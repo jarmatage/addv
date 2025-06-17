@@ -20,8 +20,8 @@ set files [lmap f $files {file join .. src ${f}.sv}]
 analyze -format sverilog $files
 
 # Convert the design into lib cells
-elaborate "matrix_multiplication"
-current_design "matrix_multiplication"
+elaborate "matmul_4x4_systolic"
+current_design "matmul_4x4_systolic"
 link
 uniquify
 
