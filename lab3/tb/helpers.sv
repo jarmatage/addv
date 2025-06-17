@@ -28,5 +28,5 @@ task display_fp8(input logic [7:0] fp);
     else if (fp[6:4] == 3'b111)
         $write("nan");
     else
-        $write("%f", fp8_to_real(fp));
+        $write("%f", $fabs(fp8_to_real(fp)));
 endtask
