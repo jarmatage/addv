@@ -25,6 +25,7 @@ module matmul_tb;
     // DUT signals
     logic clk;
     logic resetn;
+    logic is_fp8;
     logic pe_resetn;
     logic start;
     wire done;
@@ -33,6 +34,7 @@ module matmul_tb;
     matrix_multiplication u_matmul(
         .clk(clk), 
         .resetn(resetn), 
+        .is_fp8(is_fp8),
         .pe_resetn(pe_resetn), 
         .address_mat_a(10'b0),
         .address_mat_b(10'b0),
@@ -53,6 +55,7 @@ module matmul_tb;
     // Reset
     initial begin
         resetn = 1'b0;
+        is_fp8 = 1'b0;
         pe_resetn = 1'b0;
         #55;
         resetn = 1'b1;

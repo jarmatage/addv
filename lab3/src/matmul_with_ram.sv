@@ -194,6 +194,7 @@ module matrix_multiplication(
     matmul_4x4_systolic u_matmul_4x4(
         .clk(clk),
         .reset(reset),
+        .is_fp8(is_fp8),
         .pe_reset(pe_reset),
         .start_mat_mul(start_mat_mul),
         .done_mat_mul(done_mat_mul),
