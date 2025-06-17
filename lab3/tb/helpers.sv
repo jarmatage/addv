@@ -20,12 +20,13 @@ endfunction
 task display_fp8(input logic [7:0] fp);
     real abs_fp;
 
-    if (fp[7])
+    if (fp[7]) begin
         abs_fp = -fp8_to_real(fp);
         $write("-");
-    else
+    end else begin
         abs_fp = fp8_to_real(fp);
         $write("+");
+    end
 
     if (fp[6:0] == 7'b1110000)
         $write("inf");
