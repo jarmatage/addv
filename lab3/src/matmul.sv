@@ -865,34 +865,29 @@ endmodule
 //////////////////////////////////////////////////////////////////////////
 // Multiply-and-accumulate (MAC) block
 //////////////////////////////////////////////////////////////////////////
-module seq_mac(a, b, out, reset, clk);
-    input [`DWIDTH-1:0] a;
-    input [`DWIDTH-1:0] b;
-    input reset;
-    input clk;
-    output [`DWIDTH-1:0] out;
+module seq_mac(
+    input logic [`DWIDTH-1:0] a,
+    input logic [`DWIDTH-1:0] b,
+    input logic reset,
+    input logic clk,
+    output logic [`DWIDTH-1:0] out
+);
 
-    reg [`DWIDTH-1:0] out;
-    reg [`DWIDTH-1:0] a_flop, b_flop, mult;
+    logic [`DWIDTH-1:0] a_flop, b_flop, mult;
 
-    always @(posedge clk)
-    begin
-        if(reset)
-        begin
+    always_ff @(posedge clk) begin
+        if (reset) begin
             out <= 0;
             a_flop <= 0;
             b_flop <= 0;
             mult <= 0;
-        end
-        else
-        begin
+        end else begin
             a_flop <= a;
             b_flop <= b;
 
             mult <= a_flop * b_flop; 
             out <= mult + out; 
         end
-            
     end
 
 endmodule
