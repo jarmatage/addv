@@ -17,6 +17,7 @@ module fp8_tb();
             $fsdbDumpvars();
         `endif
         reset_dut();
+
         a = 8'b0_100_0100;
         b = 8'b0_100_0000;
         print_vals();
@@ -28,6 +29,43 @@ module fp8_tb();
         a = 8'b0_100_0100;
         b = 8'b0_101_0111;
         print_vals();
+
+        a = 8'b0_111_0000;
+        b = 8'b0_111_0000;
+        print_vals();
+
+        a = 8'b0_111_0000;
+        b = 8'b1_111_0000;
+        print_vals();
+
+        a = 8'b0_000_0000;
+        b = 8'b0_111_0000;
+        print_vals();
+
+        a = 8'b1_111_0000;
+        b = 8'b0_101_0011;
+        print_vals();        
+
+        a = 8'b1_111_1111;
+        b = 8'b0_100_0111;
+        print_vals();
+
+        a = 8'b0_111_1111;
+        b = 8'b0_111_0000;
+        print_vals();
+
+        a = 8'b0_110_1110;
+        b = 8'b1_101_1110;
+        print_vals();
+
+        a = 8'b1_100_0100;
+        b = 8'b1_001_0010;
+        print_vals();
+
+        a = 8'b1_001_0100;
+        b = 8'b1_001_0010;
+        print_vals();
+
         reset_dut();
         $finish;
     end
