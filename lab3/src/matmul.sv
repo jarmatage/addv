@@ -473,61 +473,34 @@ endmodule
 //////////////////////////////////////////////////////////////////////////
 // Systolic data setup
 //////////////////////////////////////////////////////////////////////////
-module systolic_data_setup(
-    clk,
-    reset,
-    start_mat_mul,
-    a_addr,
-    b_addr,
-    address_mat_a,
-    address_mat_b,
-    address_stride_a,
-    address_stride_b,
-    a_data,
-    b_data,
-    clk_cnt,
-    a0_data,
-    a1_data_delayed_1,
-    a2_data_delayed_2,
-    a3_data_delayed_3,
-    b0_data,
-    b1_data_delayed_1,
-    b2_data_delayed_2,
-    b3_data_delayed_3,
-    validity_mask_a_rows,
-    validity_mask_a_cols_b_rows,
-    validity_mask_b_cols,
-    final_mat_mul_size,
-    a_loc,
-    b_loc
+module systolic_data_setup (
+    input  logic                             clk,
+    input  logic                             reset,
+    input  logic                             start_mat_mul,
+    output logic [`AWIDTH-1:0]               a_addr,
+    output logic [`AWIDTH-1:0]               b_addr,
+    input  logic [`AWIDTH-1:0]               address_mat_a,
+    input  logic [`AWIDTH-1:0]               address_mat_b,
+    input  logic [`ADDR_STRIDE_WIDTH-1:0]    address_stride_a,
+    input  logic [`ADDR_STRIDE_WIDTH-1:0]    address_stride_b,
+    input  logic [`MAT_MUL_SIZE*`DWIDTH-1:0] a_data,
+    input  logic [`MAT_MUL_SIZE*`DWIDTH-1:0] b_data,
+    input  logic [7:0]                       clk_cnt,
+    output logic [`DWIDTH-1:0]               a0_data,
+    output logic [`DWIDTH-1:0]               a1_data_delayed_1,
+    output logic [`DWIDTH-1:0]               a2_data_delayed_2,
+    output logic [`DWIDTH-1:0]               a3_data_delayed_3,
+    output logic [`DWIDTH-1:0]               b0_data,
+    output logic [`DWIDTH-1:0]               b1_data_delayed_1,
+    output logic [`DWIDTH-1:0]               b2_data_delayed_2,
+    output logic [`DWIDTH-1:0]               b3_data_delayed_3,
+    input  logic [`MASK_WIDTH-1:0]           validity_mask_a_rows,
+    input  logic [`MASK_WIDTH-1:0]           validity_mask_a_cols_b_rows,
+    input  logic [`MASK_WIDTH-1:0]           validity_mask_b_cols,
+    input  logic [7:0]                       final_mat_mul_size,
+    input  logic [7:0]                       a_loc,
+    input  logic [7:0]                       b_loc
     );
-
-    input clk;
-    input reset;
-    input start_mat_mul;
-    output [`AWIDTH-1:0] a_addr;
-    output [`AWIDTH-1:0] b_addr;
-    input [`AWIDTH-1:0] address_mat_a;
-    input [`AWIDTH-1:0] address_mat_b;
-    input [`ADDR_STRIDE_WIDTH-1:0] address_stride_a;
-    input [`ADDR_STRIDE_WIDTH-1:0] address_stride_b;
-    input [`MAT_MUL_SIZE*`DWIDTH-1:0] a_data;
-    input [`MAT_MUL_SIZE*`DWIDTH-1:0] b_data;
-    input [7:0] clk_cnt;
-    output [`DWIDTH-1:0] a0_data;
-    output [`DWIDTH-1:0] a1_data_delayed_1;
-    output [`DWIDTH-1:0] a2_data_delayed_2;
-    output [`DWIDTH-1:0] a3_data_delayed_3;
-    output [`DWIDTH-1:0] b0_data;
-    output [`DWIDTH-1:0] b1_data_delayed_1;
-    output [`DWIDTH-1:0] b2_data_delayed_2;
-    output [`DWIDTH-1:0] b3_data_delayed_3;
-    input [`MASK_WIDTH-1:0] validity_mask_a_rows;
-    input [`MASK_WIDTH-1:0] validity_mask_a_cols_b_rows;
-    input [`MASK_WIDTH-1:0] validity_mask_b_cols;
-    input [7:0] final_mat_mul_size;
-    input [7:0] a_loc;
-    input [7:0] b_loc;
     
     wire [`DWIDTH-1:0] a0_data;
     wire [`DWIDTH-1:0] a1_data;
@@ -738,7 +711,7 @@ module systolic_pe_matrix(
     output logic [`DWIDTH-1:0]               matrixC33,
     output logic [`MAT_MUL_SIZE*`DWIDTH-1:0] a_data_out,
     output logic [`MAT_MUL_SIZE*`DWIDTH-1:0] b_data_out
-);
+    );
 
     wire [`DWIDTH-1:0] a00to01, a01to02, a02to03, a03to04;
     wire [`DWIDTH-1:0] a10to11, a11to12, a12to13, a13to14;
@@ -801,7 +774,7 @@ module processing_element(
     output logic [`DWIDTH-1:0]  out_a,
     output logic [`DWIDTH-1:0]  out_b,
     output logic [`DWIDTH-1:0]  out_c
-);
+    );
 
     logic [`DWIDTH-1:0] out_mac;
 
@@ -830,7 +803,7 @@ module seq_mac(
     input logic reset,
     input logic clk,
     output logic [`DWIDTH-1:0] out
-);
+    );
 
     logic [`DWIDTH-1:0] a_flop, b_flop, mult;
 
