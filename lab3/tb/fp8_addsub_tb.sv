@@ -65,9 +65,24 @@ module fp8_tb();
         print_vals();
 
         operation = 1'b1;
+        a = 8'b0_111_0000;
+        b = 8'b1_111_0000;
+        print_vals();
+
+        operation = 1'b1;
         a = 8'b0_101_0000;
         b = 8'b0_011_0110;
         print_vals();
+
+        operation = 1'b1;
+        a = 8'b0_010_0001;
+        b = 8'b0_010_0010;
+        print_vals();      
+
+        operation = 1'b1;
+        a = 8'b0_010_0001;
+        b = 8'b1_010_0110;
+        print_vals();     
 
         reset_dut();
         $display("\nAll done!");
