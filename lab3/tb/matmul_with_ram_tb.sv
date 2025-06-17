@@ -106,7 +106,7 @@ module matmul_tb;
         for (int i = 0; i <= 24; i += 8) begin
             $write("|");
 	    for (int j = 0; j < 4; j++) begin
-                $write(" %h", u_matmul.matrix_C.ram[j][i+:8]);
+                $write(" %d", u_matmul.matrix_C.ram[j][i+:8]);
 	    end
             $display(" |");
         end
