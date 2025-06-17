@@ -1,9 +1,3 @@
-typedef struct packed {
-    logic       sign;
-    logic [2:0] exp;
-    logic [3:0] mant;
-} fp8_value;
-
 module fp8_addsub (
     input  logic operation, // 1 = subtraction
     input  fp8_value a, b,

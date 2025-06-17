@@ -1,9 +1,3 @@
-typedef struct packed {
-    logic       sign;
-    logic [2:0] exp;
-    logic [3:0] mant;
-} fp8_value;
-
 module fp8_mult (
     input  fp8_value a, b,
     output fp8_value result,
