@@ -16,55 +16,31 @@
 
 //Design with memories
 module matrix_multiplication(
-    clk, 
-    resetn, 
-    pe_resetn,
-    address_mat_a,
-    address_mat_b,
-    address_mat_c,
-    address_stride_a,
-    address_stride_b,
-    address_stride_c,
-    bram_addr_a_ext,
-    bram_rdata_a_ext,
-    bram_wdata_a_ext,
-    bram_we_a_ext,
-    bram_addr_b_ext,
-    bram_rdata_b_ext,
-    bram_wdata_b_ext,
-    bram_we_b_ext,
-    bram_addr_c_ext,
-    bram_rdata_c_ext,
-    bram_wdata_c_ext,
-    bram_we_c_ext,
-    start, //starts the matmul operation
-    done  //asserts when matmul operation is complete
-    );
+	input  logic                             clk,
+	input  logic                             resetn,
+	input  logic                             pe_resetn,
+	input  logic [`AWIDTH-1:0]               address_mat_a,
+	input  logic [`AWIDTH-1:0]               address_mat_b,
+	input  logic [`AWIDTH-1:0]               address_mat_c,
+	input  logic [`ADDR_STRIDE_WIDTH-1:0]    address_stride_a,
+	input  logic [`ADDR_STRIDE_WIDTH-1:0]    address_stride_b,
+	input  logic [`ADDR_STRIDE_WIDTH-1:0]    address_stride_c,
+    input  logic [`AWIDTH-1:0]               bram_addr_a_ext,
+    output logic [`MAT_MUL_SIZE*`DWIDTH-1:0] bram_rdata_a_ext,
+    input  logic [`MAT_MUL_SIZE*`DWIDTH-1:0] bram_wdata_a_ext,
+    input  logic [`MASK_WIDTH-1:0]           bram_we_a_ext,
+    input  logic [`AWIDTH-1:0]               bram_addr_b_ext,
+    output logic [`MAT_MUL_SIZE*`DWIDTH-1:0] bram_rdata_b_ext,
+    input  logic [`MAT_MUL_SIZE*`DWIDTH-1:0] bram_wdata_b_ext,
+    input  logic [`MASK_WIDTH-1:0]           bram_we_b_ext,
+    input  logic [`AWIDTH-1:0]               bram_addr_c_ext,
+    output logic [`MAT_MUL_SIZE*`DWIDTH-1:0] bram_rdata_c_ext,
+    input  logic [`MAT_MUL_SIZE*`DWIDTH-1:0] bram_wdata_c_ext,
+    input  logic [`MASK_WIDTH-1:0]           bram_we_c_ext,
+	input  logic                             start,
+	output logic                             done
+);
 
-	input clk;
-	input resetn;
-	input pe_resetn;
-	input [`AWIDTH-1:0] address_mat_a;
-	input [`AWIDTH-1:0] address_mat_b;
-	input [`AWIDTH-1:0] address_mat_c;
-	input [`ADDR_STRIDE_WIDTH-1:0] address_stride_a;
-	input [`ADDR_STRIDE_WIDTH-1:0] address_stride_b;
-	input [`ADDR_STRIDE_WIDTH-1:0] address_stride_c;
-    input  [`AWIDTH-1:0] bram_addr_a_ext;
-    output [`MAT_MUL_SIZE*`DWIDTH-1:0] bram_rdata_a_ext;
-    input  [`MAT_MUL_SIZE*`DWIDTH-1:0] bram_wdata_a_ext;
-    input  [`MASK_WIDTH-1:0] bram_we_a_ext;
-    input  [`AWIDTH-1:0] bram_addr_b_ext;
-    output [`MAT_MUL_SIZE*`DWIDTH-1:0] bram_rdata_b_ext;
-    input  [`MAT_MUL_SIZE*`DWIDTH-1:0] bram_wdata_b_ext;
-    input  [`MASK_WIDTH-1:0] bram_we_b_ext;
-    input  [`AWIDTH-1:0] bram_addr_c_ext;
-    output [`MAT_MUL_SIZE*`DWIDTH-1:0] bram_rdata_c_ext;
-    input  [`MAT_MUL_SIZE*`DWIDTH-1:0] bram_wdata_c_ext;
-    input  [`MASK_WIDTH-1:0] bram_we_c_ext;
-	input start;
-	output done;
-  
 	wire [`AWIDTH-1:0] bram_addr_a;
 	wire [4*`DWIDTH-1:0] bram_rdata_a;
 	wire [4*`DWIDTH-1:0] bram_wdata_a;
@@ -80,8 +56,7 @@ module matrix_multiplication(
 	wire [4*`DWIDTH-1:0] bram_wdata_c;
 	wire [`MASK_WIDTH-1:0] bram_we_c;
 	
-
-    reg [3:0] state;
+    logic [3:0] state;
   
     //We will utilize port 0 (addr0, d0, we0, q0) to interface with the matmul.
     //Unused ports (port 1 signals addr1, d1, we1, q1) will be connected to the "external" signals i.e. signals that exposed to the external world.
@@ -133,19 +108,15 @@ module matrix_multiplication(
     );
 
 
-    reg start_mat_mul;
+    logic start_mat_mul;
     wire done_mat_mul;
 	
 	//fsm to start matmul
-	always @( posedge clk) 
-	begin
-        if (resetn == 1'b0) 
-        begin
+	always_ff @(posedge clk) begin
+        if (resetn == 1'b0) begin
             state <= 4'b0000;
             start_mat_mul <= 1'b0;
-        end 
-        else 
-        begin
+        end else begin
             case (state)
             4'b0000: 
             begin
@@ -161,7 +132,6 @@ module matrix_multiplication(
                 start_mat_mul <= 1'b1;	      
                 state <= 4'b1010;                    
             end      
-            
             
             4'b1010: 
             begin                 
