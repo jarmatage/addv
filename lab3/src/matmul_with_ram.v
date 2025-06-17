@@ -272,12 +272,12 @@ module ram (
 
     logic [31:0] ram[((1<<`AWIDTH)-1):0];
 
-    always_ff @(posedge clk) begin 
+    always @(posedge clk) begin // keep as "always" to avoid multiple drivers error
         if (|we0) ram[addr0] <= d0;
         q0 <= ram[addr0];
     end
 
-    always_ff @(posedge clk) begin
+    always @(posedge clk) begin // keep as "always" to avoid multiple drivers error
         if (|we1) ram[addr1] <= d1;
         q1 <= ram[addr1];
     end
