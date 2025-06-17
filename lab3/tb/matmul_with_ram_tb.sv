@@ -70,8 +70,8 @@ module matmul_tb;
         start = 1'b1;
         @(posedge done);
         start = 1'b0;
-        display_output();
         #100;         
+        display_output();
         $finish;
     end
     
@@ -102,11 +102,12 @@ module matmul_tb;
     end
 
     task automatic display_output();
-        $display("Output =");
-        for (int i = 0; i < 32; i += 8) begin
+        $display("\nOutput =");
+        for (int i = 0; i <= 24; i += 8) begin
             $write("|");
-            for (int j = 0; j < 4; j++)
-                $write(" %h", u_matmul.matrix_C.ram[j][7+i:i]);
+	    for (int j = 0; j < 4; j++) begin
+                $write(" %h", u_matmul.matrix_C.ram[j][i+:8]);
+	    end
             $display(" |");
         end
     endtask
