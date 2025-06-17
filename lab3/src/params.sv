@@ -1,0 +1,15 @@
+`define DWIDTH 8
+`define AWIDTH 10
+`define MEM_SIZE 1024
+
+`define MAT_MUL_SIZE 4
+`define MASK_WIDTH 4
+`define LOG2_MAT_MUL_SIZE 2
+
+`define BB_MAT_MUL_SIZE `MAT_MUL_SIZE
+`define NUM_CYCLES_IN_MAC 3
+`define MEM_ACCESS_LATENCY 1
+`define REG_DATAWIDTH 32
+`define REG_ADDRWIDTH 8
+`define ADDR_STRIDE_WIDTH 8
+`define MAX_BITS_POOL 3

@@ -15,7 +15,9 @@ define_design_lib WORK -path ./WORK
 set verilogout_show_unconnected_pins "true"
 
 # Read verilog
-analyze -format sverilog "../src/int8_matmul.sv"
+set files [list params int8_matmul output_logic ram seq_mac systolic_data_setup]
+set files [lmap f $files {file join .. src ${f}.sv}]
+analyze -format sverilog $files
 
 # Convert the design into lib cells
 elaborate "matrix_multiplication"
