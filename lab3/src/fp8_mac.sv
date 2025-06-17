@@ -1,9 +1,8 @@
 module fp8_mac (
-    input  logic       clk,
-    input  logic       reset,
-    input  logic [7:0] a,
-    input  logic [7:0] b,
-    output logic [7:0] result,
+    input  logic clk,
+    input  logic reset,
+    input  fp8_value a, b,
+    output fp8_value out,
     output logic [4:0] flags
 );
 
