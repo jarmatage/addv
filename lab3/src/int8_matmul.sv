@@ -953,7 +953,7 @@ module ram (
     input  logic                           clk
     );
 
-    reg [31:0] ram[((1<<`AWIDTH)-1):0]; // keep as "reg" to avoid multiple drivers error
+    logic [31:0] ram[((1<<`AWIDTH)-1):0];
 
     always @(posedge clk) begin // keep as "always" to avoid multiple drivers error
         if (|we0) ram[addr0] <= d0;
