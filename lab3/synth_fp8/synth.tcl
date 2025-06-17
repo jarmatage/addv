@@ -15,7 +15,18 @@ define_design_lib WORK -path ./WORK
 set verilogout_show_unconnected_pins "true"
 
 # Read verilog
-set files [list fp8_value fp8_addsub fp8_mult fp8_mac matmul matmul_with_ram]
+set files {
+    params
+    fp8_value
+    fp8_addsub
+    fp8_mult
+    fp8_mac
+    fp8_matmul
+    output_logic
+    ram
+    seq_mac
+    systolic_data_setup
+}
 set files [lmap f $files {file join .. src ${f}.sv}]
 analyze -format sverilog $files
 
