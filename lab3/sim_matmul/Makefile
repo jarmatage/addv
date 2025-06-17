@@ -3,7 +3,7 @@ all: sim verdi
 compile: clean
 	@echo "=== Compiling ==="
 	${VCS_HOME}/bin/vcs -full64 -sverilog +define+DUMP=1 -debug_access+all -kdb -timescale=1ns/1ps \
-		../tb/matmul_with_ram_tb.v \
+		../tb/matmul_with_ram_tb.sv \
 		../src/matmul_with_ram.v \
 		../src/matmul.v \
 	-l compile.log

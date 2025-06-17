@@ -102,7 +102,7 @@ module matmul_tb;
     end
 
     task automatic display_output();
-        $display("Output =")
+        $display("Output =");
         for (int i = 0; i < 32; i += 8) begin
             $write("|");
             for (int j = 0; j < 4; j++)
