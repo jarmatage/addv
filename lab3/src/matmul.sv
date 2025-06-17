@@ -435,10 +435,10 @@ module systolic_data_setup (
     //////////////////////////////////////////////////////////////////////////
     // Logic to generate addresses to BRAM A
     //////////////////////////////////////////////////////////////////////////
-    reg [`AWIDTH-1:0] a_addr;
-    reg a_mem_access; //flag that tells whether the matmul is trying to access memory or not
+    logic [`AWIDTH-1:0] a_addr;
+    logic a_mem_access; //flag that tells whether the matmul is trying to access memory or not
     
-    always @(posedge clk) 
+    always_ff@(posedge clk) 
     begin
         if ((reset || ~start_mat_mul) || (clk_cnt >= (a_loc<<`LOG2_MAT_MUL_SIZE)+final_mat_mul_size)) begin
             a_addr <= address_mat_a-address_stride_a;
@@ -454,8 +454,8 @@ module systolic_data_setup (
     //////////////////////////////////////////////////////////////////////////
     // Logic to generate valid signals for data coming from BRAM A
     //////////////////////////////////////////////////////////////////////////
-    reg [7:0] a_mem_access_counter;
-    always @(posedge clk) 
+    logic [7:0] a_mem_access_counter;
+    always_ff@(posedge clk) 
     begin
         if (reset || ~start_mat_mul) 
             a_mem_access_counter <= 0;
@@ -483,14 +483,14 @@ module systolic_data_setup (
     assign a3_data = a_data[4*`DWIDTH-1:3*`DWIDTH] & {`DWIDTH{a_data_valid}} & {`DWIDTH{validity_mask_a_rows[3]}};
 
     //For larger matmuls, more such delaying flops will be needed
-    reg [`DWIDTH-1:0] a1_data_delayed_1;
-    reg [`DWIDTH-1:0] a2_data_delayed_1;
-    reg [`DWIDTH-1:0] a2_data_delayed_2;
-    reg [`DWIDTH-1:0] a3_data_delayed_1;
-    reg [`DWIDTH-1:0] a3_data_delayed_2;
-    reg [`DWIDTH-1:0] a3_data_delayed_3;
+    logic [`DWIDTH-1:0] a1_data_delayed_1;
+    logic [`DWIDTH-1:0] a2_data_delayed_1;
+    logic [`DWIDTH-1:0] a2_data_delayed_2;
+    logic [`DWIDTH-1:0] a3_data_delayed_1;
+    logic [`DWIDTH-1:0] a3_data_delayed_2;
+    logic [`DWIDTH-1:0] a3_data_delayed_3;
     
-    always @(posedge clk) 
+    always_ff@(posedge clk) 
     begin
         if (reset || ~start_mat_mul || clk_cnt==0) 
         begin
@@ -515,10 +515,10 @@ module systolic_data_setup (
     //////////////////////////////////////////////////////////////////////////
     // Logic to generate addresses to BRAM B
     //////////////////////////////////////////////////////////////////////////
-    reg [`AWIDTH-1:0] b_addr;
-    reg b_mem_access; //flag that tells whether the matmul is trying to access memory or not
+    logic [`AWIDTH-1:0] b_addr;
+    logic b_mem_access; //flag that tells whether the matmul is trying to access memory or not
 
-    always @(posedge clk) 
+    always_ff@(posedge clk) 
     begin
         if ((reset || ~start_mat_mul) || (clk_cnt >= (b_loc<<`LOG2_MAT_MUL_SIZE)+final_mat_mul_size)) 
         begin
@@ -535,8 +535,8 @@ module systolic_data_setup (
     //////////////////////////////////////////////////////////////////////////
     // Logic to generate valid signals for data coming from BRAM B
     //////////////////////////////////////////////////////////////////////////
-    reg [7:0] b_mem_access_counter;
-    always @(posedge clk) 
+    logic [7:0] b_mem_access_counter;
+    always_ff@(posedge clk) 
     begin
         if (reset || ~start_mat_mul) 
             b_mem_access_counter <= 0;
@@ -565,14 +565,14 @@ module systolic_data_setup (
     assign b3_data = b_data[4*`DWIDTH-1:3*`DWIDTH] & {`DWIDTH{b_data_valid}} & {`DWIDTH{validity_mask_b_cols[3]}};
 
     //For larger matmuls, more such delaying flops will be needed
-    reg [`DWIDTH-1:0] b1_data_delayed_1;
-    reg [`DWIDTH-1:0] b2_data_delayed_1;
-    reg [`DWIDTH-1:0] b2_data_delayed_2;
-    reg [`DWIDTH-1:0] b3_data_delayed_1;
-    reg [`DWIDTH-1:0] b3_data_delayed_2;
-    reg [`DWIDTH-1:0] b3_data_delayed_3;
+    logic [`DWIDTH-1:0] b1_data_delayed_1;
+    logic [`DWIDTH-1:0] b2_data_delayed_1;
+    logic [`DWIDTH-1:0] b2_data_delayed_2;
+    logic [`DWIDTH-1:0] b3_data_delayed_1;
+    logic [`DWIDTH-1:0] b3_data_delayed_2;
+    logic [`DWIDTH-1:0] b3_data_delayed_3;
     
-    always @(posedge clk) 
+    always_ff@(posedge clk) 
     begin
         if (reset || ~start_mat_mul || clk_cnt==0) 
         begin
