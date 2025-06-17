@@ -438,7 +438,7 @@ module systolic_data_setup (
     logic [`AWIDTH-1:0] a_addr;
     logic a_mem_access; //flag that tells whether the matmul is trying to access memory or not
     
-    always_ff@(posedge clk) 
+    always_ff @(posedge clk) 
     begin
         if ((reset || ~start_mat_mul) || (clk_cnt >= (a_loc<<`LOG2_MAT_MUL_SIZE)+final_mat_mul_size)) begin
             a_addr <= address_mat_a-address_stride_a;
@@ -455,7 +455,7 @@ module systolic_data_setup (
     // Logic to generate valid signals for data coming from BRAM A
     //////////////////////////////////////////////////////////////////////////
     logic [7:0] a_mem_access_counter;
-    always_ff@(posedge clk) 
+    always_ff @(posedge clk) 
     begin
         if (reset || ~start_mat_mul) 
             a_mem_access_counter <= 0;
@@ -490,7 +490,7 @@ module systolic_data_setup (
     logic [`DWIDTH-1:0] a3_data_delayed_2;
     logic [`DWIDTH-1:0] a3_data_delayed_3;
     
-    always_ff@(posedge clk) 
+    always_ff @(posedge clk) 
     begin
         if (reset || ~start_mat_mul || clk_cnt==0) 
         begin
@@ -518,7 +518,7 @@ module systolic_data_setup (
     logic [`AWIDTH-1:0] b_addr;
     logic b_mem_access; //flag that tells whether the matmul is trying to access memory or not
 
-    always_ff@(posedge clk) 
+    always_ff @(posedge clk)
     begin
         if ((reset || ~start_mat_mul) || (clk_cnt >= (b_loc<<`LOG2_MAT_MUL_SIZE)+final_mat_mul_size)) 
         begin
@@ -536,7 +536,7 @@ module systolic_data_setup (
     // Logic to generate valid signals for data coming from BRAM B
     //////////////////////////////////////////////////////////////////////////
     logic [7:0] b_mem_access_counter;
-    always_ff@(posedge clk) 
+    always_ff @(posedge clk) 
     begin
         if (reset || ~start_mat_mul) 
             b_mem_access_counter <= 0;
@@ -572,7 +572,7 @@ module systolic_data_setup (
     logic [`DWIDTH-1:0] b3_data_delayed_2;
     logic [`DWIDTH-1:0] b3_data_delayed_3;
     
-    always_ff@(posedge clk) 
+    always_ff @(posedge clk) 
     begin
         if (reset || ~start_mat_mul || clk_cnt==0) 
         begin
