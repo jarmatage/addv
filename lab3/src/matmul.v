@@ -1,3 +1,4 @@
+`timescale 1ns / 1ps
 `define DWIDTH 8
 `define AWIDTH 10
 `define MEM_SIZE 1024
@@ -79,9 +80,9 @@ module matmul_4x4_systolic(
     input [7:0] a_loc;
     input [7:0] b_loc;
 
-    //////////////////////////////////////////////////////////////////////////
-    // Logic for clock counting and when to assert done
-    //////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+// Logic for clock counting and when to assert done
+//////////////////////////////////////////////////////////////////////////
 
     reg done_mat_mul;
     //This is 7 bits because the expectation is that clock count will be pretty
@@ -143,9 +144,9 @@ module matmul_4x4_systolic(
     wire [`DWIDTH-1:0] b3_data_delayed_2;
     wire [`DWIDTH-1:0] b3_data_delayed_3;
     
-    //////////////////////////////////////////////////////////////////////////
-    // Instantiation of systolic data setup
-    //////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+// Instantiation of systolic data setup
+//////////////////////////////////////////////////////////////////////////
     systolic_data_setup u_systolic_data_setup(
         .clk(clk),
         .reset(reset),
@@ -176,9 +177,9 @@ module matmul_4x4_systolic(
         );
 
 
-    //////////////////////////////////////////////////////////////////////////
-    // Logic to mux data_in coming from neighboring matmuls
-    //////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+// Logic to mux data_in coming from neighboring matmuls
+//////////////////////////////////////////////////////////////////////////
     wire [`DWIDTH-1:0] a0;
     wire [`DWIDTH-1:0] a1;
     wire [`DWIDTH-1:0] a2;
@@ -245,9 +246,9 @@ module matmul_4x4_systolic(
     wire [`DWIDTH-1:0] matrixC33;
     
 
-    //////////////////////////////////////////////////////////////////////////
-    // Instantiation of the output logic
-    //////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+// Instantiation of the output logic
+//////////////////////////////////////////////////////////////////////////
     output_logic u_output_logic(
         .clk(clk),
         .reset(reset),
@@ -280,9 +281,9 @@ module matmul_4x4_systolic(
         .matrixC33(matrixC33)
         );
 
-    //////////////////////////////////////////////////////////////////////////
-    // Instantiations of the actual PEs
-    //////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+// Instantiations of the actual PEs
+//////////////////////////////////////////////////////////////////////////
     systolic_pe_matrix u_systolic_pe_matrix(
         .reset(reset),
         .clk(clk),
@@ -385,9 +386,9 @@ module output_logic(
     
     wire row_latch_en;
 
-    //////////////////////////////////////////////////////////////////////////
-    // Logic to capture matrix C data from the PEs and shift it out
-    //////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+// Logic to capture matrix C data from the PEs and shift it out
+//////////////////////////////////////////////////////////////////////////
     assign row_latch_en = ((clk_cnt == ((final_mat_mul_size<<2) - final_mat_mul_size -1 +`NUM_CYCLES_IN_MAC)));
     
     reg c_data_available;
@@ -408,12 +409,12 @@ module output_logic(
     assign col2 = {matrixC32, matrixC22, matrixC12, matrixC02};
     assign col3 = {matrixC33, matrixC23, matrixC13, matrixC03};
 
-    //If save_output_to_accum is asserted, that means we are not intending to shift
-    //out the outputs, because the outputs are still partial sums. 
+//If save_output_to_accum is asserted, that means we are not intending to shift
+//out the outputs, because the outputs are still partial sums. 
     wire condition_to_start_shifting_output;
     assign condition_to_start_shifting_output = row_latch_en ;  
 
-    //For larger matmuls, this logic will have more entries in the case statement
+//For larger matmuls, this logic will have more entries in the case statement
     always @(posedge clk) 
     begin
         if (reset | ~start_mat_mul) 
@@ -538,9 +539,9 @@ module systolic_data_setup(
     wire [`DWIDTH-1:0] b2_data;
     wire [`DWIDTH-1:0] b3_data;
 
-    //////////////////////////////////////////////////////////////////////////
-    // Logic to generate addresses to BRAM A
-    //////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+// Logic to generate addresses to BRAM A
+//////////////////////////////////////////////////////////////////////////
     reg [`AWIDTH-1:0] a_addr;
     reg a_mem_access; //flag that tells whether the matmul is trying to access memory or not
     
@@ -557,9 +558,9 @@ module systolic_data_setup(
         end
     end  
 
-    //////////////////////////////////////////////////////////////////////////
-    // Logic to generate valid signals for data coming from BRAM A
-    //////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+// Logic to generate valid signals for data coming from BRAM A
+//////////////////////////////////////////////////////////////////////////
     reg [7:0] a_mem_access_counter;
     always @(posedge clk) 
     begin
@@ -579,16 +580,16 @@ module systolic_data_setup(
         (validity_mask_a_cols_b_rows[3]==1'b0 && a_mem_access_counter==4)) ?
         1'b0 : (a_mem_access_counter >= `MEM_ACCESS_LATENCY);
     
-    //////////////////////////////////////////////////////////////////////////
-    // Logic to delay certain parts of the data received from BRAM A (systolic data setup)
-    //////////////////////////////////////////////////////////////////////////
-    //Slice data into chunks and qualify it with whether it is valid or not
+//////////////////////////////////////////////////////////////////////////
+// Logic to delay certain parts of the data received from BRAM A (systolic data setup)
+//////////////////////////////////////////////////////////////////////////
+//Slice data into chunks and qualify it with whether it is valid or not
     assign a0_data = a_data[`DWIDTH-1:0] & {`DWIDTH{a_data_valid}} & {`DWIDTH{validity_mask_a_rows[0]}};
     assign a1_data = a_data[2*`DWIDTH-1:`DWIDTH] & {`DWIDTH{a_data_valid}} & {`DWIDTH{validity_mask_a_rows[1]}};
     assign a2_data = a_data[3*`DWIDTH-1:2*`DWIDTH] & {`DWIDTH{a_data_valid}} & {`DWIDTH{validity_mask_a_rows[2]}};
     assign a3_data = a_data[4*`DWIDTH-1:3*`DWIDTH] & {`DWIDTH{a_data_valid}} & {`DWIDTH{validity_mask_a_rows[3]}};
 
-    //For larger matmuls, more such delaying flops will be needed
+//For larger matmuls, more such delaying flops will be needed
     reg [`DWIDTH-1:0] a1_data_delayed_1;
     reg [`DWIDTH-1:0] a2_data_delayed_1;
     reg [`DWIDTH-1:0] a2_data_delayed_2;
@@ -618,9 +619,9 @@ module systolic_data_setup(
         end
     end
 
-    //////////////////////////////////////////////////////////////////////////
-    // Logic to generate addresses to BRAM B
-    //////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+// Logic to generate addresses to BRAM B
+//////////////////////////////////////////////////////////////////////////
     reg [`AWIDTH-1:0] b_addr;
     reg b_mem_access; //flag that tells whether the matmul is trying to access memory or not
 
@@ -638,9 +639,9 @@ module systolic_data_setup(
         end
     end  
 
-    //////////////////////////////////////////////////////////////////////////
-    // Logic to generate valid signals for data coming from BRAM B
-    //////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+// Logic to generate valid signals for data coming from BRAM B
+//////////////////////////////////////////////////////////////////////////
     reg [7:0] b_mem_access_counter;
     always @(posedge clk) 
     begin
@@ -661,16 +662,16 @@ module systolic_data_setup(
         1'b0 : (b_mem_access_counter >= `MEM_ACCESS_LATENCY);
 
 
-    //////////////////////////////////////////////////////////////////////////
-    // Logic to delay certain parts of the data received from BRAM B (systolic data setup)
-    //////////////////////////////////////////////////////////////////////////
-    //Slice data into chunks and qualify it with whether it is valid or not
+//////////////////////////////////////////////////////////////////////////
+// Logic to delay certain parts of the data received from BRAM B (systolic data setup)
+//////////////////////////////////////////////////////////////////////////
+//Slice data into chunks and qualify it with whether it is valid or not
     assign b0_data = b_data[`DWIDTH-1:0] & {`DWIDTH{b_data_valid}} & {`DWIDTH{validity_mask_b_cols[0]}};
     assign b1_data = b_data[2*`DWIDTH-1:`DWIDTH] & {`DWIDTH{b_data_valid}} & {`DWIDTH{validity_mask_b_cols[1]}};
     assign b2_data = b_data[3*`DWIDTH-1:2*`DWIDTH] & {`DWIDTH{b_data_valid}} & {`DWIDTH{validity_mask_b_cols[2]}};
     assign b3_data = b_data[4*`DWIDTH-1:3*`DWIDTH] & {`DWIDTH{b_data_valid}} & {`DWIDTH{validity_mask_b_cols[3]}};
 
-    //For larger matmuls, more such delaying flops will be needed
+//For larger matmuls, more such delaying flops will be needed
     reg [`DWIDTH-1:0] b1_data_delayed_1;
     reg [`DWIDTH-1:0] b2_data_delayed_1;
     reg [`DWIDTH-1:0] b2_data_delayed_2;
@@ -873,25 +874,6 @@ module seq_mac(a, b, out, reset, clk);
 
     reg [`DWIDTH-1:0] out;
     reg [`DWIDTH-1:0] a_flop, b_flop, mult;
-    logic [`DWITH-1:0] mul_result, add_result;
-    logic [4:0] mul_flags, add_flags;
-
-    // Instantiate the FP8 Multiplier
-    fp8_mult multiplier (
-        .a(a_flop),
-        .b(b_flop),
-        .result(mul_result),
-        .flags(mul_flags)
-    );
-
-    // Instantiate the FP8 Adder
-    fp8_addsub adder (
-        .a(mult),
-        .b(out),
-        .operation(1'b0), // Always addition
-        .result(add_result),
-        .flags(add_flags)
-    );
 
     always @(posedge clk)
     begin
@@ -907,8 +889,8 @@ module seq_mac(a, b, out, reset, clk);
             a_flop <= a;
             b_flop <= b;
 
-            mult <= mul_result;
-            out <= add_result;
+            mult <= a_flop * b_flop; 
+            out <= mult + out; 
         end
             
     end
