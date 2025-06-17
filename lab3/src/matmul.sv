@@ -321,84 +321,54 @@ endmodule
 //////////////////////////////////////////////////////////////////////////
 // Output logic
 //////////////////////////////////////////////////////////////////////////
-module output_logic(
-    clk,
-    reset,
-    start_mat_mul,
-    done_mat_mul,
-    address_mat_c,
-    address_stride_c,
-    c_data_in,
-    c_data_out, //Data values going out to next matmul - systolic shifting
-    c_addr,
-    c_data_available,
-    clk_cnt,
-    row_latch_en,
-    final_mat_mul_size,
-    matrixC00,
-    matrixC01,
-    matrixC02,
-    matrixC03,
-    matrixC10,
-    matrixC11,
-    matrixC12,
-    matrixC13,
-    matrixC20,
-    matrixC21,
-    matrixC22,
-    matrixC23,
-    matrixC30,
-    matrixC31,
-    matrixC32,
-    matrixC33
-    );
+module output_logic (
+    input logic clk,
+    input logic reset,
+    input logic start_mat_mul,
+    input logic done_mat_mul,
+    input logic [`AWIDTH-1:0] address_mat_c,
+    input logic [`ADDR_STRIDE_WIDTH-1:0] address_stride_c,
+    input logic [`MAT_MUL_SIZE*`DWIDTH-1:0] c_data_in,
+    output logic [`MAT_MUL_SIZE*`DWIDTH-1:0] c_data_out,
+    output logic [`AWIDTH-1:0] c_addr,
+    output logic c_data_available,
+    input logic [7:0] clk_cnt,
+    output logic row_latch_en,
+    input logic [7:0] final_mat_mul_size,
+    input logic [`DWIDTH-1:0] matrixC00,
+    input logic [`DWIDTH-1:0] matrixC01,
+    input logic [`DWIDTH-1:0] matrixC02,
+    input logic [`DWIDTH-1:0] matrixC03,
+    input logic [`DWIDTH-1:0] matrixC10,
+    input logic [`DWIDTH-1:0] matrixC11,
+    input logic [`DWIDTH-1:0] matrixC12,
+    input logic [`DWIDTH-1:0] matrixC13,
+    input logic [`DWIDTH-1:0] matrixC20,
+    input logic [`DWIDTH-1:0] matrixC21,
+    input logic [`DWIDTH-1:0] matrixC22,
+    input logic [`DWIDTH-1:0] matrixC23,
+    input logic [`DWIDTH-1:0] matrixC30,
+    input logic [`DWIDTH-1:0] matrixC31,
+    input logic [`DWIDTH-1:0] matrixC32,
+    input logic [`DWIDTH-1:0] matrixC33
+);
 
-    input clk;
-    input reset;
-    input start_mat_mul;
-    input done_mat_mul;
-    input [`AWIDTH-1:0] address_mat_c;
-    input [`ADDR_STRIDE_WIDTH-1:0] address_stride_c;
-    input [`MAT_MUL_SIZE*`DWIDTH-1:0] c_data_in;
-    output [`MAT_MUL_SIZE*`DWIDTH-1:0] c_data_out;
-    output [`AWIDTH-1:0] c_addr;
-    output c_data_available;
-    input [7:0] clk_cnt;
-    output row_latch_en;
-    input [7:0] final_mat_mul_size;
-    input [`DWIDTH-1:0] matrixC00;
-    input [`DWIDTH-1:0] matrixC01;
-    input [`DWIDTH-1:0] matrixC02;
-    input [`DWIDTH-1:0] matrixC03;
-    input [`DWIDTH-1:0] matrixC10;
-    input [`DWIDTH-1:0] matrixC11;
-    input [`DWIDTH-1:0] matrixC12;
-    input [`DWIDTH-1:0] matrixC13;
-    input [`DWIDTH-1:0] matrixC20;
-    input [`DWIDTH-1:0] matrixC21;
-    input [`DWIDTH-1:0] matrixC22;
-    input [`DWIDTH-1:0] matrixC23;
-    input [`DWIDTH-1:0] matrixC30;
-    input [`DWIDTH-1:0] matrixC31;
-    input [`DWIDTH-1:0] matrixC32;
-    input [`DWIDTH-1:0] matrixC33;
-    
     wire row_latch_en;
 
     //////////////////////////////////////////////////////////////////////////
     // Logic to capture matrix C data from the PEs and shift it out
     //////////////////////////////////////////////////////////////////////////
-    assign row_latch_en = ((clk_cnt == ((final_mat_mul_size<<2) - final_mat_mul_size -1 +`NUM_CYCLES_IN_MAC)));
+    assign row_latch_en = ((clk_cnt == ((final_mat_mul_size<<2) - final_mat_mul_size -1 + `NUM_CYCLES_IN_MAC)));
     
-    reg c_data_available;
-    reg [`AWIDTH-1:0] c_addr;
-    reg start_capturing_c_data;
+    logic c_data_available;
+    logic [`AWIDTH-1:0] c_addr;
+    logic start_capturing_c_data;
     integer counter;
-    reg [`MAT_MUL_SIZE*`DWIDTH-1:0] c_data_out;
-    reg [`MAT_MUL_SIZE*`DWIDTH-1:0] c_data_out_1;
-    reg [`MAT_MUL_SIZE*`DWIDTH-1:0] c_data_out_2;
-    reg [`MAT_MUL_SIZE*`DWIDTH-1:0] c_data_out_3;
-    
+    logic [`MAT_MUL_SIZE*`DWIDTH-1:0] c_data_out;
+    logic [`MAT_MUL_SIZE*`DWIDTH-1:0] c_data_out_1;
+    logic [`MAT_MUL_SIZE*`DWIDTH-1:0] c_data_out_2;
+    logic [`MAT_MUL_SIZE*`DWIDTH-1:0] c_data_out_3;
+
     wire [`MAT_MUL_SIZE*`DWIDTH-1:0] col0;
     wire [`MAT_MUL_SIZE*`DWIDTH-1:0] col1;
     wire [`MAT_MUL_SIZE*`DWIDTH-1:0] col2;
@@ -407,17 +377,15 @@ module output_logic(
     assign col1 = {matrixC31, matrixC21, matrixC11, matrixC01};
     assign col2 = {matrixC32, matrixC22, matrixC12, matrixC02};
     assign col3 = {matrixC33, matrixC23, matrixC13, matrixC03};
-
+    
     //If save_output_to_accum is asserted, that means we are not intending to shift
     //out the outputs, because the outputs are still partial sums. 
     wire condition_to_start_shifting_output;
-    assign condition_to_start_shifting_output = row_latch_en ;  
-
+    assign condition_to_start_shifting_output = row_latch_en;
+    
     //For larger matmuls, this logic will have more entries in the case statement
-    always @(posedge clk) 
-    begin
-        if (reset | ~start_mat_mul) 
-        begin
+    always_ff @(posedge clk) begin
+        if (reset | ~start_mat_mul) begin
             start_capturing_c_data <= 1'b0;
             c_data_available <= 1'b0;
             c_addr <= address_mat_c - address_stride_c;
@@ -426,9 +394,7 @@ module output_logic(
             c_data_out_1 <= 0; 
             c_data_out_2 <= 0; 
             c_data_out_3 <= 0; 
-        end
-        else if (condition_to_start_shifting_output) 
-        begin
+        end else if (condition_to_start_shifting_output) begin
             start_capturing_c_data <= 1'b1;
             c_data_available <= 1'b1;
             c_addr <= c_addr + address_stride_c;
@@ -437,27 +403,21 @@ module output_logic(
             c_data_out_2 <= col2; 
             c_data_out_3 <= col3; 
             counter <= counter + 1;
-        end 
-        else if (done_mat_mul) 
-        begin
+        end else if (done_mat_mul) begin
             start_capturing_c_data <= 1'b0;
             c_data_available <= 1'b0;
-            c_addr <= address_mat_c+address_stride_c;
+            c_addr <= address_mat_c + address_stride_c;
             c_data_out <= 0;
             c_data_out_1 <= 0;
             c_data_out_2 <= 0;
             c_data_out_3 <= 0;
-        end 
-        else if (counter >= `MAT_MUL_SIZE) 
-        begin
+        end else if (counter >= `MAT_MUL_SIZE) begin
             c_addr <= c_addr + address_stride_c;
             c_data_out <= c_data_out_1;
             c_data_out_1 <= c_data_out_2;
             c_data_out_2 <= c_data_out_3;
             c_data_out_3 <= c_data_in;
-        end
-        else if (start_capturing_c_data) 
-        begin
+        end else if (start_capturing_c_data) begin
             c_data_available <= 1'b1;
             c_addr <= c_addr + address_stride_c;
             counter <= counter + 1;
@@ -675,8 +635,6 @@ module systolic_data_setup (
 
 endmodule
 
-
-
 //////////////////////////////////////////////////////////////////////////
 // Systolically connected PEs
 //////////////////////////////////////////////////////////////////////////
@@ -761,7 +719,6 @@ module systolic_pe_matrix(
     assign b_data_out = {b33to43,b32to42,b31to41,b30to40};
 
 endmodule
-
 
 //////////////////////////////////////////////////////////////////////////
 // Processing element (PE)
