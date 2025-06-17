@@ -19,19 +19,38 @@ module fp8_tb();
         `endif
         reset_dut();
 
+        operation = 1'b0;
         a = 8'b0_100_0100;
         b = 8'b0_100_0000;
         print_vals();
 
+        operation = 1'b0;
         a = 8'b0_000_0001;
         b = 8'b0_101_0111;
         print_vals();
 
+        operation = 1'b0;
         a = 8'b0_100_0100;
         b = 8'b0_101_0111;
         print_vals();
 
+        operation = 1'b0;
+        a = 8'b0_111_0100;
+        b = 8'b0_001_1111;
+        print_vals();
+
+        operation = 1'b0;
+        a = 8'b0_111_0100;
+        b = 8'b0_001_1111;
+        print_vals();
+
+        operation = 1'b0;
+        a = 8'b0_111_0000;
+        b = 8'b1_111_0000;
+        print_vals();
+
         reset_dut();
+        $display("\nAll done!");
         $finish;
     end
 
@@ -46,7 +65,12 @@ module fp8_tb();
     // Print the current DUT values
     task automatic print_vals();
         #1;
-        $write("\na = %b = ", a);
+        if (operation)
+            $display("Subtraction:");
+        else
+            $display("Addition:");
+
+        $write("a = %b = ", a);
         display_fp8(a);
         $write("\nb = %b = ", b);
         display_fp8(b);
