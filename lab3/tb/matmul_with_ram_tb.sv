@@ -159,9 +159,9 @@ module matmul_tb;
         end
 
         $display("\nB =");
-        for (int i = 0; i <= 24; i += 8) begin
+        for (int i = 0; i < 4; i++) begin
             $write("|");
-            for (int j = 0; j < 4; j++) begin
+            for (int j = 0; j < 24; j += 8) begin
                     $write(" %d", u_matmul.matrix_B.ram[i][j+:8]);
             end
             $display(" |");
@@ -190,9 +190,9 @@ module matmul_tb;
         end
 
         $display("\nB =");
-        for (int i = 0; i <= 24; i += 8) begin
+        for (int i = 0; i < 4; i++) begin
             $write("|");
-            for (int j = 0; j < 4; j++) begin
+            for (int j = 0; j < 24; j += 8) begin
                     $write(" %f", fp8_to_real(u_matmul.matrix_B.ram[i][j+:8]));
             end
             $display(" |");
