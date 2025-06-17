@@ -30,18 +30,3 @@ task display_fp8(input logic [7:0] fp);
     else
         $write("%f", fp8_to_real(fp));
 endtask
-
-
-task automatic print_mac_vals();
-    real a_real, b_real;
-
-    #1;
-    $write("\na = %b = ", a);
-    display_fp8(a);
-    $write("\nb = %b = ", b);
-    display_fp8(b);
-    $write("\ny = %b = ", result);
-    display_fp8(result);
-    $display("flags = %b", flags);
-    #4;
-endtask

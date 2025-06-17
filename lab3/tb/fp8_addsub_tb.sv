@@ -21,15 +21,15 @@ module fp8_tb();
 
         a = 8'b0_100_0100;
         b = 8'b0_100_0000;
-        print_mac_vals();
+        print_vals();
 
         a = 8'b0_000_0001;
         b = 8'b0_101_0111;
-        print_mac_vals();
+        print_vals();
 
         a = 8'b0_100_0100;
         b = 8'b0_101_0111;
-        print_mac_vals();
+        print_vals();
 
         reset_dut();
         $finish;
@@ -42,4 +42,18 @@ module fp8_tb();
         operation = 1'b0;
         #5;
     endtask
+
+    // Print the current DUT values
+    task automatic print_vals();
+        #1;
+        $write("\na = %b = ", a);
+        display_fp8(a);
+        $write("\nb = %b = ", b);
+        display_fp8(b);
+        $write("\ny = %b = ", result);
+        display_fp8(result);
+        $display("flags = %b", flags);
+        #4;
+    endtask
+
 endmodule
