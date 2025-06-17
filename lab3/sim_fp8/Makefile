@@ -12,6 +12,7 @@ compile: clean
 		../src/ram.sv \
 		../src/fp8_mac.sv \
 		../src/systolic_data_setup.sv \
+		../tb/helpers.sv \
 		../tb/fp8_matmul_tb.sv \
 	-l compile.log
 
