@@ -312,7 +312,7 @@ module output_logic (
     input logic [`DWIDTH-1:0] matrixC31,
     input logic [`DWIDTH-1:0] matrixC32,
     input logic [`DWIDTH-1:0] matrixC33
-);
+    );
 
     wire row_latch_en;
 
