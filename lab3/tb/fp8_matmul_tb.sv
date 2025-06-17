@@ -9,12 +9,14 @@ module matmul_tb;
     logic pe_resetn;
     logic start;
     wire done;
+    logic [4:0] flags;
 
     // DUT
     matrix_multiplication u_matmul(
         .clk(clk), 
         .resetn(resetn),
         .pe_resetn(pe_resetn), 
+        .flags(flags),
         .address_mat_a(10'b0),
         .address_mat_b(10'b0),
         .address_mat_c(10'b0),
@@ -118,6 +120,7 @@ module matmul_tb;
                 display_fp8(u_matmul.matrix_C.ram[j][i+:8]);
             end
             $display(" |");
+            $display("flags = %b", flags);
         end
     endtask
 
