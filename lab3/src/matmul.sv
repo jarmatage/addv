@@ -708,62 +708,37 @@ endmodule
 // Systolically connected PEs
 //////////////////////////////////////////////////////////////////////////
 module systolic_pe_matrix(
-    reset,
-    clk,
-    pe_reset,
-    start_mat_mul,
-    a0, a1, a2, a3,
-    b0, b1, b2, b3,
-    matrixC00,
-    matrixC01,
-    matrixC02,
-    matrixC03,
-    matrixC10,
-    matrixC11,
-    matrixC12,
-    matrixC13,
-    matrixC20,
-    matrixC21,
-    matrixC22,
-    matrixC23,
-    matrixC30,
-    matrixC31,
-    matrixC32,
-    matrixC33,
-    a_data_out,
-    b_data_out
-    );
-
-    input clk;
-    input reset;
-    input pe_reset;
-    input start_mat_mul;
-    input [`DWIDTH-1:0] a0;
-    input [`DWIDTH-1:0] a1;
-    input [`DWIDTH-1:0] a2;
-    input [`DWIDTH-1:0] a3;
-    input [`DWIDTH-1:0] b0;
-    input [`DWIDTH-1:0] b1;
-    input [`DWIDTH-1:0] b2;
-    input [`DWIDTH-1:0] b3;
-    output [`DWIDTH-1:0] matrixC00;
-    output [`DWIDTH-1:0] matrixC01;
-    output [`DWIDTH-1:0] matrixC02;
-    output [`DWIDTH-1:0] matrixC03;
-    output [`DWIDTH-1:0] matrixC10;
-    output [`DWIDTH-1:0] matrixC11;
-    output [`DWIDTH-1:0] matrixC12;
-    output [`DWIDTH-1:0] matrixC13;
-    output [`DWIDTH-1:0] matrixC20;
-    output [`DWIDTH-1:0] matrixC21;
-    output [`DWIDTH-1:0] matrixC22;
-    output [`DWIDTH-1:0] matrixC23;
-    output [`DWIDTH-1:0] matrixC30;
-    output [`DWIDTH-1:0] matrixC31;
-    output [`DWIDTH-1:0] matrixC32;
-    output [`DWIDTH-1:0] matrixC33;
-    output [`MAT_MUL_SIZE*`DWIDTH-1:0] a_data_out;
-    output [`MAT_MUL_SIZE*`DWIDTH-1:0] b_data_out;
+    input  logic                             clk,
+    input  logic                             reset,
+    input  logic                             pe_reset,
+    input  logic                             start_mat_mul,
+    input  logic [`DWIDTH-1:0]               a0, 
+    input  logic [`DWIDTH-1:0]               a1, 
+    input  logic [`DWIDTH-1:0]               a2, 
+    input  logic [`DWIDTH-1:0]               a3,
+    input  logic [`DWIDTH-1:0]               b0, 
+    input  logic [`DWIDTH-1:0]               b1, 
+    input  logic [`DWIDTH-1:0]               b2, 
+    input  logic [`DWIDTH-1:0]               b3,
+    output logic [`DWIDTH-1:0]               matrixC00,
+    output logic [`DWIDTH-1:0]               matrixC01,
+    output logic [`DWIDTH-1:0]               matrixC02,
+    output logic [`DWIDTH-1:0]               matrixC03,
+    output logic [`DWIDTH-1:0]               matrixC10,
+    output logic [`DWIDTH-1:0]               matrixC11,
+    output logic [`DWIDTH-1:0]               matrixC12,
+    output logic [`DWIDTH-1:0]               matrixC13,
+    output logic [`DWIDTH-1:0]               matrixC20,
+    output logic [`DWIDTH-1:0]               matrixC21,
+    output logic [`DWIDTH-1:0]               matrixC22,
+    output logic [`DWIDTH-1:0]               matrixC23,
+    output logic [`DWIDTH-1:0]               matrixC30,
+    output logic [`DWIDTH-1:0]               matrixC31,
+    output logic [`DWIDTH-1:0]               matrixC32,
+    output logic [`DWIDTH-1:0]               matrixC33,
+    output logic [`MAT_MUL_SIZE*`DWIDTH-1:0] a_data_out,
+    output logic [`MAT_MUL_SIZE*`DWIDTH-1:0] b_data_out
+);
 
     wire [`DWIDTH-1:0] a00to01, a01to02, a02to03, a03to04;
     wire [`DWIDTH-1:0] a10to11, a11to12, a12to13, a13to14;
