@@ -3,8 +3,9 @@ all: sim verdi
 compile: clean
 	@echo "=== Compiling ==="
 	${VCS_HOME}/bin/vcs -full64 -sverilog +define+DUMP=1 -debug_access+all -kdb -timescale=1ns/1ps \
-		../tb/fp8_addsub_tb.sv \
 		../src/fp8_addsub.sv \
+		../tb/helpers.sv \
+		../tb/fp8_addsub_tb.sv \
 	-l compile.log
 
 sim: compile
