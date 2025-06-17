@@ -1,22 +1,3 @@
-function real fp8_to_real(input logic [7:0] fp);
-    logic sign;
-    logic [2:0] exp;
-    logic [3:0] mant;
-    int unbiased_exp;
-    real r_mant;
-
-    sign = fp[7];
-    exp  = fp[6:4];
-    mant = fp[3:0];
-
-    if (exp == 0 && mant == 0) return 0.0;
-
-    unbiased_exp = exp - 3;
-    r_mant = 1.0 + mant / 16.0;
-    return (sign ? -1.0 : 1.0) * r_mant * (2.0 ** unbiased_exp);
-endfunction
-
-
 module matmul_tb;
     // Set the timescale
     timeunit 1ns;
@@ -185,7 +166,8 @@ module matmul_tb;
         for (int i = 0; i <= 24; i += 8) begin
             $write("|");
             for (int j = 0; j < 4; j++) begin
-                    $write(" %f", fp8_to_real(u_matmul.matrix_A.ram[j][i+:8]));
+                $write(" ");
+                display_fp8(u_matmul.matrix_A.ram[j][i+:8]);
             end
             $display(" |");
         end
@@ -194,7 +176,8 @@ module matmul_tb;
         for (int i = 0; i < 4; i++) begin
             $write("|");
             for (int j = 0; j <= 24; j += 8) begin
-                    $write(" %f", fp8_to_real(u_matmul.matrix_B.ram[i][j+:8]));
+                $write(" ");
+                display_fp8(u_matmul.matrix_B.ram[i][j+:8]);
             end
             $display(" |");
         end
@@ -205,7 +188,8 @@ module matmul_tb;
         for (int i = 0; i <= 24; i += 8) begin
             $write("|");
             for (int j = 0; j < 4; j++) begin
-                    $write(" %f", fp8_to_real(u_matmul.matrix_C.ram[j][i+:8]));
+                $write(" ");
+                display_fp8(u_matmul.matrix_C.ram[j][i+:8]);
             end
             $display(" |");
         end
