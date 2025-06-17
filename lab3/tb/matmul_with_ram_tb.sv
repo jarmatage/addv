@@ -82,17 +82,18 @@ module matmul_tb;
         display_output_int8();
 
         // Perform fp8 test
-        // set_matrices_fp8();
-        // display_inputs_fp8();
-        // is_fp8 = 1'b1;
-        // start = 1'b0;
-        // #115;
-        // start = 1'b1;
-        // @(posedge done);
-        // start = 1'b0;
-        // #100;         
-        // display_output_fp8();
+        set_matrices_fp8();
+        display_inputs_fp8();
+        is_fp8 = 1'b1;
+        start = 1'b0;
+        #115;
+        start = 1'b1;
+        @(posedge done);
+        start = 1'b0;
+        #100;         
+        display_output_fp8();
 
+        $display("\nAll done!");
         $finish;
     end
     
@@ -122,11 +123,11 @@ module matmul_tb;
         u_matmul.matrix_B.ram[0]  = {8'h00, 8'h03, 8'h01, 8'h01};
     endtask
 
-    //  A           B        Output       Output in hex
-    // 8 4 6 8   1 1 3 0   98 90 82 34    62 5A 52 22
-    // 3 3 3 7   0 1 4 3   75 63 51 26    4B 3F 33 1A
-    // 5 2 1 6   3 5 3 1   62 48 44 19    3E 30 2C 13
-    // 9 1 0 5   9 6 3 2   54 40 46 13    36 28 2E 0D
+    //       A                               B                             Output
+    // +8.000 +4.000 +6.000 +8.000   +1.000 +1.000 +3.000 +0.000   +9.000 +9.000 +8.000 +3.000
+    // +3.000 +3.000 +3.000 +7.000   +0.000 +1.000 +4.000 +3.000   +7.000 +6.000 +5.000 +2.000
+    // +5.000 +2.000 +1.000 +6.000   +3.000 +5.000 +3.000 +1.000   +6.000 +4.000 +4.000 +1.000
+    // +9.000 +1.000 +0.000 +5.000   +9.000 +6.000 +3.000 +2.000   +5.000 +4.000 +4.000 +1.000
     task automatic set_matrices_fp8();
         //A is stored in ROW MAJOR format
         //A[0][0] (8'h08) should be the least significant byte of ram[0]
