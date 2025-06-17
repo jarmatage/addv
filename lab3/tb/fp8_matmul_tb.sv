@@ -120,8 +120,8 @@ module matmul_tb;
                 display_fp8(u_matmul.matrix_C.ram[j][i+:8]);
             end
             $display(" |");
-            $display("flags = %b", flags);
         end
+        $display("flags = %b", flags);
     endtask
 
 endmodule
