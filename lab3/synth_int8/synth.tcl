@@ -15,8 +15,7 @@ define_design_lib WORK -path ./WORK
 set verilogout_show_unconnected_pins "true"
 
 # Read verilog
-set files [glob -type f {../baseline/*}]
-analyze -format sverilog $files
+analyze -format sverilog "../src/int8_matmul.sv"
 
 # Convert the design into lib cells
 elaborate "matrix_multiplication"
