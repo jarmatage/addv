@@ -30,6 +30,9 @@ module matmul_tb;
     // DUT
     matrix_multiplication u_matmul(.*);
     
+    // Save the output of the done register
+    logic [15:0] status;
+
     // Clock generation  
     initial begin
         clk = 1'b0;
@@ -45,6 +48,7 @@ module matmul_tb;
         PSEL = 1'b0;
         PENABLE = 1'b0;
         PWDATA = '0;
+        status = '0;
         #55;
         resetn = 1'b1;
         pe_resetn = 1'b1;
@@ -59,11 +63,23 @@ module matmul_tb;
 
         set_matrices_fp8();
         display_inputs_fp8();
-        //start = 1'b0;
+
+        // Setup the control registers
+        write(3'd1, 16'd0);  // Mat A
+        write(3'd2, 16'd0);  // Mat B
+        write(3'd3, 16'd0);  // Mat C
+        write(3'd4, 16'd1);  // Stride A
+        write(3'd5, 16'd1);  // Stride B
+        write(3'd6, 16'd1);  // Stride C
         #115;
-        //start = 1'b1;
-        //@(posedge done);
-        //start = 1'b0;
+        write(3'd0, 16'd1);  // Start
+
+        // Wait for the done flag
+        do begin
+            read(3'd7, status);
+        end while (status[0] == 1'b0);
+
+        write(3'd0, 16'd0);  // Start
         #100;         
         display_output_fp8();
 
@@ -71,6 +87,45 @@ module matmul_tb;
         $finish;
     end
     
+    ////////////////////////////////////////////
+    // Task to write into the configuration block of the DUT
+    ////////////////////////////////////////////
+    task write(input [`REG_ADDRWIDTH-1:0] addr, input [`REG_DATAWIDTH-1:0] data);
+        @(negedge clk);
+        PSEL = 1;
+        PWRITE = 1;
+        PADDR = addr;
+        PWDATA = data;
+        @(negedge clk);
+        PENABLE = 1;
+        @(negedge clk);
+        PSEL = 0;
+        PENABLE = 0;
+        PWRITE = 0;
+        PADDR = 0;
+        PWDATA = 0;
+        $display("%t: PADDR %h, PWDATA %h", $time, addr, data);
+    endtask
+
+    ////////////////////////////////////////////
+    // Task to read from the configuration block of the DUT
+    ////////////////////////////////////////////
+    task read(input [`REG_ADDRWIDTH-1:0] addr, output [`REG_DATAWIDTH-1:0] data);
+        @(negedge clk);
+        PSEL = 1;
+        PWRITE = 0;
+        PADDR = addr;
+        @(negedge clk);
+        PENABLE = 1;
+        @(negedge clk);
+        PSEL = 0;
+        PENABLE = 0;
+        data = PRDATA;
+        PADDR = 0;
+        $display("%t: PADDR %h, PRDATA %h",$time, addr,data);
+    endtask
+
+
     //       A                               B                             Output
     // +8.000 +4.000 +6.000 +8.000   +1.000 +1.000 +3.000 +0.000   +9.000 +9.000 +8.000 +3.000
     // +3.000 +3.000 +3.000 +7.000   +0.000 +1.000 +4.000 +3.000   +7.000 +6.000 +5.000 +2.000
@@ -129,7 +184,7 @@ module matmul_tb;
             end
             $display(" |");
         end
-        //$display("flags = %b", flags);
+        $display("flags = %b", status[5:1]);
     endtask
 
 endmodule
