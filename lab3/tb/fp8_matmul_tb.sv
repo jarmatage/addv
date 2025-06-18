@@ -82,6 +82,7 @@ module matmul_tb;
         write(3'd0, 16'd1);  // Start
 
         // Wait for the done flag
+        $display("\nListening for done signal...")
         wait_done(3'd7);     // Done
         write(3'd0, 16'd0);  // Start
         #100;         
