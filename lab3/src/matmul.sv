@@ -1,226 +1,12 @@
 //////////////////////////////////////////////////////////////////////////
-// Top level with memories
-//////////////////////////////////////////////////////////////////////////
-module matrix_multiplication(
-	input  logic                             clk,
-	input  logic                             resetn,
-	input  logic                             pe_resetn,
-    input  logic                             is_fp8,
-	input  logic [`AWIDTH-1:0]               address_mat_a,
-	input  logic [`AWIDTH-1:0]               address_mat_b,
-	input  logic [`AWIDTH-1:0]               address_mat_c,
-	input  logic [`ADDR_STRIDE_WIDTH-1:0]    address_stride_a,
-	input  logic [`ADDR_STRIDE_WIDTH-1:0]    address_stride_b,
-	input  logic [`ADDR_STRIDE_WIDTH-1:0]    address_stride_c,
-    input  logic [`AWIDTH-1:0]               bram_addr_a_ext,
-    output logic [`MAT_MUL_SIZE*`DWIDTH-1:0] bram_rdata_a_ext,
-    input  logic [`MAT_MUL_SIZE*`DWIDTH-1:0] bram_wdata_a_ext,
-    input  logic [`MASK_WIDTH-1:0]           bram_we_a_ext,
-    input  logic [`AWIDTH-1:0]               bram_addr_b_ext,
-    output logic [`MAT_MUL_SIZE*`DWIDTH-1:0] bram_rdata_b_ext,
-    input  logic [`MAT_MUL_SIZE*`DWIDTH-1:0] bram_wdata_b_ext,
-    input  logic [`MASK_WIDTH-1:0]           bram_we_b_ext,
-    input  logic [`AWIDTH-1:0]               bram_addr_c_ext,
-    output logic [`MAT_MUL_SIZE*`DWIDTH-1:0] bram_rdata_c_ext,
-    input  logic [`MAT_MUL_SIZE*`DWIDTH-1:0] bram_wdata_c_ext,
-    input  logic [`MASK_WIDTH-1:0]           bram_we_c_ext,
-	input  logic                             start,
-	output logic                             done
-    );
-
-	wire [`AWIDTH-1:0] bram_addr_a;
-	wire [4*`DWIDTH-1:0] bram_rdata_a;
-	wire [4*`DWIDTH-1:0] bram_wdata_a;
-	wire [`MASK_WIDTH-1:0] bram_we_a;
-
-	wire [`AWIDTH-1:0] bram_addr_b;
-	wire [4*`DWIDTH-1:0] bram_rdata_b;
-	wire [4*`DWIDTH-1:0] bram_wdata_b;
-	wire [`MASK_WIDTH-1:0] bram_we_b;
-	
-	wire [`AWIDTH-1:0] bram_addr_c;
-	wire [4*`DWIDTH-1:0] bram_rdata_c;
-	wire [4*`DWIDTH-1:0] bram_wdata_c;
-	wire [`MASK_WIDTH-1:0] bram_we_c;
-	
-    logic [3:0] state;
-  
-    //We will utilize port 0 (addr0, d0, we0, q0) to interface with the matmul.
-    //Unused ports (port 1 signals addr1, d1, we1, q1) will be connected to the "external" signals i.e. signals that exposed to the external world.
-    //Signals that are external end in "_ext".
-    //addr is the address of the BRAM, d is the data to be written to the BRAM, we is write enable, and q is the data read from the BRAM. 
-    ////////////////////////////////////////////////////////////////
-    // RAM matrix A 
-    ////////////////////////////////////////////////////////////////
-    ram matrix_A (
-        .addr0(bram_addr_a), 
-        .d0(bram_wdata_a), 
-        .we0(bram_we_a), 
-        .q0(bram_rdata_a), 
-        .addr1(bram_addr_a_ext), 
-        .d1(bram_wdata_a_ext), 
-        .we1(bram_we_a_ext), 
-        .q1(bram_rdata_a_ext), 
-        .clk(clk)
-    );
-    
-    ////////////////////////////////////////////////////////////////
-    // RAM matrix B 
-    ////////////////////////////////////////////////////////////////
-    ram matrix_B (
-        .addr0(bram_addr_b), 
-        .d0(bram_wdata_b), 
-        .we0(bram_we_b), 
-        .q0(bram_rdata_b), 
-        .addr1(bram_addr_b_ext), 
-        .d1(bram_wdata_b_ext), 
-        .we1(bram_we_b_ext), 
-        .q1(bram_rdata_b_ext), 
-        .clk(clk)
-    );
-    
-    ////////////////////////////////////////////////////////////////
-    // RAM matrix C 
-    ////////////////////////////////////////////////////////////////
-    ram matrix_C (
-        .addr0(bram_addr_c), 
-        .d0(bram_wdata_c), 
-        .we0(bram_we_c), 
-        .q0(bram_rdata_c), 
-        .addr1(bram_addr_c_ext), 
-        .d1(bram_wdata_c_ext), 
-        .we1(bram_we_c_ext), 
-        .q1(bram_rdata_c_ext), 
-        .clk(clk)
-    );
-
-
-    logic start_mat_mul;
-    wire done_mat_mul;
-	
-	//fsm to start matmul
-	always_ff @(posedge clk) begin
-        if (resetn == 1'b0) begin
-            state <= 4'b0000;
-            start_mat_mul <= 1'b0;
-        end else begin
-            case (state)
-            4'b0000: 
-            begin
-                start_mat_mul <= 1'b0;
-                if (start == 1'b1) 
-                    state <= 4'b0001;
-                else 
-                    state <= 4'b0000;
-            end
-            
-            4'b0001: 
-            begin
-                start_mat_mul <= 1'b1;	      
-                state <= 4'b1010;                    
-            end      
-            
-            4'b1010: 
-            begin                 
-                if (done_mat_mul == 1'b1) 
-                begin
-                    start_mat_mul <= 1'b0;
-                    state <= 4'b0000;
-                end
-                else 
-                    state <= 4'b1010;
-            end
-                      
-            default:
-                state <= 4'b0000;
-            endcase  
-        end 
-    end
-	
-	assign done = done_mat_mul;
-
-    wire c_data_available;
-
-    //Connections for bram c (output matrix)
-    //bram_addr_c -> connected to u_matmul_4x4 block
-    //bram_rdata_c -> not used
-    //bram_wdata_c -> connected to u_matmul_4x4 block
-    //bram_we_c -> set to 1 when c_data is available
-
-    assign bram_we_c = (c_data_available) ? 4'b1111 : 4'b0000;  
-
-    //Connections for bram a (first input matrix)
-    //bram_addr_a -> connected to u_matmul_4x4
-    //bram_rdata_a -> connected to u_matmul_4x4
-    //bram_wdata_a -> hardcoded to 0 (this block only reads from bram a)
-    //bram_we_a -> hardcoded to 0 (this block only reads from bram a)
-
-    assign bram_wdata_a = 32'b0;
-    assign bram_we_a = 4'b0;
-  
-    //Connections for bram b (second input matrix)
-    //bram_addr_b -> connected to u_matmul_4x4
-    //bram_rdata_b -> connected to u_matmul_4x4
-    //bram_wdata_b -> hardcoded to 0 (this block only reads from bram b)
-    //bram_we_b -> hardcoded to 0 (this block only reads from bram b)
-
-    assign bram_wdata_b = 32'b0;
-    assign bram_we_b = 4'b0;
-  
-    //NC (not connected) wires 
-    wire [`BB_MAT_MUL_SIZE*`DWIDTH-1:0] a_data_out_NC;
-    wire [`BB_MAT_MUL_SIZE*`DWIDTH-1:0] b_data_out_NC;
-    wire [`BB_MAT_MUL_SIZE*`DWIDTH-1:0] a_data_in_NC;
-    wire [`BB_MAT_MUL_SIZE*`DWIDTH-1:0] b_data_in_NC;
-
-    wire reset;
-    assign reset = ~resetn;
-    assign pe_reset = ~pe_resetn;
-
-    //matmul instance
-    matmul_4x4_systolic u_matmul_4x4(
-        .clk(clk),
-        .reset(reset),
-        .is_fp8(is_fp8),
-        .pe_reset(pe_reset),
-        .start_mat_mul(start_mat_mul),
-        .done_mat_mul(done_mat_mul),
-        .address_mat_a(address_mat_a),
-        .address_mat_b(address_mat_b),
-        .address_mat_c(address_mat_c),
-        .address_stride_a(address_stride_a),
-        .address_stride_b(address_stride_b),
-        .address_stride_c(address_stride_c),
-        .a_data(bram_rdata_a),
-        .b_data(bram_rdata_b),
-        .a_data_in(a_data_in_NC),
-        .b_data_in(b_data_in_NC),
-        .c_data_in({`BB_MAT_MUL_SIZE*`DWIDTH{1'b0}}),
-        .c_data_out(bram_wdata_c),
-        .a_data_out(a_data_out_NC),
-        .b_data_out(b_data_out_NC),
-        .a_addr(bram_addr_a),
-        .b_addr(bram_addr_b),
-        .c_addr(bram_addr_c),
-        .c_data_available(c_data_available),
-        .validity_mask_a_rows(4'b1111),
-        .validity_mask_a_cols_b_rows(4'b1111),
-        .validity_mask_b_cols(4'b1111),
-        .final_mat_mul_size(8'd4),
-        .a_loc(8'd0),
-        .b_loc(8'd0)
-    );
-
-endmodule
-
-//////////////////////////////////////////////////////////////////////////
 // 4x4 Systolic Matrix Multiplier
 //////////////////////////////////////////////////////////////////////////
 module matmul_4x4_systolic (
     input  logic                             clk,
     input  logic                             reset,
-    input  logic                             is_fp8,
     input  logic                             pe_reset,
+    input  logic                             is_fp8,
+    output logic [4:0]                       flags,
     input  logic                             start_mat_mul,
     output logic                             done_mat_mul,
     input  logic [`AWIDTH-1:0]               address_mat_a,
@@ -449,8 +235,9 @@ module matmul_4x4_systolic (
     systolic_pe_matrix u_systolic_pe_matrix(
         .reset(reset),
         .clk(clk),
-        .is_fp8(is_fp8),
         .pe_reset(pe_reset),
+        .is_fp8(is_fp8),
+        .flags(flags),
         .start_mat_mul(start_mat_mul),
         .a0(a0), 
         .a1(a1), 
@@ -488,8 +275,9 @@ endmodule
 module systolic_pe_matrix(
     input  logic                             clk,
     input  logic                             reset,
-    input  logic                             is_fp8,
     input  logic                             pe_reset,
+    input  logic                             is_fp8,
+    output logic [4:0]                       flags,
     input  logic                             start_mat_mul,
     input  logic [`DWIDTH-1:0]               a0, 
     input  logic [`DWIDTH-1:0]               a1, 
@@ -528,6 +316,11 @@ module systolic_pe_matrix(
     wire [`DWIDTH-1:0] b01to11, b11to21, b21to31, b31to41;
     wire [`DWIDTH-1:0] b02to12, b12to22, b22to32, b32to42;
     wire [`DWIDTH-1:0] b03to13, b13to23, b23to33, b33to43;
+
+    wire [4:0] flags00, flags01, flags02, flags03;
+    wire [4:0] flags10, flags11, flags12, flags13;
+    wire [4:0] flags20, flags21, flags22, flags23;
+    wire [4:0] flags30, flags31, flags32, flags33;
     
     wire effective_rst;
     assign effective_rst = reset | pe_reset;
@@ -543,28 +336,33 @@ module systolic_pe_matrix(
 	//Signals matrixCxx are the output results from each PE.
 	//Reset and clock signals of all PEs are the same.	
 
-	processing_element pe00(.reset(effective_rst), .clk(clk), .is_fp8(is_fp8), .in_a(a0),      .in_b(b0), .out_a(a00to01), .out_b(b00to10), .out_c(matrixC00));
-	processing_element pe01(.reset(effective_rst), .clk(clk), .is_fp8(is_fp8), .in_a(a00to01), .in_b(b1), .out_a(a01to02), .out_b(b01to11), .out_c(matrixC01));
-	processing_element pe02(.reset(effective_rst), .clk(clk), .is_fp8(is_fp8), .in_a(a01to02), .in_b(b2), .out_a(a02to03), .out_b(b02to12), .out_c(matrixC02));
-	processing_element pe03(.reset(effective_rst), .clk(clk), .is_fp8(is_fp8), .in_a(a02to03), .in_b(b3), .out_a(a03to04), .out_b(b03to13), .out_c(matrixC03));
+	processing_element pe00(.reset(effective_rst), .clk(clk), .is_fp8(is_fp8), .flags(flags00), .in_a(a0),      .in_b(b0), .out_a(a00to01), .out_b(b00to10), .out_c(matrixC00));
+	processing_element pe01(.reset(effective_rst), .clk(clk), .is_fp8(is_fp8), .flags(flags01), .in_a(a00to01), .in_b(b1), .out_a(a01to02), .out_b(b01to11), .out_c(matrixC01));
+	processing_element pe02(.reset(effective_rst), .clk(clk), .is_fp8(is_fp8), .flags(flags02), .in_a(a01to02), .in_b(b2), .out_a(a02to03), .out_b(b02to12), .out_c(matrixC02));
+	processing_element pe03(.reset(effective_rst), .clk(clk), .is_fp8(is_fp8), .flags(flags03), .in_a(a02to03), .in_b(b3), .out_a(a03to04), .out_b(b03to13), .out_c(matrixC03));
 
-	processing_element pe10(.reset(effective_rst), .clk(clk), .is_fp8(is_fp8), .in_a(a1),      .in_b(b00to10), .out_a(a10to11), .out_b(b10to20), .out_c(matrixC10));
-	processing_element pe11(.reset(effective_rst), .clk(clk), .is_fp8(is_fp8), .in_a(a10to11), .in_b(b01to11), .out_a(a11to12), .out_b(b11to21), .out_c(matrixC11));
-	processing_element pe12(.reset(effective_rst), .clk(clk), .is_fp8(is_fp8), .in_a(a11to12), .in_b(b02to12), .out_a(a12to13), .out_b(b12to22), .out_c(matrixC12));
-	processing_element pe13(.reset(effective_rst), .clk(clk), .is_fp8(is_fp8), .in_a(a12to13), .in_b(b03to13), .out_a(a13to14), .out_b(b13to23), .out_c(matrixC13));
+	processing_element pe10(.reset(effective_rst), .clk(clk), .is_fp8(is_fp8), .flags(flags10), .in_a(a1),      .in_b(b00to10), .out_a(a10to11), .out_b(b10to20), .out_c(matrixC10));
+	processing_element pe11(.reset(effective_rst), .clk(clk), .is_fp8(is_fp8), .flags(flags11), .in_a(a10to11), .in_b(b01to11), .out_a(a11to12), .out_b(b11to21), .out_c(matrixC11));
+	processing_element pe12(.reset(effective_rst), .clk(clk), .is_fp8(is_fp8), .flags(flags12), .in_a(a11to12), .in_b(b02to12), .out_a(a12to13), .out_b(b12to22), .out_c(matrixC12));
+	processing_element pe13(.reset(effective_rst), .clk(clk), .is_fp8(is_fp8), .flags(flags13), .in_a(a12to13), .in_b(b03to13), .out_a(a13to14), .out_b(b13to23), .out_c(matrixC13));
 
-	processing_element pe20(.reset(effective_rst), .clk(clk), .is_fp8(is_fp8), .in_a(a2),      .in_b(b10to20), .out_a(a20to21), .out_b(b20to30), .out_c(matrixC20));
-	processing_element pe21(.reset(effective_rst), .clk(clk), .is_fp8(is_fp8), .in_a(a20to21), .in_b(b11to21), .out_a(a21to22), .out_b(b21to31), .out_c(matrixC21));
-	processing_element pe22(.reset(effective_rst), .clk(clk), .is_fp8(is_fp8), .in_a(a21to22), .in_b(b12to22), .out_a(a22to23), .out_b(b22to32), .out_c(matrixC22));
-	processing_element pe23(.reset(effective_rst), .clk(clk), .is_fp8(is_fp8), .in_a(a22to23), .in_b(b13to23), .out_a(a23to24), .out_b(b23to33), .out_c(matrixC23));
+	processing_element pe20(.reset(effective_rst), .clk(clk), .is_fp8(is_fp8), .flags(flags20), .in_a(a2),      .in_b(b10to20), .out_a(a20to21), .out_b(b20to30), .out_c(matrixC20));
+	processing_element pe21(.reset(effective_rst), .clk(clk), .is_fp8(is_fp8), .flags(flags21), .in_a(a20to21), .in_b(b11to21), .out_a(a21to22), .out_b(b21to31), .out_c(matrixC21));
+	processing_element pe22(.reset(effective_rst), .clk(clk), .is_fp8(is_fp8), .flags(flags22), .in_a(a21to22), .in_b(b12to22), .out_a(a22to23), .out_b(b22to32), .out_c(matrixC22));
+	processing_element pe23(.reset(effective_rst), .clk(clk), .is_fp8(is_fp8), .flags(flags23), .in_a(a22to23), .in_b(b13to23), .out_a(a23to24), .out_b(b23to33), .out_c(matrixC23));
 
-	processing_element pe30(.reset(effective_rst), .clk(clk), .is_fp8(is_fp8), .in_a(a3),      .in_b(b20to30), .out_a(a30to31), .out_b(b30to40), .out_c(matrixC30));
-	processing_element pe31(.reset(effective_rst), .clk(clk), .is_fp8(is_fp8), .in_a(a30to31), .in_b(b21to31), .out_a(a31to32), .out_b(b31to41), .out_c(matrixC31));
-	processing_element pe32(.reset(effective_rst), .clk(clk), .is_fp8(is_fp8), .in_a(a31to32), .in_b(b22to32), .out_a(a32to33), .out_b(b32to42), .out_c(matrixC32));
-	processing_element pe33(.reset(effective_rst), .clk(clk), .is_fp8(is_fp8), .in_a(a32to33), .in_b(b23to33), .out_a(a33to34), .out_b(b33to43), .out_c(matrixC33));
+	processing_element pe30(.reset(effective_rst), .clk(clk), .is_fp8(is_fp8), .flags(flags30), .in_a(a3),      .in_b(b20to30), .out_a(a30to31), .out_b(b30to40), .out_c(matrixC30));
+	processing_element pe31(.reset(effective_rst), .clk(clk), .is_fp8(is_fp8), .flags(flags31), .in_a(a30to31), .in_b(b21to31), .out_a(a31to32), .out_b(b31to41), .out_c(matrixC31));
+	processing_element pe32(.reset(effective_rst), .clk(clk), .is_fp8(is_fp8), .flags(flags32), .in_a(a31to32), .in_b(b22to32), .out_a(a32to33), .out_b(b32to42), .out_c(matrixC32));
+	processing_element pe33(.reset(effective_rst), .clk(clk), .is_fp8(is_fp8), .flags(flags33), .in_a(a32to33), .in_b(b23to33), .out_a(a33to34), .out_b(b33to43), .out_c(matrixC33));
 
     assign a_data_out = {a33to34,a23to24,a13to14,a03to04};
     assign b_data_out = {b33to43,b32to42,b31to41,b30to40};
+
+    assign flags = flags00 | flags01 | flags02 | flags03 |
+                   flags10 | flags11 | flags12 | flags13 |
+                   flags20 | flags21 | flags22 | flags23 |
+                   flags30 | flags31 | flags32 | flags33;
 
 endmodule
 
@@ -574,7 +372,8 @@ endmodule
 module processing_element(
     input  logic                reset,
     input  logic                clk,
-    input  logic                is_fp8,
+    input  logic                is_fp8, // unused by this file but used in matmul.sv
+    output logic [4:0]          flags,
     input  logic [`DWIDTH-1:0]  in_a,
     input  logic [`DWIDTH-1:0]  in_b,
     output logic [`DWIDTH-1:0]  out_a,
@@ -583,11 +382,14 @@ module processing_element(
     );
 
     logic [`DWIDTH-1:0] out_mac, out_fp8;
+    logic [4:0] fp8_flags, int8_flags;
 
+    assign int8_flags = '0;
     assign out_c = is_fp8 ? out_fp8 : out_mac;
+    assign flags = is_fp8 ? fp8_flags : int8_flags;
     
     seq_mac u_mac(.a(in_a), .b(in_b), .out(out_mac), .reset(reset), .clk(clk));
-    fp8_mac f_mac(.a(in_a), .b(in_b), .out(out_fp8), .reset(reset), .clk(clk));
+    fp8_mac u_mac(.a(in_a), .b(in_b), .out(out_mac), .reset(reset), .clk(clk), .flags(fp8_flags));
 
     always_ff @(posedge clk) begin
         if (reset) begin
@@ -598,5 +400,5 @@ module processing_element(
             out_b <= in_b;
         end
     end
- 
+
 endmodule
