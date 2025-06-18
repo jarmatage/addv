@@ -12,6 +12,7 @@ module apb_slave (
 
     // Control/Status Registers (CPU Writes)
     output logic                          start,
+    output logic                          is_fp8,
 	output logic [`AWIDTH-1:0]            address_mat_a,
 	output logic [`AWIDTH-1:0]            address_mat_b,
 	output logic [`AWIDTH-1:0]            address_mat_c,
@@ -25,14 +26,15 @@ module apb_slave (
     );
 
     // CSR Address Map
-    localparam ADDR_START    = 3'd0;
-    localparam ADDR_MAT_A    = 3'd1;
-    localparam ADDR_MAT_B    = 3'd2;
-    localparam ADDR_MAT_C    = 3'd3;
-    localparam ADDR_STRIDE_A = 3'd4;
-    localparam ADDR_STRIDE_B = 3'd5;
-    localparam ADDR_STRIDE_C = 3'd6;
-    localparam ADDR_DONE     = 3'd7;
+    localparam ADDR_START    = 4'd0;
+    localparam ADDR_MAT_A    = 4'd1;
+    localparam ADDR_MAT_B    = 4'd2;
+    localparam ADDR_MAT_C    = 4'd3;
+    localparam ADDR_STRIDE_A = 4'd4;
+    localparam ADDR_STRIDE_B = 4'd5;
+    localparam ADDR_STRIDE_C = 4'd6;
+    localparam ADDR_DONE     = 4'd7;
+    localparam ADDR_IS_FP8   = 4'd8;
 
     // Define states
     typedef enum logic [1:0] {
@@ -84,6 +86,7 @@ module apb_slave (
     always_ff @(posedge PCLK) begin
         if (!PRESETn) begin
             start            <= '0;
+            is_fp8           <= '0;
             address_mat_a    <= '0;
             address_mat_b    <= '0;
             address_mat_c    <= '0;
@@ -93,6 +96,7 @@ module apb_slave (
         end else if (PWRITE && PENABLE && next_state == WRITE_ACCESS) begin
             case (PADDR)
                 ADDR_START:    start            <= PWDATA[0];
+                ADDR_IS_FP8:   is_fp8           <= PWDATA[0];
                 ADDR_MAT_A:    address_mat_a    <= PWDATA[`AWIDTH-1:0];
                 ADDR_MAT_B:    address_mat_b    <= PWDATA[`AWIDTH-1:0];
                 ADDR_MAT_C:    address_mat_c    <= PWDATA[`AWIDTH-1:0];
@@ -110,6 +114,7 @@ module apb_slave (
         end else if (!PWRITE && PENABLE && next_state == READ_ACCESS) begin
             case (PADDR)
                 ADDR_START:    PRDATA <= {15'd0, start};
+                ADDR_IS_FP8:   PRDATA <= {31'd0, is_fp8};
                 ADDR_MAT_A:    PRDATA <= address_mat_a;
                 ADDR_MAT_B:    PRDATA <= address_mat_b;
                 ADDR_MAT_C:    PRDATA <= address_mat_c;

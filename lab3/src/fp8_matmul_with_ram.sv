@@ -98,6 +98,7 @@ module matrix_multiplication(
     logic start_mat_mul;
     wire done_mat_mul;
     logic [4:0] flags;
+    logic is_fp8;
 	
     // APB interface
     apb_slave apb_mm (
@@ -111,6 +112,7 @@ module matrix_multiplication(
         .PRDATA(PRDATA), 
         .PREADY(PREADY),
         .start(start_mat_mul),
+        .is_fp8(is_fp8),
         .address_mat_a(address_mat_a),
         .address_mat_b(address_mat_b),
         .address_mat_c(address_mat_c),
@@ -164,6 +166,7 @@ module matrix_multiplication(
         .clk(clk),
         .reset(reset),
         .pe_reset(pe_reset),
+        .is_fp8(is_fp8),
         .flags(flags),
         .start_mat_mul(start_mat_mul),
         .done_mat_mul(done_mat_mul),

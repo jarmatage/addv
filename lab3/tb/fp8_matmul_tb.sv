@@ -73,18 +73,19 @@ module matmul_tb;
 
         // Setup the control registers
         #115;
-        write(3'd1, 16'd0);  // Mat A
-        write(3'd2, 16'd0);  // Mat B
-        write(3'd3, 16'd0);  // Mat C
-        write(3'd4, 16'd1);  // Stride A
-        write(3'd5, 16'd1);  // Stride B
-        write(3'd6, 16'd1);  // Stride C
-        write(3'd0, 16'd1);  // Start
+        write(4'd1, 16'd0);  // Mat A
+        write(4'd2, 16'd0);  // Mat B
+        write(4'd3, 16'd0);  // Mat C
+        write(4'd4, 16'd1);  // Stride A
+        write(4'd5, 16'd1);  // Stride B
+        write(4'd6, 16'd1);  // Stride C
+        write(4'd8, 16'd1);  // is_fp8
+        write(4'd0, 16'd1);  // Start
 
         // Wait for the done flag
         $display("\nListening for done signal...");
-        wait_done(3'd7);     // Done
-        write(3'd0, 16'd0);  // Start
+        wait_done(4'd7);     // Done
+        write(4'd0, 16'd0);  // Start
         #100;         
         display_output_fp8();
 
