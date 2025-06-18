@@ -7,13 +7,25 @@ module matmul_tb;
     logic clk;
     logic resetn;
     logic pe_resetn;
-    logic [`REG_ADDRWIDTH-1:0] PADDR;
-    logic PWRITE;
-    logic PSEL;
-    logic PENABLE;
-    logic [`REG_DATAWIDTH-1:0] PWDATA;
-    logic [`REG_DATAWIDTH-1:0] PRDATA;
-    logic PREADY;
+    logic [`AWIDTH-1:0]               bram_addr_a_ext,
+    logic [`MAT_MUL_SIZE*`DWIDTH-1:0] bram_rdata_a_ext,
+    logic [`MAT_MUL_SIZE*`DWIDTH-1:0] bram_wdata_a_ext,
+    logic [`MASK_WIDTH-1:0]           bram_we_a_ext,
+    logic [`AWIDTH-1:0]               bram_addr_b_ext,
+    logic [`MAT_MUL_SIZE*`DWIDTH-1:0] bram_rdata_b_ext,
+    logic [`MAT_MUL_SIZE*`DWIDTH-1:0] bram_wdata_b_ext,
+    logic [`MASK_WIDTH-1:0]           bram_we_b_ext,
+    logic [`AWIDTH-1:0]               bram_addr_c_ext,
+    logic [`MAT_MUL_SIZE*`DWIDTH-1:0] bram_rdata_c_ext,
+    logic [`MAT_MUL_SIZE*`DWIDTH-1:0] bram_wdata_c_ext,
+    logic [`MASK_WIDTH-1:0]           bram_we_c_ext,
+    logic [`REG_ADDRWIDTH-1:0]        PADDR;
+    logic                             PWRITE;
+    logic                             PSEL;
+    logic                             PENABLE;
+    logic [`REG_DATAWIDTH-1:0]        PWDATA;
+    logic [`REG_DATAWIDTH-1:0]        PRDATA;
+    logic                             PREADY;
 
     // DUT
     matrix_multiplication u_matmul(.*);
