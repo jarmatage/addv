@@ -90,7 +90,7 @@ module apb_slave (
             address_stride_a <= '0;
             address_stride_b <= '0;
             address_stride_c <= '0;
-        end else if (PWRITE && PENABLE && state == WRITE_ACCESS) begin
+        end else if (PWRITE && PENABLE && next_state == WRITE_ACCESS) begin
             case (PADDR)
                 ADDR_START:    start            <= PWDATA[0];
                 ADDR_MAT_A:    address_mat_a    <= PWDATA[`AWIDTH-1:0];
@@ -107,7 +107,7 @@ module apb_slave (
     always_ff @(posedge PCLK) begin
         if (!PRESETn) begin
             PRDATA <= '0;
-        end else if (!PWRITE && PENABLE && state == READ_ACCESS) begin
+        end else if (!PWRITE && PENABLE && next_state == READ_ACCESS) begin
             case (PADDR)
                 ADDR_START:    PRDATA <= {15'd0, start};
                 ADDR_MAT_A:    PRDATA <= address_mat_a;
