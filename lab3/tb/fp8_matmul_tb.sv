@@ -129,7 +129,7 @@ module matmul_tb;
             end
             $display(" |");
         end
-        $display("flags = %b", flags);
+        //$display("flags = %b", flags);
     endtask
 
 endmodule
