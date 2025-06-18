@@ -389,7 +389,7 @@ module processing_element(
     assign flags = is_fp8 ? fp8_flags : int8_flags;
     
     seq_mac u_mac(.a(in_a), .b(in_b), .out(out_mac), .reset(reset), .clk(clk));
-    fp8_mac f_mac(.a(in_a), .b(in_b), .out(out_mac), .reset(reset), .clk(clk), .flags(fp8_flags));
+    fp8_mac f_mac(.a(in_a), .b(in_b), .out(out_fp8), .reset(reset), .clk(clk), .flags(fp8_flags));
 
     always_ff @(posedge clk) begin
         if (reset) begin
