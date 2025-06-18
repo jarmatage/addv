@@ -7,25 +7,16 @@ module matmul_tb;
     logic clk;
     logic resetn;
     logic pe_resetn;
-    logic start;
-    wire done;
-    logic [4:0] flags;
+    logic [`REG_ADDRWIDTH-1:0] PADDR;
+    logic PWRITE;
+    logic PSEL;
+    logic PENABLE;
+    logic [`REG_DATAWIDTH-1:0] PWDATA;
+    logic [`REG_DATAWIDTH-1:0] PRDATA;
+    logic PREADY;
 
     // DUT
-    matrix_multiplication u_matmul(
-        .clk(clk), 
-        .resetn(resetn),
-        .pe_resetn(pe_resetn), 
-        .flags(flags),
-        .address_mat_a(10'b0),
-        .address_mat_b(10'b0),
-        .address_mat_c(10'b0),
-        .address_stride_a(8'd1),
-        .address_stride_b(8'd1),
-        .address_stride_c(8'd1),
-        .start(start),
-	    .done(done)
-    );
+    matrix_multiplication u_matmul(.*);
     
     // Clock generation  
     initial begin
@@ -37,6 +28,11 @@ module matmul_tb;
     initial begin
         resetn = 1'b0;
         pe_resetn = 1'b0;
+        PADDR = '0;
+        PWRITE = 1'b0;
+        PSEL = 1'b0;
+        PENABLE = 1'b0;
+        PWDATA = '0;
         #55;
         resetn = 1'b1;
         pe_resetn = 1'b1;
@@ -51,11 +47,11 @@ module matmul_tb;
 
         set_matrices_fp8();
         display_inputs_fp8();
-        start = 1'b0;
+        //start = 1'b0;
         #115;
-        start = 1'b1;
-        @(posedge done);
-        start = 1'b0;
+        //start = 1'b1;
+        //@(posedge done);
+        //start = 1'b0;
         #100;         
         display_output_fp8();
 

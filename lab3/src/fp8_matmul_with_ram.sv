@@ -5,13 +5,6 @@ module matrix_multiplication(
 	input  logic                             clk,
 	input  logic                             resetn,
 	input  logic                             pe_resetn,
-    output logic [4:0]                       flags,
-	input  logic [`AWIDTH-1:0]               address_mat_a,
-	input  logic [`AWIDTH-1:0]               address_mat_b,
-	input  logic [`AWIDTH-1:0]               address_mat_c,
-	input  logic [`ADDR_STRIDE_WIDTH-1:0]    address_stride_a,
-	input  logic [`ADDR_STRIDE_WIDTH-1:0]    address_stride_b,
-	input  logic [`ADDR_STRIDE_WIDTH-1:0]    address_stride_c,
     input  logic [`AWIDTH-1:0]               bram_addr_a_ext,
     output logic [`MAT_MUL_SIZE*`DWIDTH-1:0] bram_rdata_a_ext,
     input  logic [`MAT_MUL_SIZE*`DWIDTH-1:0] bram_wdata_a_ext,
@@ -24,8 +17,15 @@ module matrix_multiplication(
     output logic [`MAT_MUL_SIZE*`DWIDTH-1:0] bram_rdata_c_ext,
     input  logic [`MAT_MUL_SIZE*`DWIDTH-1:0] bram_wdata_c_ext,
     input  logic [`MASK_WIDTH-1:0]           bram_we_c_ext,
-	input  logic                             start,
-	output logic                             done
+
+    // APB signals
+    input  logic [`REG_ADDRWIDTH-1:0] PADDR,
+    input  logic                      PWRITE,
+    input  logic                      PSEL,
+    input  logic                      PENABLE,
+    input  logic [`REG_DATAWIDTH-1:0] PWDATA,
+    output logic [`REG_DATAWIDTH-1:0] PRDATA,
+    output logic                      PREADY
     );
 
 	wire [`AWIDTH-1:0] bram_addr_a;
@@ -98,44 +98,27 @@ module matrix_multiplication(
     logic start_mat_mul;
     wire done_mat_mul;
 	
-	//fsm to start matmul
-	always_ff @(posedge clk) begin
-        if (resetn == 1'b0) begin
-            state <= 4'b0000;
-            start_mat_mul <= 1'b0;
-        end else begin
-            case (state)
-            4'b0000: 
-            begin
-                start_mat_mul <= 1'b0;
-                if (start == 1'b1) 
-                    state <= 4'b0001;
-                else 
-                    state <= 4'b0000;
-            end
-            
-            4'b0001: 
-            begin
-                start_mat_mul <= 1'b1;	      
-                state <= 4'b1010;                    
-            end      
-            
-            4'b1010: 
-            begin                 
-                if (done_mat_mul == 1'b1) 
-                begin
-                    start_mat_mul <= 1'b0;
-                    state <= 4'b0000;
-                end
-                else 
-                    state <= 4'b1010;
-            end
-                      
-            default:
-                state <= 4'b0000;
-            endcase  
-        end 
-    end
+    // APB interface
+    apb_slave apb_mm (
+        .PCLK(clk),
+        .PRESETn(resetn),
+        .PADDR(PADDR),
+        .PWRITE(PWRITE),
+        .PSEL(PSEL),
+        .PENABLE(PENABLE),
+        .PWDATA(PWDATA),
+        .PRDATA(PRDATA), 
+        .PREADY(PREADY),
+        .start(start_mat_mul),
+        .address_mat_a(address_mat_a),
+        .address_mat_b(address_mat_b),
+        .address_mat_c(address_mat_c),
+        .address_stride_a(address_stride_a),
+        .address_stride_b(address_stride_b),
+        .address_stride_c(address_stride_c),
+        .done(done_mat_mul),
+        .flags(flags)
+    );
 	
 	assign done = done_mat_mul;
 
