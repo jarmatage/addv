@@ -73,6 +73,7 @@ module matmul_tb;
 
         // Setup the control registers
         #115;
+        $display("\nWriting to APB...");
         write(4'd1, 16'd0);  // Mat A
         write(4'd2, 16'd0);  // Mat B
         write(4'd3, 16'd0);  // Mat C
