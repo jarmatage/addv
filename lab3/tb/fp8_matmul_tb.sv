@@ -164,19 +164,19 @@ module matmul_tb;
         //The first column of A should be read together. So, it needs to be 
         //placed in the first matrix_A ram location.
         //This is due to Verilog conventions declaring {MSB, ..., LSB}
-        u_matmul.matrix_A.ram[3]  = {8'h05, 8'h06, 8'h07, 8'h08}; 
-        u_matmul.matrix_A.ram[2]  = {8'h00, 8'h01, 8'h03, 8'h06};
-        u_matmul.matrix_A.ram[1]  = {8'h01, 8'h02, 8'h03, 8'h04};
-        u_matmul.matrix_A.ram[0]  = {8'h09, 8'h05, 8'h03, 8'h08};
+        u_matmul.matrix_A.ram[3]  = {8'b1_011_0110, 8'b0_101_0001, 8'b0_001_0111, 8'b0_010_0110}; 
+        u_matmul.matrix_A.ram[2]  = {8'b1_100_1000, 8'b1_010_0010, 8'b0_010_0110, 8'b0_011_1100};
+        u_matmul.matrix_A.ram[1]  = {8'b0_011_0011, 8'b1_001_0100, 8'b1_011_0110, 8'b0_101_0111};
+        u_matmul.matrix_A.ram[0]  = {8'b0_110_0001, 8'b0_001_0001, 8'b0_000_0000, 8'b1_011_0111};
 
         //B is stored in COL MAJOR format
         //B[0][0] (8'h01) should be the least significant of ram[0]
         //The first row of B should be read together. So, it needs to be 
         //placed in the first matrix_B ram location. 
-        u_matmul.matrix_B.ram[3]  = {8'h02, 8'h03, 8'h06, 8'h09};
-        u_matmul.matrix_B.ram[2]  = {8'h01, 8'h03, 8'h05, 8'h03};
-        u_matmul.matrix_B.ram[1]  = {8'h03, 8'h04, 8'h01, 8'h00};
-        u_matmul.matrix_B.ram[0]  = {8'h00, 8'h03, 8'h01, 8'h01};
+        u_matmul.matrix_B.ram[3]  = {8'b0_101_1000, 8'b0_001_0000, 8'b0_011_0011, 8'b0_110_0000}; 
+        u_matmul.matrix_B.ram[2]  = {8'b0_100_1000, 8'b0_010_0100, 8'b0_010_0110, 8'b1_101_1000};
+        u_matmul.matrix_B.ram[1]  = {8'b0_011_0000, 8'b1_011_0000, 8'b0_011_0100, 8'b0_101_0000};
+        u_matmul.matrix_B.ram[0]  = {8'b0_110_0100, 8'b0_001_0001, 8'b0_000_0000, 8'b0_011_0111};
     endtask
 
     task automatic display_inputs_fp8();
