@@ -8,6 +8,7 @@ compile: clean
 		../src/fp8_addsub.sv \
 		../src/fp8_mult.sv \
 		../src/fp8_matmul.sv \
+		../src/fp8_matmul_with_ram.sv \
 		../src/output_logic.sv \
 		../src/ram.sv \
 		../src/fp8_mac.sv \
