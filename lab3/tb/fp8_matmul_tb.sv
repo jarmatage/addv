@@ -72,13 +72,13 @@ module matmul_tb;
         display_inputs_fp8();
 
         // Setup the control registers
+        #115;
         write(3'd1, 16'd0);  // Mat A
         write(3'd2, 16'd0);  // Mat B
         write(3'd3, 16'd0);  // Mat C
         write(3'd4, 16'd1);  // Stride A
         write(3'd5, 16'd1);  // Stride B
         write(3'd6, 16'd1);  // Stride C
-        #115;
         write(3'd0, 16'd1);  // Start
 
         // Wait for the done flag
