@@ -97,6 +97,7 @@ module matrix_multiplication(
 
     logic start_mat_mul;
     wire done_mat_mul;
+    logic [4:0] flags;
 	
     // APB interface
     apb_slave apb_mm (
@@ -119,8 +120,6 @@ module matrix_multiplication(
         .done(done_mat_mul),
         .flags(flags)
     );
-	
-	assign done = done_mat_mul;
 
     wire c_data_available;
 

@@ -82,10 +82,7 @@ module matmul_tb;
         write(3'd0, 16'd1);  // Start
 
         // Wait for the done flag
-        do begin
-            read(3'd7, status);
-        end while (status[0] == 1'b0);
-
+        wait_done(3'd7);     // Done
         write(3'd0, 16'd0);  // Start
         #100;         
         display_output_fp8();
@@ -130,6 +127,28 @@ module matmul_tb;
         data = PRDATA;
         PADDR = 0;
         $display("%t: PADDR %h, PRDATA %h",$time, addr,data);
+    endtask
+
+    ////////////////////////////////////////////
+    // Task to listen for the done signal
+    ////////////////////////////////////////////
+    task wait_done(input [`REG_ADDRWIDTH-1:0] addr);
+        @(negedge clk);
+        PSEL = 1;
+        PWRITE = 0;
+        PADDR = addr;
+        @(negedge clk);
+        PENABLE = 1;
+
+        do begin
+            @(negedge clk);
+            status = PRDATA;
+            $display("%t: PADDR %h, PRDATA %b",$time, addr, status);
+        end while (status[0] == 1'b0);
+
+        PSEL = 0;
+        PENABLE = 0;
+        PADDR = 0;
     endtask
 
 
