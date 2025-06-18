@@ -54,6 +54,13 @@ module matmul_tb;
         pe_resetn = 1'b1;
     end
     
+    // Timeout
+    initial begin
+        #2_000;
+        $display("ERROR: Timeout");
+        $finish;
+    end
+
     // Perform test    
     initial begin
         `ifdef DUMP
