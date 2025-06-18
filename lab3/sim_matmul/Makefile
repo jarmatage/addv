@@ -12,6 +12,7 @@ compile: clean
 		../src/fp8_matmul_with_ram.sv \
 		../src/output_logic.sv \
 		../src/ram.sv \
+		../src/seq_mac.sv \
 		../src/fp8_mac.sv \
 		../src/systolic_data_setup.sv \
 		../tb/helpers.sv \
