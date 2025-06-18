@@ -94,6 +94,8 @@ module matrix_multiplication(
         .clk(clk)
     );
 
+    logic [`AWIDTH-1:0] address_mat_a, address_mat_b, address_mat_c;
+    logic [`ADDR_STRIDE_WIDTH-1:0] address_stride_a, address_stride_b, address_stride_c;
 
     logic start_mat_mul;
     wire done_mat_mul;
