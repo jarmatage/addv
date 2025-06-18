@@ -31,8 +31,8 @@ set files [lmap f $files {file join .. src ${f}.sv}]
 analyze -format sverilog $files
 
 # Convert the design into lib cells
-elaborate "matrix_multiplication"
-current_design "matrix_multiplication"
+elaborate "matmul_4x4_systolic"
+current_design "matmul_4x4_systolic"
 link
 uniquify
 
@@ -49,9 +49,6 @@ set_driving_cell -lib_cell INVX1 [all_inputs]
 # Set delay on the ports
 set_input_delay  0.1 -clock clk [remove_from_collection [all_inputs] clk]
 set_output_delay 0.1 -clock clk [all_outputs]
-
-# Don't touch the instruction memory to prevent it from being treated as constant
-set_dont_touch [get_cells imem]
 
 # Compile
 compile -ungroup_all -map_effort high
