@@ -22,7 +22,8 @@ set files {
     fp8_addsub
     fp8_mult
     fp8_mac
-    fp8_matmul
+    seq_mac
+    matmul
     output_logic
     ram
     systolic_data_setup
