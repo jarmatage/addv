@@ -4,6 +4,7 @@ compile: clean
 	@echo "=== Compiling ==="
 	${VCS_HOME}/bin/vcs -full64 -sverilog +define+DUMP=1 -debug_access+all -kdb -timescale=1ns/1ps \
 		../src/params.sv \
+		../src/apb_slave.sv \
 		../src/fp8_value.sv \
 		../src/fp8_addsub.sv \
 		../src/fp8_mult.sv \

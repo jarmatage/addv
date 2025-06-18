@@ -17,6 +17,7 @@ set verilogout_show_unconnected_pins "true"
 # Read verilog
 set files {
     params
+    apb_slave
     fp8_value
     fp8_addsub
     fp8_mult
