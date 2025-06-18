@@ -13,6 +13,7 @@ compile: clean
 		../src/seq_mac.sv \
 		../src/systolic_data_setup.sv \
 		../src/matmul.sv \
+		../src/fp8_matmul_with_ram.sv \
 		../tb/helpers.sv \
 		../tb/matmul_tb.sv \
 	-l compile.log
