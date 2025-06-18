@@ -29,9 +29,9 @@ task display_fp8(input logic [7:0] fp);
     end
 
     if (fp[6:0] == 7'b111_0000)
-        $write("inf");
+        $write("inf     ");
     else if (fp[6:4] == 3'b111)
-        $write("nan");
+        $write("nan     ");
     else if (fp[6:0] == 7'b000_0000)
         $write("0.000000");
     else

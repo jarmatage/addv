@@ -152,12 +152,6 @@ module matmul_tb;
         PADDR = 0;
     endtask
 
-
-    //       A                               B                             Output
-    // +8.000 +4.000 +6.000 +8.000   +1.000 +1.000 +3.000 +0.000   +9.000 +9.000 +8.000 +3.000
-    // +3.000 +3.000 +3.000 +7.000   +0.000 +1.000 +4.000 +3.000   +7.000 +6.000 +5.000 +2.000
-    // +5.000 +2.000 +1.000 +6.000   +3.000 +5.000 +3.000 +1.000   +6.000 +4.000 +4.000 +1.000
-    // +9.000 +1.000 +0.000 +5.000   +9.000 +6.000 +3.000 +2.000   +5.000 +4.000 +4.000 +1.000
     task automatic set_matrices_fp8();
         //A is stored in ROW MAJOR format
         //A[0][0] (8'h08) should be the least significant byte of ram[0]
@@ -167,7 +161,7 @@ module matmul_tb;
         u_matmul.matrix_A.ram[3]  = {8'b1_011_0110, 8'b0_101_0001, 8'b0_001_0111, 8'b0_010_0110}; 
         u_matmul.matrix_A.ram[2]  = {8'b1_100_1000, 8'b1_010_0010, 8'b0_010_0110, 8'b0_011_1100};
         u_matmul.matrix_A.ram[1]  = {8'b0_011_0011, 8'b1_001_0100, 8'b1_011_0110, 8'b0_101_0111};
-        u_matmul.matrix_A.ram[0]  = {8'b0_110_0001, 8'b0_001_0001, 8'b0_000_0000, 8'b1_011_0111};
+        u_matmul.matrix_A.ram[0]  = {8'b0_100_0001, 8'b0_001_0001, 8'b0_000_0000, 8'b1_011_0111};
 
         //B is stored in COL MAJOR format
         //B[0][0] (8'h01) should be the least significant of ram[0]
