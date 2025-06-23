@@ -1,4 +1,5 @@
 module async_fifo #(
+    parameter int DATA_WIDTH = 8,
     parameter int ADDR_WIDTH = 4
 ) (
     write_if.DUT write, // Push interface
@@ -15,7 +16,7 @@ module async_fifo #(
     logic [ADDR_WIDTH:0] rptr_sync;
 
     // Create memory block
-    memory #(write.DATA_WIDTH, ADDR_WIDTH) mem1(
+    memory #(DATA_WIDTH, ADDR_WIDTH) mem1(
         .wclk(write.clk),
         .wen(write.en),
         .full(write.full),
