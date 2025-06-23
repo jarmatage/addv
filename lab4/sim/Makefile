@@ -4,6 +4,9 @@ compile: clean
 	@echo "=== Compiling ==="
 	${VCS_HOME}/bin/vcs -full64 -sverilog +define+DUMP=1 -debug_access+all -kdb -timescale=1ns/1ps \
 		../src/*.sv \
+		../tb/transaction.sv \
+		../tb/monitor.sv \
+		../tb/scoreboard.sv \
 		../tb/tb_async_fifo.sv \
 	-l compile.log
 
