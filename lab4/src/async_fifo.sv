@@ -23,7 +23,7 @@ module async_fifo #(
         .rclk(read.clk),
         .rst_n(rst_n),
         .ren(read.en),
-        .wptr_sync(wptr_sync),
+        .wptr_sync(write.ptr_sync),
         .raddr(read.addr),
         .rptr(read.ptr),
         .empty(read.empty),
