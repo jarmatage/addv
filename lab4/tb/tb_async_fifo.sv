@@ -78,6 +78,7 @@ module tb_async_fifo;
     task automatic push();
         @(negedge wclk);
         write.data <= wcnt + 8'd1; // Each slot holds the value of its place in the queue
+        $display("Pushing data: %0d", write.data);
         write.en <= 1'b1;
         if (!write.full) wcnt <= wcnt + 8'd1;
         @(posedge wclk);
