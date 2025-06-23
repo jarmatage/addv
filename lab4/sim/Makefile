@@ -2,7 +2,7 @@ all: sim verdi
 
 compile: clean
 	@echo "=== Compiling ==="
-	${VCS_HOME}/bin/vcs -full64 -sverilog +define+DUMP=1 -debug_access+all -kdb -timescale=1ns/1ps \
+	${VCS_HOME}/bin/vcs -full64 -sverilog +define+DUMP=1 -debug_access+all -kdb -timescale=1ns/1ps +log_level=2 \
 		../src/*.sv \
 		../tb/transaction.sv \
 		../tb/monitor.sv \
