@@ -6,8 +6,7 @@ class scoreboard;
     transaction q[$];
 
 
-    function new(mailbox txn_mail);
-        this.txn_mail = txn_mail;
+    function new();
     endfunction 
 
 

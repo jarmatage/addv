@@ -7,10 +7,9 @@ class monitor;
     int log_level = 0; // 0 = off, 1 = brief, 2 = verbose
 
 
-    function new(virtual write_if vwrite, virtual read_if vread, mailbox txn_mail);
+    function new(virtual write_if vwrite, virtual read_if vread);
         this.vwrite = vwrite;
         this.vread = vread;
-        this.txn_mail = txn_mail;
 
         // Get plusarg if it was passed on the command line
         void'($value$plusargs("log_level=%0d", log_level));

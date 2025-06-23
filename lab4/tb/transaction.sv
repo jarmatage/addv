@@ -22,7 +22,7 @@ class transaction;
 
 
     function string verbose();
-        return $sformartf("data = %0d, empty = %b, almost_empty = %b, full = %b, almost_full = %b",
+        return $sformatf("data = %0d, empty = %b, almost_empty = %b, full = %b, almost_full = %b",
             data, empty, almost_empty, full, almost_full);
     endfunction
 

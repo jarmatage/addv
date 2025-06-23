@@ -33,9 +33,11 @@ module tb_async_fifo;
     scoreboard sb;
 
     initial begin
-        txn_mail = new();
         mon = new(write, read, txn_mail);
         sb = new(txn_mail);
+        txn_mail = new();
+        mon.txn_mail = txn_mail;
+        sb.txn_mail = txn_mail;
         fork
             mon.run();
             sb.run();
