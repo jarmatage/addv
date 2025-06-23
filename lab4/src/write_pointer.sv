@@ -1,5 +1,3 @@
-`timescale 1ns/1ps
-
 module write_pointer #(
     parameter int WIDTH = 8
 ) (

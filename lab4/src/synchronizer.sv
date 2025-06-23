@@ -1,5 +1,3 @@
-`timescale 1ns/1ps
-
 module synchronizer #(
     parameter int WIDTH = 8
 ) (
