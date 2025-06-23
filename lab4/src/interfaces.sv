@@ -1,5 +1,6 @@
 interface read_if #(
-    parameter DATA_WIDTH = 8
+    parameter int DATA_WIDTH = 8,
+    parameter int ADDR_WIDTH = 4
 ) (
     input logic clk
 );
@@ -19,10 +20,14 @@ interface read_if #(
         output data, empty, almost_empty
     );
 
+    // Internal signals for pointers
+    logic [ADDR_WIDTH:0] addr, ptr, ptr_sync;
+
 endinterface
 
 interface write_if #(
-    parameter DATA_WIDTH = 8
+    parameter int DATA_WIDTH = 8,
+    parameter int ADDR_WIDTH = 4
 ) (
     input logic clk
 );
@@ -41,5 +46,8 @@ interface write_if #(
         input clk, en, data,
         output full, almost_full
     );
+
+    // Internal signals for pointers
+    logic [ADDR_WIDTH:0] addr, ptr, ptr_sync;
 
 endinterface
