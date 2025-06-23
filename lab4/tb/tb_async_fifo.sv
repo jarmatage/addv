@@ -16,8 +16,8 @@ module tb_async_fifo;
     logic [7:0] wcnt;
 
     // Create DUT interfaces
-    write_if write #(DATA_WIDTH) (wclk);
-    read_if  read  #(DATA_WIDTH) (rclk);
+    write_if #(DATA_WIDTH) write (wclk);
+    read_if #(DATA_WIDTH) read (rclk);
 
     // Instantiate the DUT (data width = 8, address width = 4)
     async_fifo #(DATA_WIDTH, ADDR_WIDTH) dut(write.DUT, read.DUT, rst_n);
