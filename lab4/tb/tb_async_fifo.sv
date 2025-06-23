@@ -146,7 +146,7 @@ module tb_async_fifo;
 
             // Reader
             begin
-                repeat (2) @(posedge wclk); // Give the Writer a head start
+                repeat (3) @(posedge wclk); // Give the Writer a head start
                 repeat (25) pop();
             end
         join
