@@ -13,7 +13,7 @@ class scoreboard;
 
     task run();
         forever begin
-            txn = txn_mail.get();
+            txn_mail.get(txn);
             if (txn.is_write)
                 q.push_back(txn);   // Store the write transaction in the queue
             else
