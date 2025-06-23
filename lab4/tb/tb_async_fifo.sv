@@ -141,13 +141,13 @@ module tb_async_fifo;
         fork
             // Writer
             begin
-                repeat (25) push();
+                repeat (30) push();
             end
 
             // Reader
             begin
                 @(negedge read.empty);
-                repeat (25) pop();
+                repeat (30) pop();
             end
         join
 
