@@ -8,29 +8,19 @@ module tb_async_fifo;
     localparam int ADDR_WIDTH = 4;
     localparam int DATA_DEPTH = 1 << ADDR_WIDTH;
 
-    // Create write side signals
-    logic                  wclk;
-    logic                  wen;
-    logic [DATA_WIDTH-1:0] wdata;
-    logic                  full;
-    logic                  almost_full;
-
-    // Create read side signals
-    logic                  rclk;
-    logic                  ren;
-    logic [DATA_WIDTH-1:0] rdata;
-    logic                  empty;
-    logic                  almost_empty;
-
-    // Global reset (active low)
-    logic rst_n;
+    // Clock and reset signals
+    logic wclk, rclk, rst_n;
 
     // Counts for tracking the number of pushes and pops
     logic [7:0] rcnt;
     logic [7:0] wcnt;
 
+    // Create DUT interfaces
+    write_if write #(DATA_WIDTH) (wclk);
+    read_if  read  #(DATA_WIDTH) (rclk);
+
     // Instantiate the DUT (data width = 8, address width = 4)
-    async_fifo #(DATA_WIDTH, ADDR_WIDTH) dut(.*);
+    async_fifo #(DATA_WIDTH, ADDR_WIDTH) dut(write.DUT, read.DUT, rst_n);
 
     // Generate both read and write clocks
     initial wclk = 0;
@@ -40,7 +30,10 @@ module tb_async_fifo;
 
     // Main test sequence
     initial begin
-        $fsdbDumpvars(); // Create a waveform FSDB for Verdi
+        `ifdef DUMP
+            $display("Dumping to FSDB");
+            $fsdbDumpvars();
+        `endif
         reset();
         check_reset();
         fill_fifo();

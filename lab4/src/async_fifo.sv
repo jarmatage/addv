@@ -2,8 +2,8 @@ module async_fifo #(
     parameter int DATA_WIDTH = 8,
     parameter int ADDR_WIDTH = 4
 ) (
-    write_if.DUT write, // Push interface
-    read_if.DUT  read,  // Pop interface
+    write_if write,     // Push interface
+    read_if read,       // Pop interface
     input logic rst_n   // Global reset
 );
 
