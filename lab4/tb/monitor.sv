@@ -30,6 +30,7 @@ class monitor;
             $display("Monitor: vwrite clk posedge at %0t", $time);
             $display("Monitor: vwrite.en = %0d, vwrite.full = %0d", vwrite.en, vwrite.full);
             if (vwrite.en && !vwrite.full) begin
+                $display("Inside");
                 txn = new();
                 txn.is_write = 1'b1;
                 txn.data = vwrite.data;
