@@ -27,6 +27,21 @@ module tb_async_fifo;
     initial rclk = 0;
     always #8 rclk = ~rclk; // 16ns period = 62.5MHz
 
+    // Create testbench components
+    mailbox #(transaction) txn_mail;
+    monitor mon;
+    scoreboard sb;
+
+    initial begin
+        txn_mail = new();
+        mon = new(write, read, txn_mail);
+        sb = new(txn_mail);
+        fork
+            mon.run();
+            sb.run();
+        join
+    end
+
     // Main test sequence
     initial begin
         `ifdef DUMP
