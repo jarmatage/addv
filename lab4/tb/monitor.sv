@@ -13,6 +13,7 @@ class monitor;
 
         // Get plusarg if it was passed on the command line
         $value$plusargs("log_level=%0d", log_level);
+        $display("Monitor log level set to %0d", log_level);
     endfunction
 
 
@@ -27,11 +28,7 @@ class monitor;
     task monitor_write();
         forever begin
             @(posedge vwrite.clk);
-            $display("Monitor: vwrite clk posedge at %0t", $time);
-            $display("Monitor: vwrite.en = %0d, vwrite.full = %0d", vwrite.en, vwrite.full);
             if (vwrite.en && !vwrite.full) begin
-                $display("Inside, data = %0d", vwrite.data);
-                $display("Log level = %0d", log_level);
                 txn = new();
                 txn.is_write = 1'b1;
                 txn.data = vwrite.data;
