@@ -27,6 +27,7 @@ class monitor;
     task monitor_write();
         forever begin
             @(posedge vwrite.clk);
+            $display("Monitor: vwrite clk posedge at %0t", $time);
             if (vwrite.en && !vwrite.full) begin
                 txn = new();
                 txn.is_write = 1'b1;
