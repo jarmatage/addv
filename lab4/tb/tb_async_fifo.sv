@@ -80,7 +80,10 @@ module tb_async_fifo;
         write.data = wcnt + 8'd1; // Each slot holds the value of its place in the queue
         $display("Pushing data: %0d", write.data);
         write.en = 1'b1;
-        if (!write.full) wcnt = wcnt + 8'd1;
+        if (!write.full)
+            wcnt = wcnt + 8'd1;
+        else
+            $display("Attempted to push to a full FIFO at time %t", $time);
         @(posedge wclk);
         write.en = 1'b0;
     endtask
@@ -89,7 +92,10 @@ module tb_async_fifo;
     task automatic pop();
         @(negedge rclk);
         read.en = 1'b1;
-        if (!read.empty) rcnt = rcnt + 8'd1;
+        if (!read.empty)
+            rcnt = rcnt + 8'd1;
+        else
+            $display("Attempted to pop from an empty FIFO at time %t", $time);
         @(posedge rclk);
         #2;
         read.en = 1'b0;
