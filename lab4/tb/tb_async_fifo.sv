@@ -76,6 +76,7 @@ module tb_async_fifo;
 
     // Push data into FIFO
     task automatic push();
+        @(negedge wclk);
         write.data <= wcnt + 8'd1; // Each slot holds the value of its place in the queue
         write.en <= 1'b1;
         if (!write.full) wcnt <= wcnt + 8'd1;
@@ -86,6 +87,7 @@ module tb_async_fifo;
 
     // Pop data from the FIFO
     task automatic pop();
+        @(negedge rclk);
         read.en <= 1'b1;
         if (!read.empty) rcnt <= rcnt + 8'd1;
         @(posedge rclk);
@@ -96,19 +98,19 @@ module tb_async_fifo;
     // Check the FIFO's initial reset state
     task automatic check_reset();
         if (!read.empty) begin
-            $display("ERROR: FIFO not empty after reset at time %t", $time);
+            $error("ERROR: FIFO not empty after reset at time %t", $time);
             $finish;
         end
         if (!read.almost_empty) begin
-            $display("ERROR: FIFO not almost empty after reset at time %t", $time);
+            $error("ERROR: FIFO not almost empty after reset at time %t", $time);
             $finish;
         end
         if (write.full) begin
-            $display("ERROR: FIFO should not be full after reset at time %t", $time);
+            $error("ERROR: FIFO should not be full after reset at time %t", $time);
             $finish;
         end
         if (write.almost_full) begin
-            $display("ERROR: FIFO should not be almost_full after reset at time %t", $time);
+            $error("ERROR: FIFO should not be almost_full after reset at time %t", $time);
             $finish;
         end
     endtask
@@ -116,78 +118,20 @@ module tb_async_fifo;
     // Write to the FIFO until it is full
     task automatic fill_fifo();
         $display("\n--- Filling the FIFO ---\n");
-
-        repeat (DATA_DEPTH) begin
-            push();
-
-            // Display each iteration
-            $display("write %0d: full=%0b, almost_full=%0b, rdata=%0d", wcnt, write.full, write.almost_full, read.data);
-
-            // Check that the full flag is correct
-            if (wcnt != DATA_DEPTH && write.full) begin
-                $display("ERROR: full flag was asserted at wcnt=%0d and time=%t", wcnt, $time);
-                $finish;
-            end
-            if (wcnt == DATA_DEPTH && !write.full) begin
-                $display("ERROR: full flag did not assert at wcnt=%0d and time=%t", wcnt, $time);
-                $finish;
-            end
-
-            // Check that the almost full flag is correct
-            if (wcnt < (DATA_DEPTH * 3/4) && write.almost_full) begin
-                $display("ERROR: almost_full flag was asserted at wcnt=%0d and time=%t", wcnt, $time);
-                $finish;
-            end
-            if (wcnt >= (DATA_DEPTH * 3/4) && !write.almost_full) begin
-                $display("ERROR: almost_full flag did not assert at wcnt=%0d and time=%t", wcnt, $time);
-                $finish;
-            end
-        end
-
-        // Perform one extra write attempt
-        push();
-        if (wcnt != DATA_DEPTH) begin
-            $display("ERROR: FIFO accepted write when full at time %t", $time);
-            $finish;
-        end
+        repeat (DATA_DEPTH) push();
+        push(); // Perform one extra write attempt to test interface assertions
     endtask
 
     // Read from the FIFO until it is empty
     task automatic empty_fifo();
         $display("\n--- Emptying the FIFO ---\n");
-
-        repeat (DATA_DEPTH) begin
-            pop();
-
-            // Display each iteration
-            $display("read %0d: empty=%0b, almost_empty=%0b, rdata=%0d", rcnt, read.empty, read.almost_empty, read.data);
-
-            // Check that the empty flag is correct
-            if (rcnt != DATA_DEPTH && read.empty) begin
-                $display("ERROR: empty flag was asserted at rcnt=%0d and time=%t", rcnt, $time);
-                $finish;
-            end
-            if (rcnt == DATA_DEPTH && !read.empty) begin
-                $display("ERROR: empty flag did not assert at rcnt=%0d and time=%t", rcnt, $time);
-                $finish;
-            end            
-
-            // Check that the almost empty flag is correct
-            if (rcnt < (DATA_DEPTH * 3/4) && read.almost_empty) begin
-                $display("ERROR: almost_empty flag was asserted at rcnt=%0d and time=%t", rcnt, $time);
-                $finish;
-            end
-            if (rcnt >= (DATA_DEPTH * 3/4) && !read.almost_empty) begin
-                $display("ERROR: almost_empty flag did not assert at rcnt=%0d and time=%t", rcnt, $time);
-                $finish;
-            end
-        end
+        repeat (DATA_DEPTH) pop();
+        pop(); // Perform one extra read attempt to test interface assertions
     endtask
 
     // Simultaneously read and write from the FIFO
     task automatic simultaneous_rw();
         $display("\n--- Performing Simultaneous Read and Write Operations ---\n");
-
         fork
             // Writer
             begin
@@ -197,17 +141,14 @@ module tb_async_fifo;
             // Reader
             begin
                 repeat (2) @(posedge wclk); // Give the Writer a head start
-                repeat (2*DATA_DEPTH) begin
-                    pop();
-                    $display("rdata = %d", read.data);
-                end
+                repeat (2*DATA_DEPTH) pop();
             end
         join
 
         // FIFO should be empty again
         #20;
         if (!read.empty) begin
-            $display("ERROR: FIFO not empty after read/writes at time %t", $time);
+            $error("ERROR: FIFO not empty after read/writes at time %t", $time);
             $finish;
         end
     endtask
