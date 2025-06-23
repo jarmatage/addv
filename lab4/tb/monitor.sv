@@ -12,7 +12,7 @@ class monitor;
         this.vread = vread;
 
         // Get plusarg if it was passed on the command line
-        $test$plusargs("log_level=%0d", log_level);
+        $value$plusargs("log_level=%0d", log_level);
     endfunction
 
 
