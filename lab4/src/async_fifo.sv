@@ -8,12 +8,9 @@ module async_fifo #(
 );
 
     // Internal signals for read/write pointers
-    logic [ADDR_WIDTH:0] waddr;     // binary memory addresses
-    logic [ADDR_WIDTH:0] raddr;
-    logic [ADDR_WIDTH:0] wptr;      // gray pointers
-    logic [ADDR_WIDTH:0] rptr;
-    logic [ADDR_WIDTH:0] wptr_sync; // synchronized gray pointers
-    logic [ADDR_WIDTH:0] rptr_sync;
+    logic [ADDR_WIDTH:0] waddr, raddr;          // binary memory addresses
+    logic [ADDR_WIDTH:0] wptr, rptr;            // gray pointers
+    logic [ADDR_WIDTH:0] wptr_sync, rptr_sync;  // synchronized gray pointers
 
     // Create memory block
     memory #(DATA_WIDTH, ADDR_WIDTH) mem1(
