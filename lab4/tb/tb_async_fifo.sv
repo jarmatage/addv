@@ -78,12 +78,11 @@ module tb_async_fifo;
     task automatic push();
         @(negedge wclk);
         write.data = wcnt + 8'd1; // Each slot holds the value of its place in the queue
-        $display("Pushing data: %0d", write.data);
         write.en = 1'b1;
         if (!write.full)
             wcnt = wcnt + 8'd1;
         else
-            $display("Attempted to push to a full FIFO at time %t", $time);
+            $error("[%0t] ERROR: attempted to push to a full FIFO", $time);
         @(posedge wclk);
         write.en = 1'b0;
     endtask
@@ -95,7 +94,7 @@ module tb_async_fifo;
         if (!read.empty)
             rcnt = rcnt + 8'd1;
         else
-            $display("Attempted to pop from an empty FIFO at time %t", $time);
+            $error("[%0t] ERROR: attempted to pop from an empty FIFO", $time);
         @(posedge rclk);
         #2;
         read.en = 1'b0;
@@ -104,19 +103,19 @@ module tb_async_fifo;
     // Check the FIFO's initial reset state
     task automatic check_reset();
         if (!read.empty) begin
-            $error("ERROR: FIFO not empty after reset at time %t", $time);
+            $error("[%0t] ERROR: FIFO not empty after reset", $time);
             $finish;
         end
         if (!read.almost_empty) begin
-            $error("ERROR: FIFO not almost empty after reset at time %t", $time);
+            $error("[%0t] ERROR: FIFO not almost empty after reset", $time);
             $finish;
         end
         if (write.full) begin
-            $error("ERROR: FIFO should not be full after reset at time %t", $time);
+            $error("[%0t] ERROR: FIFO should not be full after reset", $time);
             $finish;
         end
         if (write.almost_full) begin
-            $error("ERROR: FIFO should not be almost_full after reset at time %t", $time);
+            $error("[%0t] ERROR: FIFO should not be almost_full after reset", $time);
             $finish;
         end
     endtask
@@ -154,7 +153,7 @@ module tb_async_fifo;
         // FIFO should be empty again
         #20;
         if (!read.empty) begin
-            $error("ERROR: FIFO not empty after read/writes at time %t", $time);
+            $error("[%0t] ERROR: FIFO not empty after read/writes", $time);
             $finish;
         end
     endtask
