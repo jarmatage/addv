@@ -77,23 +77,22 @@ module tb_async_fifo;
     // Push data into FIFO
     task automatic push();
         @(negedge wclk);
-        write.data <= wcnt + 8'd1; // Each slot holds the value of its place in the queue
+        write.data = wcnt + 8'd1; // Each slot holds the value of its place in the queue
         $display("Pushing data: %0d", write.data);
-        write.en <= 1'b1;
-        if (!write.full) wcnt <= wcnt + 8'd1;
+        write.en = 1'b1;
+        if (!write.full) wcnt = wcnt + 8'd1;
         @(posedge wclk);
-        #2;
-        write.en <= 1'b0;
+        write.en = 1'b0;
     endtask
 
     // Pop data from the FIFO
     task automatic pop();
         @(negedge rclk);
-        read.en <= 1'b1;
-        if (!read.empty) rcnt <= rcnt + 8'd1;
+        read.en = 1'b1;
+        if (!read.empty) rcnt = rcnt + 8'd1;
         @(posedge rclk);
         #2;
-        read.en <= 1'b0;
+        read.en = 1'b0;
     endtask
 
     // Check the FIFO's initial reset state
