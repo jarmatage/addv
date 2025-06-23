@@ -135,13 +135,13 @@ module tb_async_fifo;
         fork
             // Writer
             begin
-                repeat (2*DATA_DEPTH) push();
+                repeat (25) push();
             end
 
             // Reader
             begin
                 @(posedge wclk); // Give the Writer a head start
-                repeat (2*DATA_DEPTH) pop();
+                repeat (25) pop();
             end
         join
 
