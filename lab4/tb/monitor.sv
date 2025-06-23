@@ -49,7 +49,7 @@ class monitor;
             @(posedge vread.clk);
             if (vread.en && !vread.empty) begin
                 txn = new();
-                txn.is_write = 1'b1;
+                txn.is_write = 1'b0;
                 txn.data = vread.data;
                 txn.empty = vread.empty;
                 txn.almost_empty = vread.almost_empty;
