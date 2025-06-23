@@ -30,7 +30,7 @@ class scoreboard;
             if (expected.data != txn.data)
                 $error("[%0t] ERROR: read data '%0d' does not match expected data '%0d'", $time, txn.data, expected.data);
             else
-                $display("[%0t] INFO: read data '%0d' matches expected data", $time, txn.data);
+                $display("[%0t] SCOREBOARD: read data '%0d' matches expected data", $time, txn.data);
         end
     endfunction
 

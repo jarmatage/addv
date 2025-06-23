@@ -7,18 +7,13 @@ module async_fifo #(
     input logic rst_n   // Global reset
 );
 
-    // Internal signals for read/write pointers
-    logic [ADDR_WIDTH:0] waddr, raddr;          // binary memory addresses
-    logic [ADDR_WIDTH:0] wptr, rptr;            // gray pointers
-    logic [ADDR_WIDTH:0] wptr_sync, rptr_sync;  // synchronized gray pointers
-
     // Create memory block
     memory #(DATA_WIDTH, ADDR_WIDTH) mem1(
         .wclk(write.clk),
         .wen(write.en),
         .full(write.full),
-        .waddr(waddr[ADDR_WIDTH-1:0]),
-        .raddr(raddr[ADDR_WIDTH-1:0]),
+        .waddr(write.addr[ADDR_WIDTH-1:0]),
+        .raddr(read.addr[ADDR_WIDTH-1:0]),
         .wdata(write.data),
         .rdata(read.data)
     );
@@ -29,8 +24,8 @@ module async_fifo #(
         .rst_n(rst_n),
         .ren(read.en),
         .wptr_sync(wptr_sync),
-        .raddr(raddr),
-        .rptr(rptr),
+        .raddr(read.addr),
+        .rptr(read.ptr),
         .empty(read.empty),
         .almost_empty(read.almost_empty)
     );
@@ -40,9 +35,9 @@ module async_fifo #(
         .wclk(write.clk),
         .rst_n(rst_n),
         .wen(write.en),
-        .rptr_sync(rptr_sync),
-        .waddr(waddr),
-        .wptr(wptr),
+        .rptr_sync(read.ptr_sync),
+        .waddr(write.addr),
+        .wptr(write.ptr),
         .full(write.full),
         .almost_full(write.almost_full)
     );
@@ -51,14 +46,14 @@ module async_fifo #(
     synchronizer #(ADDR_WIDTH+1) rsync(
         .clk(write.clk),
         .rst_n(rst_n),
-        .d(rptr),
-        .q2(rptr_sync)
+        .d(read.ptr),
+        .q2(read.ptr_sync)
     );
     synchronizer #(ADDR_WIDTH+1) wsync(
         .clk(read.clk),
         .rst_n(rst_n),
-        .d(wptr),
-        .q2(wptr_sync)
+        .d(write.ptr),
+        .q2(write.ptr_sync)
     );
 
 endmodule
