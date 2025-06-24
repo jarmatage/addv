@@ -21,7 +21,7 @@ module dpi_checker (
     always_ff @(posedge read.clk) begin
         if (read.en) begin
             expected_rdata = pop();
-            if (expected_rdata == read.data)
+            if (!read.empty && expected_rdata == read.data)
                 $display("[%0t] INFO: read data '%0d' matches C model", $time, read.data);
             else
                 $error("[%0t] ERROR: read data '%0d' does not match C model '%0d'", $time, read.data, expected_rdata);
