@@ -16,6 +16,7 @@ void push(uint8_t data) {
         fifo[waddr] = data;
         waddr = (waddr + 1) % DEPTH;
         count++;
+        printf("[C FIFO] pushed: %02X\n", data);
     } else {
         printf("[C FIFO] push attempted when full!\n");
     }
@@ -28,6 +29,7 @@ uint8_t pop() {
         raddr = (raddr + 1) % DEPTH;
         count--;
         return val;
+        printf("[C FIFO] popped: %02X\n", val);
     } else {
         printf("[C FIFO] pop attempted when empty!\n");
         return 0xFF;
