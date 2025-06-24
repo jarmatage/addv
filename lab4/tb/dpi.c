@@ -6,15 +6,15 @@
 #define DEPTH 16
 
 static uint8_t fifo[DEPTH];
-static int head = 0;  // write index
-static int tail = 0;  // read index
+static int waddr = 0;  // write index
+static int raddr = 0;  // read index
 static int count = 0;
 
 // Push value into FIFO
-void fifo_push(uint8_t data) {
+void push(uint8_t data) {
     if (count < DEPTH) {
-        fifo[head] = data;
-        head = (head + 1) % DEPTH;
+        fifo[waddr] = data;
+        waddr = (waddr + 1) % DEPTH;
         count++;
     } else {
         printf("[C FIFO] push attempted when full!\n");
@@ -22,10 +22,10 @@ void fifo_push(uint8_t data) {
 }
 
 // Pop value from FIFO
-uint8_t fifo_pop() {
+uint8_t pop() {
     if (count > 0) {
-        uint8_t val = fifo[tail];
-        tail = (tail + 1) % DEPTH;
+        uint8_t val = fifo[raddr];
+        raddr = (raddr + 1) % DEPTH;
         count--;
         return val;
     } else {
@@ -35,18 +35,18 @@ uint8_t fifo_pop() {
 }
 
 // Query if FIFO is empty
-bool fifo_is_empty() {
+bool is_empty() {
     return (count == 0);
 }
 
 // Query if FIFO is full
-bool fifo_is_full() {
+bool is_full() {
     return (count == DEPTH);
 }
 
 // Optional: Reset FIFO
-void fifo_reset() {
-    head = 0;
-    tail = 0;
+void reset() {
+    waddr = 0;
+    raddr = 0;
     count = 0;
 }
