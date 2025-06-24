@@ -1,16 +1,16 @@
-import "DPI-C" context function void push(byte data);
-import "DPI-C" context function byte pop();
-import "DPI-C" context function bit  is_empty();
-import "DPI-C" context function bit  is_full();
-import "DPI-C" context function void reset();
-
 module dpi_checker (
     write_if write,     // Push interface
     read_if  read       // Pop interface
 );
 
+    import "DPI-C" context function void push(byte data);
+    import "DPI-C" context function byte pop();
+    import "DPI-C" context function bit  is_empty();
+    import "DPI-C" context function bit  is_full();
+    import "DPI-C" context function void reset();
+
     logic is_full, is_empty;
-    logic [7:0] expected_rdata;
+    byte expected_rdata;
 
     // Call C push() on every write
     always_ff @(posedge write.clk) begin
