@@ -29,11 +29,11 @@ module dpi_checker (
     end
 
     // Continuously check full and empty flags
-    always_ff @(posedge write.clk) begin
+    always_comb begin
         if (is_full() != write.full)
             $error("[%0t] ERROR: full flag mismatch, expected: %b, got: %b", $time, is_full(), write.full);
     end
-    always_ff @(posedge read.clk) begin
+    always_comb begin
         if (is_empty() != read.empty)
             $error("[%0t] ERROR: empty flag mismatch, expected: %b, got: %b", $time, is_empty(), read.empty);
     end
