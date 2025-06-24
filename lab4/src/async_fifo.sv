@@ -3,8 +3,7 @@ module async_fifo #(
     parameter int ADDR_WIDTH = 4
 ) (
     write_if write,     // Push interface
-    read_if read,       // Pop interface
-    input logic rst_n   // Global reset
+    read_if  read       // Pop interface
 );
 
     // Create memory block
@@ -21,7 +20,7 @@ module async_fifo #(
     // Compute the read pointer and empty status flags
     read_pointer #(ADDR_WIDTH+1) rptr_empty(
         .rclk(read.clk),
-        .rst_n(rst_n),
+        .rst_n(read.rst_n),
         .ren(read.en),
         .wptr_sync(write.ptr_sync),
         .raddr(read.addr),
@@ -33,7 +32,7 @@ module async_fifo #(
     // Compute the write pointer and full status flags
     write_pointer #(ADDR_WIDTH+1) wptr_full(
         .wclk(write.clk),
-        .rst_n(rst_n),
+        .rst_n(write.rst_n),
         .wen(write.en),
         .rptr_sync(read.ptr_sync),
         .waddr(write.addr),
@@ -45,13 +44,13 @@ module async_fifo #(
     // Synchronize the pointers with clock domain crossing
     synchronizer #(ADDR_WIDTH+1) rsync(
         .clk(write.clk),
-        .rst_n(rst_n),
+        .rst_n(read.rst_n),
         .d(read.ptr),
         .q2(read.ptr_sync)
     );
     synchronizer #(ADDR_WIDTH+1) wsync(
         .clk(read.clk),
-        .rst_n(rst_n),
+        .rst_n(write.rst_n),
         .d(write.ptr),
         .q2(write.ptr_sync)
     );

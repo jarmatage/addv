@@ -2,7 +2,8 @@ interface read_if #(
     parameter int DATA_WIDTH = 8,
     parameter int ADDR_WIDTH = 4
 ) (
-    input logic clk
+    input logic clk,
+    input logic rst_n
 );
 
     logic                  en;
@@ -11,12 +12,12 @@ interface read_if #(
     logic                  almost_empty;
 
     modport TB (
-        input clk, data, empty, almost_empty,
+        input clk, rst_n, data, empty, almost_empty,
         output en
     );
 
     modport DUT (
-        input clk, en,
+        input clk, rst_n, en,
         output data, empty, almost_empty
     );
 
@@ -38,7 +39,8 @@ interface write_if #(
     parameter int DATA_WIDTH = 8,
     parameter int ADDR_WIDTH = 4
 ) (
-    input logic clk
+    input logic clk,
+    input logic rst_n
 );
 
     logic                  en;
@@ -47,12 +49,12 @@ interface write_if #(
     logic                  almost_full;
 
     modport TB (
-        input clk, full, almost_full,
+        input clk, rst_n, full, almost_full,
         output en, data
     );
 
     modport DUT (
-        input clk, en, data,
+        input clk, rst_n, en, data,
         output full, almost_full
     );
 

@@ -15,11 +15,11 @@ module tb_async_fifo;
     logic [7:0] wcnt, rcnt;
 
     // Create DUT interfaces
-    write_if #(DATA_WIDTH, ADDR_WIDTH) write (wclk);
-    read_if #(DATA_WIDTH, ADDR_WIDTH) read (rclk);
+    write_if #(DATA_WIDTH, ADDR_WIDTH) write (wclk, rst_n);
+    read_if #(DATA_WIDTH, ADDR_WIDTH) read (rclk, rst_n);
 
     // Instantiate the DUT (data width = 8, address width = 4)
-    async_fifo #(DATA_WIDTH, ADDR_WIDTH) dut(write.DUT, read.DUT, rst_n);
+    async_fifo #(DATA_WIDTH, ADDR_WIDTH) dut(write.DUT, read.DUT);
 
     // Generate both read and write clocks
     initial wclk = 0;
