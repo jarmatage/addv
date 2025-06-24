@@ -9,7 +9,6 @@ module dpi_checker (
     import "DPI-C" context function bit  is_full();
     import "DPI-C" context function void reset();
 
-    logic is_full, is_empty;
     byte expected_rdata;
 
     // Call C push() on every write
@@ -29,14 +28,12 @@ module dpi_checker (
 
     // Continuously check full and empty flags
     always_ff @(posedge write.clk) begin
-        is_full = is_full();
-        if (is_full != write.full)
-            $error("[%0t] ERROR: full flag mismatch, expected: %b, got: %b", $time, is_full, write.full);
+        if (is_full() != write.full)
+            $error("[%0t] ERROR: full flag mismatch, expected: %b, got: %b", $time, is_full(), write.full);
     end
     always_ff @(posedge read.clk) begin
-        is_empty = is_empty();
-        if (is_empty != read.empty)
-            $error("[%0t] ERROR: empty flag mismatch, expected: %b, got: %b", $time, is_empty, read.empty);
+        if (is_empty() != read.empty)
+            $error("[%0t] ERROR: empty flag mismatch, expected: %b, got: %b", $time, is_empty(), read.empty);
     end
 
     // Reset the C model on reset signal
