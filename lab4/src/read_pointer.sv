@@ -23,10 +23,11 @@ module read_pointer #(
     logic [WIDTH-1:0] diff;
 
     // Add the increment (0 or 1) to the current count
-    if ($test$plusargs("BUGGED")) 
+    `ifdef BUGGED
         assign next_raddr = raddr + {(WIDTH)'(0), ren};
-    else
+    `else
         assign next_raddr = raddr + {(WIDTH)'(0), (ren && !empty)};
+    `endif
 
     // Convert the next count into gray code
     assign next_rptr = next_raddr ^ (next_raddr >> 1);

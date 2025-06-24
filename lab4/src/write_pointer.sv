@@ -23,7 +23,11 @@ module write_pointer #(
     logic [WIDTH-1:0] diff;
 
     // Add the increment (0 or 1) to the current count
-    assign next_waddr = waddr + {(WIDTH-1)'(0), (wen && !full)};
+    `ifdef BUGGED
+        assign next_waddr = waddr + {(WIDTH-1)'(0), wen};
+    `else
+        assign next_waddr = waddr + {(WIDTH-1)'(0), (wen && !full)};
+    `endif
 
     // Convert the next count into gray code
     assign next_wptr = next_waddr ^ (next_waddr >> 1);
