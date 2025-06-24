@@ -23,6 +23,15 @@ interface read_if #(
     // Internal signals for pointers
     logic [ADDR_WIDTH:0] addr, ptr, ptr_sync;
 
+    // Assert that write pointer does not change when FIFO is full
+    property no_write_when_full;
+        @(posedge clk) disable iff (!rst_n)
+        full |=> (ptr == $past(ptr));
+    endproperty
+
+    assert property (no_write_when_full) else
+        $error("[%0t] ERROR: write pointer changed while FIFO is full", $time);
+
 endinterface
 
 interface write_if #(
@@ -49,5 +58,14 @@ interface write_if #(
 
     // Internal signals for pointers
     logic [ADDR_WIDTH:0] addr, ptr, ptr_sync;
+
+    // Assert that read pointer does not change when FIFO is empty
+    property no_read_when_empty;
+        @(posedge clk) disable iff (!rst_n)
+        empty |=> (ptr == $past(ptr));
+    endproperty
+
+    assert property (no_read_when_empty) else
+        $error("[%0t] ERROR: read pointer changed while FIFO is empty", $time);
 
 endinterface

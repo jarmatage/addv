@@ -82,7 +82,7 @@ module tb_async_fifo;
         if (!write.full)
             wcnt = wcnt + 8'd1;
         else
-            $error("[%0t] ERROR: attempted to push to a full FIFO", $time);
+            $display("[%0t] INFO: attempted to push to a full FIFO", $time);
         @(posedge wclk);
         write.en = 1'b0;
     endtask
@@ -94,7 +94,7 @@ module tb_async_fifo;
         if (!read.empty)
             rcnt = rcnt + 8'd1;
         else
-            $error("[%0t] ERROR: attempted to pop from an empty FIFO", $time);
+            $display("[%0t] INFO: attempted to pop from an empty FIFO", $time);
         @(posedge rclk);
         #2;
         read.en = 1'b0;
