@@ -13,13 +13,13 @@ module dpi_checker (
     logic [7:0] expected_rdata;
 
     // Call C push() on every write
-    always @(write.clk) begin
+    always_ff @(posedge write.clk) begin
         if (write.en)
             push(write.data);
     end
 
     // Call C pop() on every read and compare data
-    always @(read.clk) begin
+    always_ff @(posedge read.clk) begin
         if (read.en) begin
             expected_rdata = pop();
             if (expected_rdata != read.data)
@@ -28,15 +28,18 @@ module dpi_checker (
     end
 
     // Continuously check full and empty flags
-    always @(write.clk) begin
+    always_ff @(posedge write.clk) begin
         is_full = is_full();
         if (is_full != write.full)
             $error("[%0t] ERROR: full flag mismatch, expected: %b, got: %b", $time, is_full, write.full);
     end
-    always @(read.clk) begin
+    always_ff @(posedge read.clk) begin
         is_empty = is_empty();
         if (is_empty != read.empty)
             $error("[%0t] ERROR: empty flag mismatch, expected: %b, got: %b", $time, is_empty, read.empty);
     end
+
+    // Reset the C model on reset signal
+    always_ff @(negedge write.rst_n or negedge read.rst_n) reset();
 
 endmodule
