@@ -6,9 +6,8 @@ compile: clean
 	@echo "=== Compiling ==="
 	${VCS_HOME}/bin/vcs -full64 -sverilog +define+DUMP=1 -debug_access+all -kdb -timescale=1ns/1ps +plusarg_save +log_level=$(LOG_LEVEL) \
 		../src/*.sv \
-		../tb/transaction.sv \
-		../tb/monitor.sv \
-		../tb/scoreboard.sv \
+		../tb/dpi.c \
+		../tb/dpi_checker.sv \
 		../tb/tb_async_fifo_dpi.sv \
 	-l compile.log
 
