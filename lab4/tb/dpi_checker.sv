@@ -22,7 +22,7 @@ module dpi_checker (
         if (read.en) begin
             expected_rdata = pop();
             if (expected_rdata != read.data)
-                $error("[%0t] ERROR: read data '%0d' does not match C model '%0d'", $time, txn.data, expected_rdata);
+                $error("[%0t] ERROR: read data '%0d' does not match C model '%0d'", $time, read.data, expected_rdata);
         end
     end
 
