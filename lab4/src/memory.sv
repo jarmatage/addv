@@ -13,6 +13,14 @@ module memory #(
 
     localparam int DATA_DEPTH = (1 << ADDR_WIDTH);
 
+    // Inject write data bug
+    logic [DATA_WIDTH-1:0] wdata_bug;
+    `ifdef BUGGED
+        assign wdata_bug = (wdata == 'd21) ? '0 : wdata; // Bug: if wdata is 21, write 0 instead
+    `else
+        assign wdata_bug = wdata;
+    `endif
+
     // Create memory block
     logic [DATA_WIDTH-1:0] mem [0:DATA_DEPTH-1];
 
@@ -21,6 +29,6 @@ module memory #(
 
     // Write to memory synchronously
     always_ff @(posedge wclk)
-        if (wen && !full) mem[waddr] <= wdata;
+        if (wen && !full) mem[waddr] <= wdata_bug;
    
 endmodule
