@@ -28,8 +28,8 @@ uint8_t pop() {
         uint8_t val = fifo[raddr];
         raddr = (raddr + 1) % DEPTH;
         count--;
-        return val;
         printf("[C FIFO] popped: %02X\n", val);
+        return val;
     } else {
         printf("[C FIFO] pop attempted when empty!\n");
         return 0xFF;
