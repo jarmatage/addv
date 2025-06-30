@@ -20,4 +20,4 @@ verdi:
 clean:
 	rm -rf simv csrc simv.daidir *.fsdb novas* *.key *.log verdi*
 
-.PHONY: all clean compile compile_bug sim sim_bug verdi
+.PHONY: all clean compile sim verdi
