@@ -17,8 +17,7 @@ class instr_monitor extends uvm_monitor;
     function void build_phase(uvm_phase phase);
         super.build_phase(phase);
         if (!uvm_config_db#(virtual imem_if)::get(null, "", "vif", vif))
-            `uvm_fatal("NOVIF", "virtual interface not set in config_db")
-        instr_ap = new("instr_ap", this);
+            `uvm_fatal("NOVIF", "virtual interface not set in config_db");
     endfunction
 
 
