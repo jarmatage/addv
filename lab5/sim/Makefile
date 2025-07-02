@@ -6,7 +6,9 @@ compile: clean
 	@echo "=== Compiling ==="
 	${VCS_HOME}/bin/vcs -full64 -sverilog +define+DUMP=1 -debug_access+all -kdb -timescale=1ns/1ps +plusarg_save +log_level=$(LOG_LEVEL) \
 		../src/*.sv \
-		../tb/*.sv \
+		../tb/instruction.sv \
+		../tb/instr_gen.sv \
+		../tb/tb_mips.sv \
 	-l compile.log
 
 sim: compile
