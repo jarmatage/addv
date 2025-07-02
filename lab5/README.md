@@ -1,6 +1,6 @@
 There are the following folders in the project:
-  - src - contains all the system verilog for the mips processor.
-  - tb  - contains testbenches for the code.
+  - src - contains all the system verilog for the pipelined mips processor.
+  - tb  - contains uvm classes and the testbench for the code.
   - sim - compile and simulate the mips processor
 
 
