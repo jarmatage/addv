@@ -9,6 +9,7 @@ compile: clean
 		../tb/setup_uvm.sv \
 		../tb/instruction.sv \
 		../tb/instr_gen.sv \
+		../tb/instr_monitor.sv \
 		../tb/tb_mips.sv \
 	-l compile.log
 
