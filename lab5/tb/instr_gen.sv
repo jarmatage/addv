@@ -58,6 +58,7 @@ class instr_gen extends uvm_sequence #(instruction);
 
     // Generate an instruction that initializes a given register to 0
     function void gen_init_reg(int reg_num);
+        instruction instr;
         instr = instruction::type_id::create("init_reg");
         assert(instr.randomize() with {
             opcode == 6'b000000;
@@ -72,6 +73,7 @@ class instr_gen extends uvm_sequence #(instruction);
 
     // Generate an instruction that initializes a given memory address to 0
     function void gen_init_mem(int mem_addr);
+        instruction instr;
         instr = instruction::type_id::create("init_mem");
         assert(instr.randomize() with {
             opcode == 6'b101011;
@@ -93,6 +95,7 @@ class instr_gen extends uvm_sequence #(instruction);
 
     // Generate a pair of instructions with a register dependency
     function void gen_register_dependency();
+        instruction a, b;
         a = instruction::type_id::create("reg_dep_A");
         b = instruction::type_id::create("reg_dep_B");
 
@@ -111,6 +114,7 @@ class instr_gen extends uvm_sequence #(instruction);
 
     // Generate a SW and LW pair with the same memory address
     function void gen_memory_dependency();
+        instruction a, b;
         a = instruction::type_id::create("mem_dep_A");
         b = instruction::type_id::create("mem_dep_B");
 
@@ -147,6 +151,7 @@ class instr_gen extends uvm_sequence #(instruction);
 
     // Generate a branch instruction that is guaranteed to be taken
     function void gen_branch_taken();
+        instruction instr;
         instr = instruction::type_id::create("branch_taken");
         assert(instr.randomize() with {
             opcode == 6'b000100; // BEQ
@@ -158,6 +163,7 @@ class instr_gen extends uvm_sequence #(instruction);
 
     // Generate a random instruction with no specific constraints
     function void gen_individual_random();
+        instruction instr;
         instr = instruction::type_id::create("single_instr");
         assert(instr.randomize());
         add_instr(instr);
