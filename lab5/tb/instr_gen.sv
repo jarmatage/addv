@@ -1,6 +1,3 @@
-`include "uvm_macros.svh"
-import uvm_pkg::*;
-
 class instr_gen extends uvm_sequence #(instruction);
     `uvm_object_utils(instr_gen)
 
