@@ -1,4 +1,4 @@
-class instruction extends uvm_sequence_item;
+class instruction extends uvm_transaction;
     `uvm_object_utils(instruction)
 
     rand bit [5:0]  opcode;
