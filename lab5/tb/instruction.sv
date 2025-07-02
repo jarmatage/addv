@@ -42,7 +42,7 @@ class instruction extends uvm_transaction;
         funct inside {
             6'b100000, // ADD
             6'b100100  // AND
-        }
+        };
     }
 
     constraint imm_range {
