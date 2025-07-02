@@ -36,8 +36,7 @@ class instr_monitor extends uvm_monitor;
     // Send the current instruction to the analysis port
     task send_instruction();
         instruction instr;
-        name = $sformatf("instr_%0d", vif.pc);
-        instr = instruction::type_id::create(name);
+        instr = instruction::type_id::create($sformatf("instr_%0d", vif.pc));
         instr.disassemble(vif.instr);
         instr_ap.write(instr);
     endtask
