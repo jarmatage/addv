@@ -28,6 +28,11 @@ module tb_mips ();
         $finish;
     end
     
+    // Initialize instruction memory
+    initial begin
+        $readmemh("memfile.dat", dut.imem.RAM, 0, 255);
+    end
+
     // Initialize expected data and addresses
     initial begin
         expected_data[1] = 32'd7;
