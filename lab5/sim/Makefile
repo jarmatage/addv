@@ -10,6 +10,9 @@ compile: clean
 		../tb/instruction.sv \
 		../tb/instr_gen.sv \
 		../tb/instr_monitor.sv \
+		../tb/instr_coverage.sv \
+		../tb/instr_env.sv \
+		../tb/instr_test.sv \
 		../tb/tb_mips.sv \
 	-l compile.log
 

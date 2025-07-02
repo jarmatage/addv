@@ -16,8 +16,8 @@ class instr_monitor extends uvm_monitor;
     // Set the virtual interface
     function void build_phase(uvm_phase phase);
         super.build_phase(phase);
-        if (!uvm_config_db#(virtual imem_if)::get(this, "", "vif", vif))
-            `uvm_fatal("NOVIF", "Virtual interface must be set for instruction_monitor")
+        if (!uvm_config_db#(virtual imem_if)::get(null, "", "vif", vif))
+            `uvm_fatal("NOVIF", "virtual interface not set in config_db")
     endfunction
 
 
