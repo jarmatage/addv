@@ -165,4 +165,11 @@ class instr_gen extends uvm_sequence #(instruction);
         assert(instr.randomize());
         add_instr(instr);
     endfunction
+
+    // Display all instructions in the list
+    task display_all();
+        $display("\nInstruction Sequence:");
+        foreach (instr_list[i])
+            $display("[%d] 0x%h, %s", i, machine_code_list[i], instr_list[i].get_name());
+    endtask
 endclass
