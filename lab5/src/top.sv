@@ -1,10 +1,10 @@
 module top (
+    imem_if my_imem_if,
     input  logic        clk, reset,
     output logic [31:0] writedata,
     output logic [31:0] dataadr,
     output logic        memwrite
 );
-    imem_if my_imem_if (.clk(clk), .reset(reset));
     wire [31:0] readdata;
 
     // instantiate processor and memories

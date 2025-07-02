@@ -6,8 +6,11 @@ module tb_mips ();
     wire [31:0] writedata, dataadr;
     wire memwrite;
 
+    // Imem interface
+    imem_if my_imem_if (.clk(clk), .reset(reset));
+
     // Instantiate top module
-    top dut(.*);
+    top dut(.my_imem_if(my_imem_if.DUT), .*);
 
     // Clock generation
     initial clk = 1'b0;
@@ -22,12 +25,12 @@ module tb_mips ();
     end
 
     // Setup instruction monitor
-    instruction_monitor mon;
+    // instruction_monitor mon;
 
-    initial begin
-        mon = instruction_monitor::type_id::create("mon", this);
-        uvm_config_db#(virtual imem_if)::set(null, "*", "vif", dut.my_imem_if);
-    end
+    // initial begin
+    //     mon = instruction_monitor::type_id::create("mon", this);
+    //     uvm_config_db#(virtual imem_if)::set(null, "*", "vif", dut.my_imem_if);
+    // end
 
     // Initialize instruction memory
     initial begin
