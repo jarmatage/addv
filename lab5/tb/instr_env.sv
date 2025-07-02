@@ -19,6 +19,6 @@ class instr_env extends uvm_env;
 
     virtual function void connect_phase(uvm_phase phase);
         super.connect_phase(phase);
-        mon.ap.connect(cov.imp);
+        mon.instr_ap.connect(cov.imp);
     endfunction
 endclass
