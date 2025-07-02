@@ -19,14 +19,14 @@ class instruction extends uvm_sequence_item;
 
     constraint rs_range {
         if (opcode == 6'b000000 || opcode == 6'b000100) 
-            rs inside {5'd1, 5'd2, 5'd3, 5'd4}; // R-type or BEQ
+            rs inside {5'd0, 5'd1, 5'd2, 5'd3, 5'd4}; // R-type or BEQ
         else
             rs == 5'd0; // Make base address 0 for LW/SW
     }
 
 
     constraint rt_range {
-        rt inside {5'd1, 5'd2, 5'd3, 5'd4};
+        rt inside {5'd0, 5'd1, 5'd2, 5'd3, 5'd4};
     }
 
 
