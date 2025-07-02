@@ -63,4 +63,18 @@ class instruction extends uvm_sequence_item;
         else
             return {opcode, rs, rt, imm}; // I-type
     endfunction
+
+
+    function void disassemble(bit [31:0] instr);
+        opcode = instr[31:26];
+        rs = instr[25:21];
+        rt = instr[20:16];
+
+        if (opcode == 6'b000000) begin
+            rd = instr[15:11];
+            funct = instr[5:0];
+        end else begin
+            imm = instr[15:0];
+        end
+    endfunction
 endclass
