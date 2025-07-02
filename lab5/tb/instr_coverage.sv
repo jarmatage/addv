@@ -22,12 +22,12 @@ class instr_coverage extends uvm_subscriber #(instruction);
     endfunction
 
 
-    function void write(instruction tr);
+    function void write(instruction t);
         instr_fields_cg.sample();
         if (prev_instr != null) begin
             instr_order_cg.sample();
             instr_gap_cg.sample();
         end
-        prev_instr = tr;
+        prev_instr = t;
     endfunction
 endclass
