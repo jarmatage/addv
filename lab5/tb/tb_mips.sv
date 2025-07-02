@@ -10,7 +10,14 @@ module tb_mips ();
     imem_if my_imem_if (.clk(clk), .reset(reset));
 
     // Instantiate top module
-    top dut(.my_imem_if(my_imem_if.DUT), .*);
+    top dut(
+        .my_imem_if(my_imem_if.DUT),
+        .clk(clk),
+        .reset(reset),
+        .writedata(writedata),
+        .dataadr(dataadr),
+        .memwrite(memwrite)    
+    );
 
     // Clock generation
     initial clk = 1'b0;
@@ -25,12 +32,12 @@ module tb_mips ();
     end
 
     // Setup instruction monitor
-    // instruction_monitor mon;
+    instruction_monitor mon;
 
-    // initial begin
-    //     mon = instruction_monitor::type_id::create("mon", this);
-    //     uvm_config_db#(virtual imem_if)::set(null, "*", "vif", dut.my_imem_if);
-    // end
+    initial begin
+        mon = instruction_monitor::type_id::create();
+        uvm_config_db#(virtual imem_if)::set(null, "*", "vif", my_imem_if);
+    end
 
     // Initialize instruction memory
     initial begin
