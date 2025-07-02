@@ -19,6 +19,7 @@ class instr_coverage extends uvm_subscriber #(instruction);
 
     function new(string name, uvm_component parent);
         super.new(name, parent);
+        imp = new("imp", this);
     endfunction
 
 
