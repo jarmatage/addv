@@ -1,5 +1,3 @@
-`include "instruction.sv"
-
 class instr_gen extends uvm_sequence #(instruction);
     `uvm_object_utils(instr_gen)
 
