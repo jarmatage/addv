@@ -105,6 +105,7 @@ class instr_gen extends uvm_sequence #(instruction);
         });
 
         add_instr(a);
+        gen_gap();
         add_instr(b);
     endfunction
 
@@ -124,13 +125,14 @@ class instr_gen extends uvm_sequence #(instruction);
         });
 
         add_instr(a);
+        gen_gap();
         add_instr(b);
     endfunction
 
 
     // Generate 0 to 4 random instructions
     function void gen_gap();
-        int gap_size = $urandom_range(0, 4);
+        int gap_size = $urandom_range(0, 3);
         for (int i = 0; i < gap_size; i++)
             gen_individual();
     endfunction
