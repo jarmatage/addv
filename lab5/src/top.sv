@@ -4,22 +4,23 @@ module top (
     output logic [31:0] dataadr,
     output logic        memwrite
 );
-    wire [31:0] pc, instr, readdata;
+    imem_if my_imem_if (.clk(clk), .reset(reset));
+    wire [31:0] readdata;
 
     // instantiate processor and memories
     mips mips (
         .clk,
         .reset,
-        .pc,
-        .instr,
+        .pc(my_imem_if.pc),
+        .instr(my_imem_if.instr),
         .memwrite,
         .aluout(dataadr),
         .writedata,
         .readdata
     );
     imem imem (
-        .a(pc[9:2]),
-        .rd(instr)
+        .a(my_imem_if.pc[9:2]),
+        .rd(my_imem_if.instr)
     );
     dmem dmem (
         .clk, 

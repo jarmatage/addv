@@ -42,6 +42,7 @@ class instruction extends uvm_sequence_item;
         };
     }
 
+
     constraint imm_range {
         if (opcode == 6'b000100) {
             imm inside {16'd1, 16'd2, 16'd3, 16'd4}; // Specific offsets for BEQ
