@@ -19,8 +19,6 @@ class instr_env extends uvm_env;
 
     virtual function void connect_phase(uvm_phase phase);
         super.connect_phase(phase);
-        $display("mon.instr_ap: %p", mon.instr_ap);
-        $display("cov.imp: %p", cov.imp);
         mon.instr_ap.connect(cov.imp);
     endfunction
 endclass
