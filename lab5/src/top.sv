@@ -18,7 +18,7 @@ module top (
         .readdata
     );
     imem imem (
-        .a(pc[7:2]),
+        .a(pc[9:2]),
         .rd(instr)
     );
     dmem dmem (
@@ -46,7 +46,7 @@ endmodule
 
 
 module imem(
-    input  logic [5:0]  a,
+    input  logic [7:0]  a,
     output logic [31:0] rd
 );
     logic [31:0] RAM[255:0];

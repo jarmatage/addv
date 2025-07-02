@@ -166,6 +166,7 @@ class instr_gen extends uvm_sequence #(instruction);
         add_instr(instr);
     endfunction
 
+
     // Display all instructions in the list
     task display_all();
         $display("\nInstruction Sequence:");

@@ -31,10 +31,11 @@ module tb_mips ();
 
     // Main test sequence
     initial begin
-        reset = 1'b1; // Assert reset
+        reset = 1'b1;
         #50;
-        reset = 1'b0; // Deassert reset
-        #1_000;
+        reset = 1'b0;
+        wait (dut.imem.a == 8'hFF);
+        $display("End of instruction memory reached, stopping simulation.");
         $finish;
     end
 endmodule
