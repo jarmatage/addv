@@ -1,5 +1,3 @@
-`include "uvm_macros.svh"
-
 class instruction extends uvm_transaction;
     `uvm_object_utils(instruction)
 

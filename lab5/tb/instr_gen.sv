@@ -1,4 +1,3 @@
-`include "uvm_macros.svh"
 `include "instruction.sv"
 
 class instr_gen extends uvm_sequence #(instruction);
