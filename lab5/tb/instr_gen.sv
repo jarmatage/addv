@@ -138,7 +138,7 @@ class instr_gen extends uvm_sequence #(instruction);
 
     // Generate a single instruction
     function void gen_individual();
-        int choice = $urandom_range(0, 5);
+        int choice = $urandom_range(0, 9);
         case (choice)
             0: gen_branch_taken();
             default: gen_individual_random();
@@ -170,6 +170,8 @@ class instr_gen extends uvm_sequence #(instruction);
     task display_all();
         $display("\nInstruction Sequence:");
         foreach (instr_list[i])
-            $display("[%d] 0x%h, %s", i, machine_code_list[i], instr_list[i].get_name());
+            $display("[%0d] 0x%h, %s", i, machine_code_list[i], instr_list[i].get_name());
+        for (int i = instr_list.size(); i < imem_size; i++)
+            $display("[%0d] 0x%h, NOP", i, 32'd0);
     endtask
 endclass
