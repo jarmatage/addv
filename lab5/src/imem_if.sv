@@ -7,7 +7,7 @@ interface imem_if (
 
     modport TB (
         input clk, reset, pc, instr
-    )
+    );
 
     modport DUT (
         input clk, reset,
