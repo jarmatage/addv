@@ -143,7 +143,8 @@ class instr_coverage extends uvm_subscriber #(instruction);
         if (code == 32'd0) begin
             gap++;
         end else begin
-            instr_gap_cg.sample();
+            if (prev_instr != null)
+                instr_gap_cg.sample();
             prev_instr = instr;
         end
     endfunction
