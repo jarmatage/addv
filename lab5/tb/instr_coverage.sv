@@ -2,7 +2,7 @@ class instr_coverage extends uvm_subscriber #(instruction);
     `uvm_component_utils(instr_coverage)
 
     uvm_analysis_imp #(instruction, instr_coverage) imp;
-    instruction prev_instr;
+    instruction instr, prev_instr;
 
 
     covergroup instr_fields_cg;
