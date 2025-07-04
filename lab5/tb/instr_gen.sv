@@ -202,7 +202,7 @@ class instr_gen extends uvm_sequence #(instruction);
         instruction instr;
         instr = instruction::type_id::create("single_instr");
         assert(instr.randomize() with {
-            funct != 6'b000000 // Not a NOP
+            funct != 6'b000000; // Not a NOP
         });
         add_instr(instr);
     endfunction
