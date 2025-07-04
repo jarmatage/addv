@@ -47,7 +47,7 @@ module dmem(
     initial begin
         // Initialize RAM with zeros
         for (int i = 0; i < 64; i++) begin
-            RAM[i] = 32'b0;
+            RAM[i] <= 32'b0;
         end
     end
 
