@@ -83,7 +83,6 @@ class instr_gen extends uvm_sequence #(instruction);
         case (choice)
             0: gen_register_dependency();
             1: gen_memory_dependency();
-            2: gen_load_word_dependency();
             3: gen_branch_taken();
             default: gen_individual();
         endcase
