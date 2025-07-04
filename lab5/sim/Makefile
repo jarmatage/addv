@@ -5,7 +5,7 @@ all: sim verdi
 
 compile: clean
 	@echo "=== Compiling ==="
-	mkdir seeds
+	mkdir -p seeds
 	${VCS_HOME}/bin/vcs \
 		-full64 \
 		-sverilog \
