@@ -32,7 +32,7 @@ class instr_coverage extends uvm_subscriber #(instruction);
         add_rd : coverpoint instr.rd iff (instr.opcode == 6'h00 && instr.funct == 6'h20) {
             bins rd_vals[] = {[0:4]};
         }
-        add_cross : cross add_rs, add_rt, add_rd iff (instr.rd == 5'd0);
+        add_cross : cross add_rs, add_rt, add_rd iff (instr.rd != 5'd0);
 
         // AND
         and_rs : coverpoint instr.rs iff (instr.opcode == 6'h00 && instr.funct == 6'h24) {
@@ -44,7 +44,7 @@ class instr_coverage extends uvm_subscriber #(instruction);
         and_rd : coverpoint instr.rd iff (instr.opcode == 6'h00 && instr.funct == 6'h24) {
             bins rd_vals[] = {[0:4]};
         }
-        and_cross : cross and_rs, and_rt, and_rd iff (instr.rd == 5'd0);
+        and_cross : cross and_rs, and_rt, and_rd iff (instr.rd != 5'd0);
 
         // LW
         lw_rs : coverpoint instr.rs iff (instr.opcode == 6'h23) {

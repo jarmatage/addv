@@ -5,7 +5,7 @@ all: sim verdi
 
 compile: clean
 	@echo "=== Compiling ==="
-	mkdir -p seeds
+	@mkdir -p seeds
 	${VCS_HOME}/bin/vcs \
 		-full64 \
 		-sverilog \
@@ -39,6 +39,9 @@ verdi:
 	${VERDI_HOME}/bin/verdi -dbdir ./simv.daidir -ssf novas.fsdb -nologo &
 
 cov:
+	@for i in {0..100..5}; do \
+		$(MAKE) sim SEED=$$i; \
+	done
 	${VCS_HOME}/bin/urg -dir seeds/*.vdb -dbname merged.vdb
 	${VERDI_HOME}/bin/verdi -cov -covdir merged.vdb &
 
