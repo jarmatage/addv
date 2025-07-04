@@ -14,7 +14,7 @@ compile: clean
 		-timescale=1ns/1ps \
 		-ntb_opts uvm \
 		-cm line+tgl+cond+fsm+branch+assert \
-		-cm_dir simv_$(SEED).vdb \
+		-cm_dir seeds/simv_$(SEED).vdb \
 		+plusarg_save \
 		+define+DUMP=1 \
 		+log_level=$(LOG_LEVEL) \
@@ -39,7 +39,8 @@ verdi:
 	${VERDI_HOME}/bin/verdi -dbdir ./simv.daidir -ssf novas.fsdb -nologo &
 
 cov:
-	${VERDI_HOME}/bin/verdi -cov -covdir simv.vdb &
+	${VCS_HOME}/bin/urg -dir seeds/*.vdb -dbname merged.vdb
+	${VERDI_HOME}/bin/verdi -cov -covdir merged.vdb &
 
 clean:
 	rm -rf simv csrc simv.daidir *.fsdb novas* *.key *.log verdi*
