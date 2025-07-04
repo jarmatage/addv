@@ -6,14 +6,16 @@ class instr_coverage extends uvm_subscriber #(instruction);
 
 
     covergroup instr_fields_cg;
+        coverpoint t.opcode {
+            bins ADD = {6'h00};
+            bins LW  = {6'h23};
+            bins SW  = {6'h2B};
+            bins BEQ = {6'h04};
+        }
     endgroup
 
 
     covergroup instr_order_cg;
-    endgroup
-
-
-    covergroup instr_gap_cg;
     endgroup
 
 
@@ -27,7 +29,6 @@ class instr_coverage extends uvm_subscriber #(instruction);
         instr_fields_cg.sample();
         if (prev_instr != null) begin
             instr_order_cg.sample();
-            instr_gap_cg.sample();
         end
         prev_instr = t;
     endfunction
