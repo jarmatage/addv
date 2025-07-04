@@ -7,11 +7,16 @@ class instr_coverage extends uvm_subscriber #(instruction);
 
     covergroup instr_fields_cg;
         opcode_cp : coverpoint instr.opcode {
-            bins ADD = {6'h00};
+            bins RTYPE = {6'h00};
             bins LW  = {6'h23};
             bins SW  = {6'h2B};
             bins BEQ = {6'h04};
         }
+
+        add_rs : coverpoint instr.rs iff (instr.opcode == 6'h00 && instr.funct == 6'h20) {
+            bins rs_vals[] = {[0:4]};
+        }
+
     endgroup
 
 
