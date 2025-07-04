@@ -37,10 +37,10 @@ verdi:
 	@echo "=== Launching Verdi ==="
 	${VERDI_HOME}/bin/verdi -dbdir ./simv.daidir -ssf novas.fsdb -nologo &
 
-coverage:
+cov:
 	${VERDI_HOME}/bin/verdi -cov -covdir simv.vdb &
 
 clean:
 	rm -rf simv csrc simv.daidir *.fsdb novas* *.key *.log verdi*
 
-.PHONY: all clean compile coverage sim verdi
+.PHONY: all clean compile cov sim verdi
