@@ -39,7 +39,7 @@ verdi:
 	${VERDI_HOME}/bin/verdi -dbdir ./simv.daidir -ssf novas.fsdb -nologo &
 
 cov:
-	@for i in {0..100..5}; do \
+	@for i in {0..150..5}; do \
 		$(MAKE) sim SEED=$$i; \
 	done
 	${VCS_HOME}/bin/urg -dir seeds/*.vdb -dbname merged.vdb

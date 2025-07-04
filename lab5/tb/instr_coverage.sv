@@ -30,9 +30,12 @@ class instr_coverage extends uvm_subscriber #(instruction);
             bins rt_vals[] = {[0:4]};
         }
         add_rd : coverpoint instr.rd iff (instr.opcode == 6'h00 && instr.funct == 6'h20) {
-            bins rd_vals[] = {[0:4]};
+            bins rd_vals[] = {[1:4]};
         }
-        add_cross : cross add_rs, add_rt, add_rd iff (instr.rd != 5'd0);
+        add_throw_away : coverpoint instr.rd iff (instr.opcode == 6'h00 && instr.funct == 6'h20) {
+            bins rd_vals[] = {0};
+        }
+        add_cross : cross add_rs, add_rt, add_rd;
 
         // AND
         and_rs : coverpoint instr.rs iff (instr.opcode == 6'h00 && instr.funct == 6'h24) {
@@ -42,9 +45,12 @@ class instr_coverage extends uvm_subscriber #(instruction);
             bins rt_vals[] = {[0:4]};
         }
         and_rd : coverpoint instr.rd iff (instr.opcode == 6'h00 && instr.funct == 6'h24) {
-            bins rd_vals[] = {[0:4]};
+            bins rd_vals[] = {[1:4]};
         }
-        and_cross : cross and_rs, and_rt, and_rd iff (instr.rd != 5'd0);
+        and_throw_away : coverpoint instr.rd iff (instr.opcode == 6'h00 && instr.funct == 6'h24) {
+            bins rd_vals[] = {0};
+        }
+        and_cross : cross and_rs, and_rt, and_rd;
 
         // LW
         lw_rs : coverpoint instr.rs iff (instr.opcode == 6'h23) {
