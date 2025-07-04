@@ -36,11 +36,10 @@ class instruction extends uvm_sequence_item;
 
 
     constraint funct_range {
-        funct inside {
-            6'b000000, // NOP
-            6'b100000, // ADD
-            6'b100100  // AND
-        };
+        if ({opcode, rs, rt, rd} == 0)
+            funct == 6'b000000; // NOP
+        else
+            funct inside {6'b100000, 6'b100100}; // ADD, AND
     }
 
 
