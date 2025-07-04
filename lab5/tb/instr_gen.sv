@@ -15,10 +15,10 @@ class instr_gen extends uvm_sequence #(instruction);
     // Generate pairs of instructions with gaps between until imem is full
     function void gen_sequence();
         gen_init();
-        while (instr_list.size() < (imem_size - 15)) begin
-            gen_pair();
-            gen_gap();
-        end
+        while (instr_list.size() < (imem_size - 15))
+            gen_segement();
+        for (int i = instr_list.size(); i < imem_size; i++)
+            gen_nop();
         gen_machine_code();
     endfunction
 
@@ -26,12 +26,8 @@ class instr_gen extends uvm_sequence #(instruction);
     // Assemble the machine code for each instruction in the list
     function void gen_machine_code();
         machine_code_list = new [imem_size];
-        
         for (int i = 0; i < instr_list.size(); i++)
             machine_code_list[i] = instr_list[i].assemble();
-        for (int i = instr_list.size(); i < imem_size; i++)
-            machine_code_list[i] = 32'h0; // Fill remaining space with NOPs
-
         $writememh("memfile.dat", machine_code_list, 0, imem_size - 1);
     endfunction
 
@@ -81,12 +77,16 @@ class instr_gen extends uvm_sequence #(instruction);
     endfunction
 
 
-    // Generate a pair of instructions where one depends on the other
-    function void gen_pair();
-        if ($urandom_range(0, 1))
-            gen_register_dependency();
-        else
-            gen_memory_dependency();
+    // Randomly select what sequence to generate
+    function void gen_segment();
+        int choice = $urandom_range(0, 9);
+        case (choice)
+            0: gen_register_dependency();
+            1: gen_memory_dependency();
+            2: gen_load_word_dependency();
+            3: gen_branch_taken();
+            default: gen_individual();
+        endcase
     endfunction
 
 
@@ -130,21 +130,46 @@ class instr_gen extends uvm_sequence #(instruction);
     endfunction
 
 
+    // Generate load word dependency
+    function void gen_load_word_dependency();
+        instruction a, b;
+        a = instruction::type_id::create("lw_dep_A");
+        b = instruction::type_id::create("lw_dep_B");
+        
+        assert(a.randomize() with {
+            opcode == 6'b100011; // LW
+        });
+        assert(b.randomize() with {
+            opcode == 6'b000000; // R-type
+            funct != 6'b000000; // Not a NOP
+            rs == a.rt; // Use the loaded value
+        });
+
+        add_instr(a);
+        gen_gap();
+        add_instr(b);
+    endfunction
+
     // Generate 0 to 4 random instructions
     function void gen_gap();
         int gap_size = $urandom_range(0, 3);
         for (int i = 0; i < gap_size; i++)
-            gen_individual();
+            gen_nop();
     endfunction
 
-
-    // Generate a single instruction
-    function void gen_individual();
-        int choice = $urandom_range(0, 9);
-        case (choice)
-            0: gen_branch_taken();
-            default: gen_individual_random();
-        endcase
+    
+    // Generate a NOP instruction
+    function void gen_nop();
+        instruction instr;
+        instr = instruction::type_id::create("nop");
+        assert(instr.randomize() with {
+            opcode == 6'b000000;
+            funct  == 6'b000000;
+            rd     == 5'd0;
+            rs     == 5'd0;
+            rt     == 5'd0;
+        });
+        add_instr(instr);
     endfunction
 
 
@@ -157,11 +182,23 @@ class instr_gen extends uvm_sequence #(instruction);
             rs == rt; // Ensure branch condition is true
         });
         add_instr(instr);
+
+        for (int i = 0; i < instr.imm; i++)
+            gen_skipped(); // Instructions that should be skipped
+    endfunction
+
+
+    // Generate a random instruction that should be skipped by the branch
+    function void gen_skipped();
+        instruction instr;
+        instr = instruction::type_id::create("skipped_instr");
+        assert(instr.randomize());
+        add_instr(instr);
     endfunction
 
 
     // Generate a random instruction with no specific constraints
-    function void gen_individual_random();
+    function void gen_individual();
         instruction instr;
         instr = instruction::type_id::create("single_instr");
         assert(instr.randomize());
@@ -174,7 +211,5 @@ class instr_gen extends uvm_sequence #(instruction);
         $display("\nInstruction Sequence:");
         foreach (instr_list[i])
             $display("[%0d] 0x%h, %s", i, machine_code_list[i], instr_list[i].get_name());
-        for (int i = instr_list.size(); i < imem_size; i++)
-            $display("[%0d] 0x%h, NOP", i, 32'd0);
     endtask
 endclass
