@@ -12,8 +12,8 @@ compile: clean
 		-debug_access+all \
 		-timescale=1ns/1ps \
 		-ntb_opts uvm \
-		-cm cond \
-		-cm_dir simv_$(SEED).vdb \
+		-cm line+tgl+cond+fsm+branch+assert \
+		-cm_dir simv.vdb \
 		+plusarg_save \
 		+define+DUMP=1 \
 		+log_level=$(LOG_LEVEL) \
