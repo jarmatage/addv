@@ -26,6 +26,7 @@ class instr_monitor extends uvm_monitor;
     task run_phase(uvm_phase phase);
         $display("Starting instruction monitor run phase");
         forever begin
+            $display("[%0t] Waiting for clock edge", $time);
             @(posedge vif.clk);
             if (!vif.reset && prev_pc != vif.pc)
                 send_instruction();
