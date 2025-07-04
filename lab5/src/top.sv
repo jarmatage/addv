@@ -43,6 +43,14 @@ module dmem(
     assign rd = RAM[a[31:2]];
     always_ff @(posedge clk)
         if (we) RAM[a[31:2]] <= wd;
+
+    initial begin
+        // Initialize RAM with zeros
+        for (int i = 0; i < 64; i++) begin
+            RAM[i] = 32'b0;
+        end
+    end
+
 endmodule
 
 
