@@ -9,7 +9,7 @@ class instruction extends uvm_sequence_item;
 
     constraint opcode_range {
         opcode inside {
-            6'b000000, // R-type
+            6'b000000, // R-type / NOP
             6'b100011, // I-type, LW
             6'b101011, // I-type, SW
             6'b000100  // I-type, BEQ
