@@ -16,21 +16,13 @@ class instr_coverage extends uvm_subscriber #(instruction);
     endgroup
 
 
-    covergroup instr_order_cg;
-    endgroup
-
-
     function new(string name, uvm_component parent);
         super.new(name, parent);
         imp = new("imp", this);
     endfunction
 
 
-    function void write(instruction t);
+    virtual function void write(instruction t);
         instr_fields_cg.sample();
-        if (prev_instr != null) begin
-            instr_order_cg.sample();
-        end
-        prev_instr = t;
     endfunction
 endclass
