@@ -6,7 +6,7 @@ all: sim verdi
 compile: clean
 	@echo "=== Compiling ==="
 	${VCS_HOME}/bin/vcs -full64 -sverilog -ntb_opts uvm +define+DUMP=1 -debug_access+all -kdb -timescale=1ns/1ps +plusarg_save +log_level=$(LOG_LEVEL) \
-		-cm -cm_dir=simv_$(SEED).vdb +ntb_random_seed=$(SEED) \
+		-cm -cm_dir simv_$(SEED).vdb +ntb_random_seed=$(SEED) \
 		../src/*.sv \
 		../tb/setup_uvm.sv \
 		../tb/instruction.sv \
