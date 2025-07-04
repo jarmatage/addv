@@ -28,9 +28,7 @@ class instr_monitor extends uvm_monitor;
         phase.raise_objection(this, "Keeping simulation alive");
         $display("Starting instruction monitor run phase");
         forever begin
-            $display("[%0t] Waiting for clock edge", $time);
             @(posedge vif.clk);
-            $display("[%0t] Got clock edge", $time);
             if (!vif.reset && prev_pc != vif.pc)
                 send_instruction();
             prev_pc = vif.pc;
