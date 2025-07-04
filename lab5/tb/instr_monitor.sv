@@ -9,6 +9,7 @@ class instr_monitor extends uvm_monitor;
     // Create a new instruction monitor object
     function new(string name = "instruction_monitor", uvm_component parent = null);
         super.new(name, parent);
+        $display("Creating instruction monitor");
         instr_ap = new("instr_ap", this);
     endfunction
 
