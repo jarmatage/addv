@@ -2,12 +2,12 @@ class instr_coverage extends uvm_subscriber #(instruction);
     `uvm_component_utils(instr_coverage)
 
     uvm_analysis_imp #(instruction, instr_coverage) imp;
-    instruction t; // current instruction
+    instruction instr;
     instruction prev_instr;
 
 
     covergroup instr_fields_cg;
-        opcode_cp : coverpoint t.opcode {
+        opcode_cp : coverpoint instr.opcode {
             bins ADD = {6'h00};
             bins LW  = {6'h23};
             bins SW  = {6'h2B};
@@ -24,6 +24,8 @@ class instr_coverage extends uvm_subscriber #(instruction);
 
 
     virtual function void write(instruction t);
-        instr_fields_cg.sample();
+        instr = t;
+        instr_fields_cg my_instr_fields_cg = new();
+        my_instr_fields_cg.sample();
     endfunction
 endclass
