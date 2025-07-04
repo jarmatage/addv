@@ -16,7 +16,7 @@ class instr_gen extends uvm_sequence #(instruction);
     function void gen_sequence();
         gen_init();
         while (instr_list.size() < (imem_size - 15))
-            gen_segement();
+            gen_segment();
         for (int i = instr_list.size(); i < imem_size; i++)
             gen_nop();
         gen_machine_code();
