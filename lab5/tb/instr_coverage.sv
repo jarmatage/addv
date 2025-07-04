@@ -23,7 +23,8 @@ class instr_coverage extends uvm_subscriber #(instruction);
     endfunction
 
 
-    virtual function void write(instruction instr);
+    virtual function void write(instruction t);
+        instr = t;
         instr_fields_cg.sample();
     endfunction
 endclass
