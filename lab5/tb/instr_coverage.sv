@@ -79,7 +79,7 @@ class instr_coverage extends uvm_subscriber #(instruction);
 
 
     covergroup branch_taken_cg;
-        branch_taken : coverpoint rs {
+        branch_taken : coverpoint instr.rs {
             bins rs_eq_rt[] = {[0:4]} iff (instr.rs == instr.rt && instr.opcode == 6'h04);
         }
     endgroup
