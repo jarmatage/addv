@@ -8,7 +8,6 @@ module tb_mips ();
 
     // Imem interface
     imem_if my_imem_if (.clk(clk), .reset(reset));
-    uvm_config_db#(virtual imem_if)::set(null, "*", "vif", my_imem_if);
 
     // Instantiate top module
     top dut(
@@ -40,13 +39,18 @@ module tb_mips ();
         $readmemh("memfile.dat", dut.imem.RAM, 0, 255);
     end
 
+    // Start instruction test
+    initial begin
+        uvm_config_db#(virtual imem_if)::set(null, "*", "vif", my_imem_if);
+        run_test("instr_test");
+    end
+
     // Main test sequence
     initial begin
         reset = 1'b1;
         #50;
         reset = 1'b0;
-        $display("Reset deasserted, starting instruction test.");
-        run_test("instr_test");
+        $display("Reset deasserted, starting program.");
         wait (dut.imem.a == 8'hFF);
         $display("End of instruction memory reached, stopping simulation.");
         $finish;
