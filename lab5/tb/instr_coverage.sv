@@ -2,7 +2,6 @@ class instr_coverage extends uvm_subscriber #(instruction);
     `uvm_component_utils(instr_coverage)
 
     uvm_analysis_imp #(instruction, instr_coverage) imp;
-    instruction instr;
     instruction prev_instr;
 
 
@@ -24,8 +23,7 @@ class instr_coverage extends uvm_subscriber #(instruction);
     endfunction
 
 
-    virtual function void write(instruction t);
-        instr = t;
+    virtual function void write(instruction instr);
         instr_fields_cg.sample();
     endfunction
 endclass
