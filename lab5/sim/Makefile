@@ -5,6 +5,7 @@ all: sim verdi
 
 compile: clean
 	@echo "=== Compiling ==="
+	mkdir seeds
 	${VCS_HOME}/bin/vcs \
 		-full64 \
 		-sverilog \
@@ -13,7 +14,7 @@ compile: clean
 		-timescale=1ns/1ps \
 		-ntb_opts uvm \
 		-cm line+tgl+cond+fsm+branch+assert \
-		-cm_dir simv.vdb \
+		-cm_dir simv_$(SEED).vdb \
 		+plusarg_save \
 		+define+DUMP=1 \
 		+log_level=$(LOG_LEVEL) \

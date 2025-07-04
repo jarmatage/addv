@@ -3,6 +3,7 @@ class instr_coverage extends uvm_subscriber #(instruction);
 
     uvm_analysis_imp #(instruction, instr_coverage) imp;
     instruction instr, prev_instr;
+    int gap;
 
 
     covergroup instr_fields_cg;
@@ -97,6 +98,30 @@ class instr_coverage extends uvm_subscriber #(instruction);
 
 
     covergroup instr_gap_cg;
+        reg_dep : coverpoint gap iff (
+            prev_instr.opcode == 6'h00 && 
+            instr.opcode != 6'h23 && 
+            instr.rt == prev_instr.rd
+        ) {
+            bins gap_vals[] = {[0:3]};
+        }
+        mem_dep : coverpoint gap iff (
+            prev_instr.opcode == 6'h2B &&
+            instr.opcode == 6'h23 &&
+            instr.imm == prev_instr.imm
+        ) {
+            bins gap_vals[] = {[0:3]};
+        }
+        lw_dep : coverpoint gap iff (
+            prev_instr.opcode == 6'h23 &&
+            instr.opcode == 6'h00 &&
+            instr.funct != 6'h00 &&
+            instr.rs == prev_instr.rt
+        ) {
+            bins gap_vals[] = {[0:3]};
+        }
+    endgroup
+
 
     function new(string name, uvm_component parent);
         super.new(name, parent);
@@ -104,12 +129,22 @@ class instr_coverage extends uvm_subscriber #(instruction);
         imp = new("imp", this);
         instr_fields_cg = new();
         branching_cg = new();
+        instr_gap_cg = new();
+        gap = 0;
     endfunction
 
 
     virtual function void write(instruction t);
+        bit [31:0] code = t.assemble();
         instr = t;
         instr_fields_cg.sample();
         branching_cg.sample();
+
+        if (code == 32'd0) begin
+            gap++;
+        end else begin
+            instr_gap_cg.sample();
+            prev_instr = instr;
+        end
     endfunction
 endclass
