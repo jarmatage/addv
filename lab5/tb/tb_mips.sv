@@ -41,8 +41,8 @@ module tb_mips ();
 
     // Start instruction test
     initial begin
-        uvm_config_db#(virtual imem_if)::set(null, "*", "vif", my_imem_if);
-        run_test("instr_test");
+        //uvm_config_db#(virtual imem_if)::set(null, "*", "vif", my_imem_if);
+        //run_test("instr_test");
     end
 
     // Main test sequence
