@@ -24,6 +24,7 @@ class instr_monitor extends uvm_monitor;
 
     // Main sampling process
     task run_phase(uvm_phase phase);
+        $display("Starting instruction monitor run phase");
         instruction instr;
         forever begin
             @(posedge vif.clk);
