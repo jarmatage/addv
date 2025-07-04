@@ -2,11 +2,12 @@ class instr_coverage extends uvm_subscriber #(instruction);
     `uvm_component_utils(instr_coverage)
 
     uvm_analysis_imp #(instruction, instr_coverage) imp;
+    instruction t; // current instruction
     instruction prev_instr;
 
 
     covergroup instr_fields_cg;
-        coverpoint t.opcode {
+        opcode_cp : coverpoint t.opcode {
             bins ADD = {6'h00};
             bins LW  = {6'h23};
             bins SW  = {6'h2B};
