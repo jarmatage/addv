@@ -7,6 +7,7 @@ class instr_env extends uvm_env;
 
     function new(string name, uvm_component parent);
         super.new(name, parent);
+        $display("Creating instruction environment");
     endfunction
 
 

@@ -6,6 +6,7 @@ class instr_test extends uvm_test;
 
     function new (string name = "instr_test", uvm_component parent = null);
         super.new(name, parent);
+        $display("Creating instruction test");
     endfunction
 
 
