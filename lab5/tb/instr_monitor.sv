@@ -38,6 +38,7 @@ class instr_monitor extends uvm_monitor;
         instruction instr;
         instr = instruction::type_id::create($sformatf("instr_%0d", vif.pc));
         instr.disassemble(vif.instr);
+        $display("[%0t] Sending instruction '%0h' at PC '%0d'", $time, vif.instr, vif.pc);
         instr_ap.write(instr);
     endtask
 endclass
