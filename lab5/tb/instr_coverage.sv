@@ -20,6 +20,7 @@ class instr_coverage extends uvm_subscriber #(instruction);
         super.new(name, parent);
         $display("Creating instruction coverage collector");
         imp = new("imp", this);
+        instr_fields_cg = new();
     endfunction
 
 
