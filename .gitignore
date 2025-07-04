@@ -4,6 +4,7 @@
 simv
 csrc/
 simv.daidir/
+simv*.vdb/
 novas*
 *.key
 *.log
