@@ -6,6 +6,7 @@ class instr_coverage extends uvm_subscriber #(instruction);
 
 
     covergroup instr_fields_cg;
+        // Opcode
         opcode_cp : coverpoint instr.opcode {
             bins RTYPE = {6'h00};
             bins LW  = {6'h23};
@@ -13,10 +14,67 @@ class instr_coverage extends uvm_subscriber #(instruction);
             bins BEQ = {6'h04};
         }
 
+        // Function code
+        funct_cp : coverpoint instr.funct {
+            bins NOP = {6'h00};
+            bins ADD = {6'h20};
+            bins AND = {6'h24};
+        }
+
+        // ADD
         add_rs : coverpoint instr.rs iff (instr.opcode == 6'h00 && instr.funct == 6'h20) {
             bins rs_vals[] = {[0:4]};
         }
+        add_rt : coverpoint instr.rt iff (instr.opcode == 6'h00 && instr.funct == 6'h20) {
+            bins rt_vals[] = {[0:4]};
+        }
+        add_rd : coverpoint instr.rd iff (instr.opcode == 6'h00 && instr.funct == 6'h20) {
+            bins rd_vals[] = {[0:4]};
+        }
 
+        // AND
+        and_rs : coverpoint instr.rs iff (instr.opcode == 6'h00 && instr.funct == 6'h24) {
+            bins rs_vals[] = {[0:4]};
+        }
+        and_rt : coverpoint instr.rt iff (instr.opcode == 6'h00 && instr.funct == 6'h24) {
+            bins rt_vals[] = {[0:4]};
+        }
+        and_rd : coverpoint instr.rd iff (instr.opcode == 6'h00 && instr.funct == 6'h24) {
+            bins rd_vals[] = {[0:4]};
+        }
+
+        // LW
+        lw_rs : coverpoint instr.rs iff (instr.opcode == 6'h23) {
+            bins rs_vals[] = {0};
+        }
+        lw_rt : coverpoint instr.rt iff (instr.opcode == 6'h23) {
+            bins rt_vals[] = {[0:4]};
+        }
+        lw_imm : coverpoint instr.imm iff (instr.opcode == 6'h23) {
+            bins imm_vals[] = {16'h0, 16'h4, 16'h8, 16'hC};
+        }
+
+        // SW
+        sw_rs : coverpoint instr.rs iff (instr.opcode == 6'h2B) {
+            bins rs_vals[] = {0};
+        }
+        sw_rt : coverpoint instr.rt iff (instr.opcode == 6'h2B) {
+            bins rt_vals[] = {[0:4]};
+        }
+        sw_imm : coverpoint instr.imm iff (instr.opcode == 6'h2B) {
+            bins imm_vals[] = {16'h0, 16'h4, 16'h8, 16'hC};
+        }
+
+        // BEQ
+        beq_rs : coverpoint instr.rs iff (instr.opcode == 6'h04) {
+            bins rs_vals[] = {[0:4]};
+        }
+        beq_rt : coverpoint instr.rt iff (instr.opcode == 6'h04) {
+            bins rt_vals[] = {[0:4]};
+        }
+        beq_imm : coverpoint instr.imm iff (instr.opcode == 6'h04) {
+            bins imm_vals[] = {16'd1, 16'd2, 16'd3, 16'd4};
+        }
     endgroup
 
 
