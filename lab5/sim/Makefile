@@ -5,8 +5,19 @@ all: sim verdi
 
 compile: clean
 	@echo "=== Compiling ==="
-	${VCS_HOME}/bin/vcs -full64 -sverilog -ntb_opts uvm +define+DUMP=1 -debug_access+all -kdb -timescale=1ns/1ps +plusarg_save +log_level=$(LOG_LEVEL) \
-		-cm cond -cm_dir simv_$(SEED).vdb +ntb_random_seed=$(SEED) \
+	${VCS_HOME}/bin/vcs \
+		-full64 \
+		-sverilog \
+		-kdb \
+		-debug_access+all \
+		-timescale=1ns/1ps \
+		-ntb_opts uvm \
+		-cm cond \
+		-cm_dir simv_$(SEED).vdb \
+		+plusarg_save \
+		+define+DUMP=1 \
+		+log_level=$(LOG_LEVEL) \
+		+ntb_random_seed=$(SEED) \
 		../src/*.sv \
 		../tb/setup_uvm.sv \
 		../tb/instruction.sv \
@@ -27,7 +38,7 @@ verdi:
 	${VERDI_HOME}/bin/verdi -dbdir ./simv.daidir -ssf novas.fsdb -nologo &
 
 coverage:
-	urg -dir simv_$(SEED).vdb
+	${VERDI_HOME}/bin/verdi -cov -covdir simv.vdb -nologo &
 
 clean:
 	rm -rf simv csrc simv.daidir *.fsdb novas* *.key *.log verdi*
