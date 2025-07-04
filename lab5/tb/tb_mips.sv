@@ -37,6 +37,7 @@ module tb_mips ();
         gen.gen_sequence();
         gen.display_all();
         $readmemh("memfile.dat", dut.imem.RAM, 0, 255);
+        $readmemh("dmem.dat", dut.dmem.RAM, 0, 63);
     end
 
     // Start instruction test
