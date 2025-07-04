@@ -152,9 +152,9 @@ class instr_gen extends uvm_sequence #(instruction);
 
     // Generate 0 to 4 random instructions
     function void gen_gap();
-        // int gap_size = $urandom_range(0, 3);
-        // for (int i = 0; i < gap_size; i++)
-        //    gen_nop();
+        int gap_size = $urandom_range(0, 3);
+        for (int i = 0; i < gap_size; i++)
+           gen_nop();
     endfunction
 
     
