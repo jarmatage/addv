@@ -27,7 +27,7 @@ verdi:
 	${VERDI_HOME}/bin/verdi -dbdir ./simv.daidir -ssf novas.fsdb -nologo &
 
 coverage:
-	${VERDI_HOME}/bin/urg -dir simv_$(SEED).vdb
+	urg -dir simv_$(SEED).vdb
 
 clean:
 	rm -rf simv csrc simv.daidir *.fsdb novas* *.key *.log verdi*
