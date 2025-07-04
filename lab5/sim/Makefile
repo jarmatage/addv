@@ -38,7 +38,7 @@ verdi:
 	${VERDI_HOME}/bin/verdi -dbdir ./simv.daidir -ssf novas.fsdb -nologo &
 
 coverage:
-	${VERDI_HOME}/bin/verdi -cov -covdir simv.vdb -nologo &
+	${VERDI_HOME}/bin/verdi -cov -covdir simv.vdb &
 
 clean:
 	rm -rf simv csrc simv.daidir *.fsdb novas* *.key *.log verdi*
