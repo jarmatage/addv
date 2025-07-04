@@ -15,7 +15,7 @@ class instr_gen extends uvm_sequence #(instruction);
     // Generate pairs of instructions with gaps between until imem is full
     function void gen_sequence();
         gen_init();
-        while (instr_list.size() < (imem_size - 15))
+        while (instr_list.size() < (imem_size - 6))
             gen_segment();
         for (int i = instr_list.size(); i < imem_size; i++)
             gen_nop();
