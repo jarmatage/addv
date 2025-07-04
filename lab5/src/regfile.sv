@@ -8,7 +8,7 @@ module regfile(
     logic [31:0] rf[31:0];
 
     always_ff @(posedge clk)
-        if (we3) rf[wa3] <= ((^wd3) == 1'bX ? '0 : wd3);
+        if (we3) rf[wa3] <= ($urandom(0, 16));
 
     assign rd1 = (ra1 != 0) ? rf[ra1] : '0;
     assign rd2 = (ra2 != 0) ? rf[ra2] : '0;
