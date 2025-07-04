@@ -24,6 +24,7 @@ class instr_monitor extends uvm_monitor;
 
     // Main sampling process
     task run_phase(uvm_phase phase);
+        super.run_phase(phase);
         $display("Starting instruction monitor run phase");
         forever begin
             $display("[%0t] Waiting for clock edge", $time);
