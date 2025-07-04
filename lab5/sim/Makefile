@@ -32,4 +32,4 @@ coverage:
 clean:
 	rm -rf simv csrc simv.daidir *.fsdb novas* *.key *.log verdi*
 
-.PHONY: all clean compile sim verdi
+.PHONY: all clean compile coverage sim verdi
