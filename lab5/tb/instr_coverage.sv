@@ -31,6 +31,7 @@ class instr_coverage extends uvm_subscriber #(instruction);
         add_rd : coverpoint instr.rd iff (instr.opcode == 6'h00 && instr.funct == 6'h20) {
             bins rd_vals[] = {[0:4]};
         }
+        add_cross : cross add_rs, add_rt, add_rd;
 
         // AND
         and_rs : coverpoint instr.rs iff (instr.opcode == 6'h00 && instr.funct == 6'h24) {
@@ -42,6 +43,7 @@ class instr_coverage extends uvm_subscriber #(instruction);
         and_rd : coverpoint instr.rd iff (instr.opcode == 6'h00 && instr.funct == 6'h24) {
             bins rd_vals[] = {[0:4]};
         }
+        and_cross : cross and_rs, and_rt, and_rd;
 
         // LW
         lw_rs : coverpoint instr.rs iff (instr.opcode == 6'h23) {
@@ -53,6 +55,7 @@ class instr_coverage extends uvm_subscriber #(instruction);
         lw_imm : coverpoint instr.imm iff (instr.opcode == 6'h23) {
             bins imm_vals[] = {16'h0, 16'h4, 16'h8, 16'hC};
         }
+        lw_cross : cross lw_rs, lw_rt, lw_imm;
 
         // SW
         sw_rs : coverpoint instr.rs iff (instr.opcode == 6'h2B) {
@@ -64,6 +67,7 @@ class instr_coverage extends uvm_subscriber #(instruction);
         sw_imm : coverpoint instr.imm iff (instr.opcode == 6'h2B) {
             bins imm_vals[] = {16'h0, 16'h4, 16'h8, 16'hC};
         }
+        sw_cross : cross sw_rs, sw_rt, sw_imm;
 
         // BEQ
         beq_rs : coverpoint instr.rs iff (instr.opcode == 6'h04) {
@@ -75,12 +79,19 @@ class instr_coverage extends uvm_subscriber #(instruction);
         beq_imm : coverpoint instr.imm iff (instr.opcode == 6'h04) {
             bins imm_vals[] = {16'd1, 16'd2, 16'd3, 16'd4};
         }
+        beq_cross : cross beq_rs, beq_rt, beq_imm;
     endgroup
 
 
-    covergroup branch_taken_cg;
+    covergroup branching_cg;
         branch_taken : coverpoint instr.rs {
             bins rs_eq_rt[] = {[0:4]} iff (instr.rs == instr.rt && instr.opcode == 6'h04);
+        }
+        branch_not_taken_rs : coverpoint instr.rs {
+            bins rs_ne_rt[] = {[0:4]} iff (instr.rs != instr.rt && instr.opcode == 6'h04);
+        }
+        branch_not_taken_rt : coverpoint instr.rt {
+            bins rt_ne_rs[] = {[0:4]} iff (instr.rs != instr.rt && instr.opcode == 6'h04);
         }
     endgroup
 
@@ -90,12 +101,13 @@ class instr_coverage extends uvm_subscriber #(instruction);
         $display("Creating instruction coverage collector");
         imp = new("imp", this);
         instr_fields_cg = new();
+        branching_cg = new();
     endfunction
 
 
     virtual function void write(instruction t);
         instr = t;
         instr_fields_cg.sample();
-        branch_taken_cg.sample();
+        branching_cg.sample();
     endfunction
 endclass
