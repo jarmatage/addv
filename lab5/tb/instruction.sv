@@ -31,12 +31,13 @@ class instruction extends uvm_sequence_item;
 
 
     constraint rd_range {
-        rd inside {5'd1, 5'd2, 5'd3, 5'd4};
+        rd inside {5'd0, 5'd1, 5'd2, 5'd3, 5'd4};
     }
 
 
     constraint funct_range {
         funct inside {
+            6'b000000, // NOP
             6'b100000, // ADD
             6'b100100  // AND
         };
