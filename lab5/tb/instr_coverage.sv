@@ -78,6 +78,13 @@ class instr_coverage extends uvm_subscriber #(instruction);
     endgroup
 
 
+    covergroup branch_taken_cg;
+        branch_taken : coverpoint rs {
+            bins rs_eq_rt[] = {[0:4]} iff (instr.rs == instr.rt && instr.opcode == 6'h04);
+        }
+    endgroup
+
+
     function new(string name, uvm_component parent);
         super.new(name, parent);
         $display("Creating instruction coverage collector");
