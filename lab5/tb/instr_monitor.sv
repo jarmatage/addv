@@ -1,7 +1,7 @@
 class instr_monitor extends uvm_monitor;
     `uvm_component_utils(instr_monitor)
     
-    virtual imem_if vif;
+    virtual mips_if vif;
     uvm_analysis_port #(instruction) instr_ap;
     logic [31:0] prev_pc;
 
@@ -17,7 +17,7 @@ class instr_monitor extends uvm_monitor;
     // Set the virtual interface
     function void build_phase(uvm_phase phase);
         super.build_phase(phase);
-        if (!uvm_config_db#(virtual imem_if)::get(null, "", "vif", vif))
+        if (!uvm_config_db#(virtual mips_if)::get(null, "", "vif", vif))
             `uvm_fatal("NOVIF", "virtual interface not set in config_db")
     endfunction
 
