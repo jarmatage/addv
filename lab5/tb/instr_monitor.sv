@@ -31,6 +31,7 @@ class instr_monitor extends uvm_monitor;
             @(posedge vif.clk);
             if (!vif.reset && prev_pc != vif.pc)
                 send_instruction();
+            trickbox();
             prev_pc = vif.pc;
         end
     endtask
@@ -43,5 +44,12 @@ class instr_monitor extends uvm_monitor;
         instr.disassemble(vif.instr);
         $display("[%0t] Sending instruction '%0h' at PC '%0d'", $time, vif.instr, vif.pc);
         instr_ap.write(instr);
+    endtask
+
+
+    // Trick box
+    task trickbox();
+        if (!vif.reset && vif.memwrite && vif.dataadr == 32'h1C)
+            $display("[TRICK-BOX] CPU says: 0x%08x (%0d)", vif.writedata, vif.writedata);
     endtask
 endclass

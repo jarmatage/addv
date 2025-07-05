@@ -7,17 +7,10 @@ module tb_mips ();
     wire memwrite;
 
     // Imem interface
-    imem_if my_imem_if (.clk(clk), .reset(reset));
+    mips_if my_mips_if (.clk(clk), .reset(reset));
 
     // Instantiate top module
-    top dut(
-        .my_imem_if(my_imem_if.DUT),
-        .clk(clk),
-        .reset(reset),
-        .writedata(writedata),
-        .dataadr(dataadr),
-        .memwrite(memwrite)    
-    );
+    top dut(my_mips_if.DUT);
 
     // Clock generation
     initial clk = 1'b0;
@@ -41,7 +34,7 @@ module tb_mips ();
 
     // Start instruction test
     initial begin
-        uvm_config_db#(virtual imem_if)::set(null, "*", "vif", my_imem_if);
+        uvm_config_db#(virtual mips_if)::set(null, "*", "vif", my_mips_if);
         run_test("instr_test");
     end
 
