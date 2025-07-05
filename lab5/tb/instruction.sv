@@ -5,6 +5,7 @@ class instruction extends uvm_sequence_item;
     rand bit [4:0]  rs, rt, rd;
     rand bit [5:0]  funct;
     rand bit [15:0] imm;
+    bit trick; 
 
 
     constraint opcode_range {
@@ -46,6 +47,8 @@ class instruction extends uvm_sequence_item;
     constraint imm_range {
         if (opcode == 6'b000100) {
             imm inside {16'd1, 16'd2, 16'd3, 16'd4}; // Specific offsets for BEQ
+        } else if (trick) {
+            imm inside {16'h1C}; // Specific offset for TRICKBOX
         } else {
             imm inside {16'h0, 16'h4, 16'h8, 16'hC}; // Aligned addresses for LW/SW
         }
@@ -54,6 +57,7 @@ class instruction extends uvm_sequence_item;
 
     function new(string name="my_instruction");
         super.new(name);
+        trick = 0;
     endfunction
 
 
