@@ -196,7 +196,7 @@ class instr_gen extends uvm_sequence #(instruction);
         instr.trick = 1;
         assert(instr.randomize() with {
             opcode == 6'b101011; // SW
-            rt == 5'd1; // Read from register 1
+            rt != 5'd0; // Read from register 1
             imm == 16'h1C; // Write to TRICKBOX address
         });
         add_instr(instr);

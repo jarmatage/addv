@@ -3,8 +3,6 @@ module tb_mips ();
 
     // DUT signals
     logic clk, reset;
-    wire [31:0] writedata, dataadr;
-    wire memwrite;
 
     // Imem interface
     mips_if my_mips_if (.clk(clk), .reset(reset));
