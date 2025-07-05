@@ -1,5 +1,5 @@
 module top (
-    mips_if my_mips_if,
+    mips_if my_mips_if
 );
     wire [31:0] readdata;
 
