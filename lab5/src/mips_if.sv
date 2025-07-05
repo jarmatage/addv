@@ -1,4 +1,4 @@
-interface imem_if (
+interface mips_if (
     input logic clk,
     input logic reset
 );
