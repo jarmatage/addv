@@ -10,7 +10,7 @@ module top (
         .pc(my_mips_if.pc),
         .instr(my_mips_if.instr),
         .memwrite(my_mips_if.memwrite),
-        .aluout(my_mips_if.aluout),
+        .aluout(my_mips_if.dataadr),
         .writedata(my_mips_if.writedata),
         .readdata(readdata)
     );
