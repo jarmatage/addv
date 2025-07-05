@@ -85,6 +85,7 @@ class instr_gen extends uvm_sequence #(instruction);
             1: gen_memory_dependency();
             2: gen_load_word_dependency();
             3: gen_branch_taken();
+            4: gen_trickbox();
             default: gen_individual();
         endcase
     endfunction
@@ -185,6 +186,20 @@ class instr_gen extends uvm_sequence #(instruction);
 
         for (int i = 0; i < instr.imm; i++)
             gen_skipped(); // Instructions that should be skipped
+    endfunction
+
+
+    // Generate a TRICKBOX instruction that writes to a specific address
+    function void gen_trickbox();
+        instruction instr;
+        instr = instruction::type_id::create("trickbox");
+        instr.trick = 1;
+        assert(instr.randomize() with {
+            opcode == 6'b101011; // SW
+            rt == 5'd1; // Read from register 1
+            imm == 16'h1C; // Write to TRICKBOX address
+        });
+        add_instr(instr);
     endfunction
 
 
