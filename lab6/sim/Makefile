@@ -6,6 +6,7 @@ compile: clean
 		-ntb_opts uvm \
 		+plusarg_save \
 		+define+DUMP=1 \
+		../tb/setup_uvm.sv \
 		../src/*.sv \
 		../src/common/* \
 		../src/master/* \
