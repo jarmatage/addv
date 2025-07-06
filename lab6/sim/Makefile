@@ -1,0 +1,19 @@
+all: sim verdi
+
+compile: clean
+	${VCS_HOME}/bin/vcs -full64 -sverilog -debug_access+all -kdb -timescale=1ns/1ps +define+DUMP=1 \
+		../src/params.sv \
+		../src/matmul/*.sv \
+		../tb/fp8_matmul_tb.sv \
+	-l compile.log
+
+sim: compile
+	./simv |& tee sim.log
+
+verdi:
+	${VERDI_HOME}/bin/verdi -dbdir ./simv.daidir -ssf novas.fsdb -nologo &
+
+clean:
+	rm -rf simv csrc simv.daidir *.fsdb novas* *.key *.log verdi*
+
+.PHONY: all clean compile sim verdi
