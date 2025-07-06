@@ -16,6 +16,8 @@ compile: clean
 		../src/master/apb_master_pkg.sv \
 		../src/slave/apb_slave_pkg.sv \
 		../src/matmul/*.sv \
+		../tb/apb_env.svh \
+		../tb/apb_test.svh \
 		../tb/matmul_tb.sv \
 	-l compile.log
 
