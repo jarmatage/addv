@@ -1,6 +1,8 @@
 `ifndef _APB_TEST_
 `define _APB_TEST_
 
+`include "uvm_macros.svh"
+
 class apb_test extends uvm_test;
 
 	//Register with factory
