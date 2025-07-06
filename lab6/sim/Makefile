@@ -1,7 +1,7 @@
 all: sim verdi
 
 compile: clean
-	${VCS_HOME}/bin/vcs -full64 -sverilog -debug_access+all -kdb 
+	${VCS_HOME}/bin/vcs -full64 -sverilog -debug_access+all -kdb \
 		-timescale=1ns/1ps \
 		-ntb_opts uvm \
 		+plusarg_save \
