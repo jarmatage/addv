@@ -1,17 +1,3 @@
-/*--------------------------------------------------------------
- *  File Name 	: apb_env.svh
- *  Title 		: APB environment class 	
- *  Author		: sefaveske@gmail.com	
- *  Date		: 08/19/2018
- *
- *               ##     ####   #    #
- *              #  #   #       #    #
- *             #    #   ####   #    #
- *             ######       #  #    #
- *             #    #  #    #   #  #
- *             #    #   ####     ##
- * ------------------------------------------------------------*/
-
 `ifndef _APB_ENV_
 `define _APB_ENV_
 
@@ -19,7 +5,6 @@ import uvm_pkg::*;
 `include "uvm_macros.svh" 
 
 import apb_master_pkg::*;
-import apb_slave_pkg::*;
 
 class apb_env extends uvm_env;
 	`uvm_component_utils(apb_env)
