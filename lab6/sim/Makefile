@@ -6,13 +6,14 @@ compile: clean
 		-ntb_opts uvm \
 		+plusarg_save \
 		+define+DUMP=1 \
-		../tb/setup_uvm.sv \
+		+incdir+../src/common \
+		+incdir+../src/master \
+		+incdir+../tb \
 		../src/*.sv \
-		../src/common/* \
-		../src/master/* \
+		../src/common/apb_if.sv \
+		../src/common/apb_common_pkg.sv \
+		../src/master/apb_master_pkg.sv \
 		../src/matmul/*.sv \
-		../tb/apb_env.svh \
-		../tb/apb_test.svh \
 		../tb/matmul_tb.sv \
 	-l compile.log
 
