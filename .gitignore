@@ -4,7 +4,7 @@
 simv
 csrc/
 simv.daidir/
-simv*.vdb/
+*.vdb/
 novas*
 *.key
 *.log
@@ -22,3 +22,4 @@ lab5/sim/memfile.dat
 vdCovLog/
 Cov.ses
 .fsm.sch.verilog.xml
+urgReport/
