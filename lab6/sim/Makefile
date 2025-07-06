@@ -8,7 +8,7 @@ compile: clean
 		+define+DUMP=1 \
 		../src/*.sv \
 		../src/matmul/*.sv \
-		../tb/fp8_matmul_tb.sv \
+		../tb/matmul_tb.sv \
 	-l compile.log
 
 sim: compile
