@@ -2,7 +2,7 @@ all: sim verdi
 
 compile: clean
 	${VCS_HOME}/bin/vcs -full64 -sverilog -debug_access+all -kdb -timescale=1ns/1ps +define+DUMP=1 \
-		../src/params.sv \
+		../src/*.sv \
 		../src/matmul/*.sv \
 		../tb/fp8_matmul_tb.sv \
 	-l compile.log
