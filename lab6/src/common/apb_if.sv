@@ -112,7 +112,7 @@ interface apb_if(input bit PCLK, PRESET_N);
 	
 	property read_transfer;
 		@( PCLK) disable iff (PRESET_N)
-			PSEL & !PWRITE & PENABLE & PREADY & $changed(PRDATA) |-> $rose(PCLK)
+			PSEL & !PWRITE & PENABLE & PREADY & $changed(PRDATA) |-> $rose(PCLK);
 	endproperty
 	
 	assert property (read_transfer)
