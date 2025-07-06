@@ -1,3 +1,9 @@
+import uvm_pkg::*;
+`include "uvm_macros.svh"
+
+import apb_master_pkg::*;
+`include "apb_test.svh"
+
 module matmul_tb;
     // Set the timescale
     timeunit 1ns;
