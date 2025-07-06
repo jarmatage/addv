@@ -7,6 +7,8 @@ compile: clean
 		+plusarg_save \
 		+define+DUMP=1 \
 		../src/*.sv \
+		../src/common/*.sv \
+		../src/master/*.sv \
 		../src/matmul/*.sv \
 		../tb/matmul_tb.sv \
 	-l compile.log
