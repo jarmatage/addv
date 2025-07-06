@@ -19,13 +19,13 @@ module matrix_multiplication(
     input  logic [`MASK_WIDTH-1:0]           bram_we_c_ext,
 
     // APB signals
-    input  logic [`REG_ADDRWIDTH-1:0] PADDR,
-    input  logic                      PWRITE,
-    input  logic                      PSEL,
-    input  logic                      PENABLE,
-    input  logic [`REG_DATAWIDTH-1:0] PWDATA,
-    output logic [`REG_DATAWIDTH-1:0] PRDATA,
-    output logic                      PREADY
+    input  logic [`ADDR_WIDTH-1:0] PADDR,
+    input  logic                   PWRITE,
+    input  logic                   PSEL,
+    input  logic                   PENABLE,
+    input  logic [`DATA_WIDTH-1:0] PWDATA,
+    output logic [`DATA_WIDTH-1:0] PRDATA,
+    output logic                   PREADY
     );
 
 	wire [`AWIDTH-1:0] bram_addr_a;

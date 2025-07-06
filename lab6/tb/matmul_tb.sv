@@ -22,12 +22,12 @@ module matmul_tb;
     logic [`MAT_MUL_SIZE*`DWIDTH-1:0] bram_rdata_c_ext;
     logic [`MAT_MUL_SIZE*`DWIDTH-1:0] bram_wdata_c_ext;
     logic [`MASK_WIDTH-1:0]           bram_we_c_ext;
-    logic [`REG_ADDRWIDTH-1:0]        PADDR;
+    logic [`ADDR_WIDTH-1:0]           PADDR;
     logic                             PWRITE;
     logic                             PSEL;
     logic                             PENABLE;
-    logic [`REG_DATAWIDTH-1:0]        PWDATA;
-    logic [`REG_DATAWIDTH-1:0]        PRDATA;
+    logic [`DATA_WIDTH-1:0]           PWDATA;
+    logic [`DATA_WIDTH-1:0]           PRDATA;
     logic                             PREADY;
 
     // DUT
@@ -100,7 +100,7 @@ module matmul_tb;
     ////////////////////////////////////////////
     // Task to write into the configuration block of the DUT
     ////////////////////////////////////////////
-    task write(input [`REG_ADDRWIDTH-1:0] addr, input [`REG_DATAWIDTH-1:0] data);
+    task write(input [`ADDR_WIDTH-1:0] addr, input [`DATA_WIDTH-1:0] data);
         @(negedge clk);
         PSEL = 1;
         PWRITE = 1;
@@ -120,7 +120,7 @@ module matmul_tb;
     ////////////////////////////////////////////
     // Task to read from the configuration block of the DUT
     ////////////////////////////////////////////
-    task read(input [`REG_ADDRWIDTH-1:0] addr, output [`REG_DATAWIDTH-1:0] data);
+    task read(input [`ADDR_WIDTH-1:0] addr, output [`DATA_WIDTH-1:0] data);
         @(negedge clk);
         PSEL = 1;
         PWRITE = 0;
@@ -138,7 +138,7 @@ module matmul_tb;
     ////////////////////////////////////////////
     // Task to listen for the done signal
     ////////////////////////////////////////////
-    task wait_done(input [`REG_ADDRWIDTH-1:0] addr);
+    task wait_done(input [`ADDR_WIDTH-1:0] addr);
         @(negedge clk);
         PSEL = 1;
         PWRITE = 0;

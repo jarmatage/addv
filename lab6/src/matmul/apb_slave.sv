@@ -2,12 +2,12 @@ module apb_slave (
     // APB Interface
     input  logic                      PCLK,
     input  logic                      PRESETn,
-    input  logic [`REG_ADDRWIDTH-1:0] PADDR,
+    input  logic [`ADDR_WIDTH-1:0] PADDR,
     input  logic                      PWRITE,
     input  logic                      PSEL,
     input  logic                      PENABLE,
-    input  logic [`REG_DATAWIDTH-1:0] PWDATA,
-    output logic [`REG_DATAWIDTH-1:0] PRDATA,
+    input  logic [`DATA_WIDTH-1:0] PWDATA,
+    output logic [`DATA_WIDTH-1:0] PRDATA,
     output logic                      PREADY,
 
     // Control/Status Registers (CPU Writes)
