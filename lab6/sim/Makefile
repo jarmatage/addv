@@ -7,9 +7,11 @@ compile: clean
 		+plusarg_save \
 		+define+DUMP=1 \
 		../src/*.sv \
-		../src/common/*.sv \
-		../src/master/*.sv \
+		../src/common/* \
+		../src/master/* \
 		../src/matmul/*.sv \
+		../tb/apb_env.svh \
+		../tb/apb_test.svh \
 		../tb/matmul_tb.sv \
 	-l compile.log
 
