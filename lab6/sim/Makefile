@@ -8,11 +8,13 @@ compile: clean
 		+define+DUMP=1 \
 		+incdir+../src/common \
 		+incdir+../src/master \
+		+incdir+../src/slave \
 		+incdir+../tb \
 		../src/*.sv \
 		../src/common/apb_if.sv \
 		../src/common/apb_common_pkg.sv \
 		../src/master/apb_master_pkg.sv \
+		../src/slave/apb_slave_pkg.sv \
 		../src/matmul/*.sv \
 		../tb/matmul_tb.sv \
 	-l compile.log
