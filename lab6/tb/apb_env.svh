@@ -1,11 +1,6 @@
 `ifndef _APB_ENV_
 `define _APB_ENV_
 
-import uvm_pkg::*;
-`include "uvm_macros.svh" 
-
-import apb_master_pkg::*;
-
 class apb_env extends uvm_env;
 	`uvm_component_utils(apb_env)
 
