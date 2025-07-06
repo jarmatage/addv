@@ -1,7 +1,11 @@
 all: sim verdi
 
 compile: clean
-	${VCS_HOME}/bin/vcs -full64 -sverilog -debug_access+all -kdb -timescale=1ns/1ps +define+DUMP=1 \
+	${VCS_HOME}/bin/vcs -full64 -sverilog -debug_access+all -kdb 
+		-timescale=1ns/1ps \
+		-ntb_opts uvm \
+		+plusarg_save \
+		+define+DUMP=1 \
 		../src/*.sv \
 		../src/matmul/*.sv \
 		../tb/fp8_matmul_tb.sv \
