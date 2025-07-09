@@ -1,5 +1,3 @@
-`include "memory_defines.svh"
-
 class memory_driver extends uvm_driver#(memory_seq_item);
     `uvm_component_utils(memory_driver)
 
