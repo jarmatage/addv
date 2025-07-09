@@ -39,7 +39,6 @@ module systolic_data_setup (
     //////////////////////////////////////////////////////////////////////////
     // Logic to generate addresses to BRAM A
     //////////////////////////////////////////////////////////////////////////
-    logic a_mem_access; //flag that tells whether the matmul is trying to access memory or not
     
     always_ff @(posedge clk) 
     begin
@@ -115,7 +114,6 @@ module systolic_data_setup (
     //////////////////////////////////////////////////////////////////////////
     // Logic to generate addresses to BRAM B
     //////////////////////////////////////////////////////////////////////////
-    logic b_mem_access; //flag that tells whether the matmul is trying to access memory or not
 
     always_ff @(posedge clk)
     begin
