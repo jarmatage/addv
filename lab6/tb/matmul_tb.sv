@@ -65,7 +65,7 @@ module matmul_tb;
         set_matrices_fp8();
         display_inputs_fp8();
         run_test("apb_test");
-        #100;
+        #1_000;
         display_output_fp8();
         $display("\nAll done!");
         $finish;

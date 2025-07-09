@@ -15,9 +15,9 @@ class apb_sequence extends uvm_sequence #(apb_master_seq_item);
         // Write to address registers
         `uvm_info(get_type_name(), "Writing to ADDR_MAT_A", UVM_MEDIUM)
         write(4'd1, 16'd0);
-        `uvm_info(get_type_name(), "Writing to ADDR_MAT_A", UVM_MEDIUM)
+        `uvm_info(get_type_name(), "Writing to ADDR_MAT_B", UVM_MEDIUM)
         write(4'd2, 16'd0);
-        `uvm_info(get_type_name(), "Writing to ADDR_MAT_A", UVM_MEDIUM)
+        `uvm_info(get_type_name(), "Writing to ADDR_MAT_C", UVM_MEDIUM)
         write(4'd3, 16'd0);
 
         // Write to stride registers
