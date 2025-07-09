@@ -30,9 +30,9 @@ class memory_driver extends uvm_driver#(memory_seq_item);
         forever begin
             @(posedge vif.clk);
             if (vif.en) begin
-                if (mode == memory_seq_item::READ) begin
+                if (mode == mem_agent_mode_t::READ) begin
                     read();
-                end else if (mode == memory_seq_item::WRITE) begin
+                end else if (mode == mem_agent_mode_t::WRITE) begin
                     write();
                 end else begin
                     `uvm_fatal("INVALID_MODE", $sformatf("Invalid mode: %s", mode.name()));
@@ -45,7 +45,7 @@ class memory_driver extends uvm_driver#(memory_seq_item);
 
     task read();
         item = memory_seq_item::type_id::create("mem_read");
-        item.mode = memory_seq_item::READ;
+        item.mode = mem_agent_mode_t::READ;
         item.addr = vif.addr;
         start_item(item);
         item.data = mem_model[item.addr];
@@ -54,7 +54,7 @@ class memory_driver extends uvm_driver#(memory_seq_item);
 
     task write();
         item = memory_seq_item::type_id::create("mem_write");
-        item.mode = memory_seq_item::WRITE;
+        item.mode = mem_agent_mode_t::WRITE;
         item.addr = vif.addr;
         item.data = vif.data;
         start_item(item);
