@@ -13,34 +13,35 @@ class apb_sequence extends uvm_sequence #(apb_master_seq_item);
 
     task body();
         // Write to address registers
-        `uvm_info(get_type_name(), "Writing to ADDR_MAT_A", UVM_MEDIUM)
+        `uvm_info(get_type_name(), "\nWriting to ADDR_MAT_A", UVM_MEDIUM)
         write(4'd1, 16'd0);
-        `uvm_info(get_type_name(), "Writing to ADDR_MAT_B", UVM_MEDIUM)
+        `uvm_info(get_type_name(), "\nWriting to ADDR_MAT_B", UVM_MEDIUM)
         write(4'd2, 16'd0);
-        `uvm_info(get_type_name(), "Writing to ADDR_MAT_C", UVM_MEDIUM)
+        `uvm_info(get_type_name(), "\nWriting to ADDR_MAT_C", UVM_MEDIUM)
         write(4'd3, 16'd0);
 
         // Write to stride registers
-        `uvm_info(get_type_name(), "Writing to STRIDE_A", UVM_MEDIUM)
+        `uvm_info(get_type_name(), "\nWriting to STRIDE_A", UVM_MEDIUM)
         write(4'd4, 16'd1);
-        `uvm_info(get_type_name(), "Writing to STRIDE_B", UVM_MEDIUM)
+        `uvm_info(get_type_name(), "\nWriting to STRIDE_B", UVM_MEDIUM)
         write(4'd5, 16'd1);
-        `uvm_info(get_type_name(), "Writing to STRIDE_C", UVM_MEDIUM)
+        `uvm_info(get_type_name(), "\nWriting to STRIDE_C", UVM_MEDIUM)
         write(4'd6, 16'd1);
 
         // Write to start register
-        `uvm_info(get_type_name(), "Writing to START", UVM_MEDIUM)
+        `uvm_info(get_type_name(), "\nWriting to START", UVM_MEDIUM)
         write(4'd0, 16'd1);
 
         // Poll done register until done
-        `uvm_info(get_type_name(), "Polling the DONE register", UVM_MEDIUM)
+        `uvm_info(get_type_name(), "\nPolling the DONE register", UVM_MEDIUM)
         read(1, 4'd7, done);
         poll_count = 0;
         while (!done[0]) begin
             read(0, 4'd7, done);
             poll_count++;
         end
-        `uvm_info(get_type_name(), $sformatf("DONE register indicated completion after %0d polls, flags = %b", poll_count, done[5:1]), UVM_MEDIUM)
+        `uvm_info(get_type_name(), $sformatf(
+            "\nDONE register indicated completion after %0d polls, fp8 status flags = %b", poll_count, done[5:1]), UVM_MEDIUM)
     endtask
 
 
