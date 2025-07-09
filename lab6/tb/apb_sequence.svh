@@ -3,6 +3,8 @@
 class apb_sequence extends uvm_sequence #(apb_master_seq_item);
     `uvm_object_utils(apb_sequence)
 
+    logic [`DATA_WIDTH-1:0] done;
+    int poll_count;
 
     function new(string name = "apb_sequence");
         super.new(name);
@@ -32,9 +34,8 @@ class apb_sequence extends uvm_sequence #(apb_master_seq_item);
 
         // Poll done register until done
         `uvm_info(get_type_name(), "Polling the DONE register", UVM_MEDIUM)
-        bit [`DATA_WIDTH-1:0] done;
         done = '0;
-        int poll_count = 0;
+        poll_count = 0;
         while (!done[0]) begin
             read(4'd7, done);
             poll_count++;
