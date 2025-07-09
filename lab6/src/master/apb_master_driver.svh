@@ -78,7 +78,10 @@ task apb_master_driver::get_and_drive();
 		@ (posedge vif.PCLK);
 		vif.master.PENABLE <= '1;
 		
-		wait(vif.master.PREADY);	
+		wait(vif.master.PREADY);
+
+		if(m_apb_master_seq_item.apb_tr == apb_master_seq_item::READ)
+			m_apb_master_seq_item.data <= vif.master.PRDATA;
 		
 		@ (posedge vif.PCLK);
 		vif.master.PSEL    <= '0;
