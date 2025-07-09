@@ -2,6 +2,8 @@
 // 4x4 Systolic Matrix Multiplier
 //////////////////////////////////////////////////////////////////////////
 module matmul_4x4_systolic (
+    output logic                             a_mem_access,
+    output logic                             b_mem_access,
     input  logic                             clk,
     input  logic                             reset,
     input  logic                             pe_reset,
@@ -96,6 +98,8 @@ module matmul_4x4_systolic (
     // Instantiation of systolic data setup
     //////////////////////////////////////////////////////////////////////////
     systolic_data_setup u_systolic_data_setup(
+        .a_mem_access(a_mem_access),
+        .b_mem_access(b_mem_access),
         .clk(clk),
         .reset(reset),
         .start_mat_mul(start_mat_mul),

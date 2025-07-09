@@ -1,4 +1,6 @@
 module systolic_data_setup (
+    output logic                             a_mem_access,
+    output logic                             b_mem_access,
     input  logic                             clk,
     input  logic                             reset,
     input  logic                             start_mat_mul,

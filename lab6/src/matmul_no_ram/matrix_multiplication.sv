@@ -2,91 +2,12 @@
 // Top level with memories
 //////////////////////////////////////////////////////////////////////////
 module matrix_multiplication(
-	input  logic                             clk,
-	input  logic                             resetn,
-	input  logic                             pe_resetn,
-    input  logic [`AWIDTH-1:0]               bram_addr_a_ext,
-    output logic [`MAT_MUL_SIZE*`DWIDTH-1:0] bram_rdata_a_ext,
-    input  logic [`MAT_MUL_SIZE*`DWIDTH-1:0] bram_wdata_a_ext,
-    input  logic [`MASK_WIDTH-1:0]           bram_we_a_ext,
-    input  logic [`AWIDTH-1:0]               bram_addr_b_ext,
-    output logic [`MAT_MUL_SIZE*`DWIDTH-1:0] bram_rdata_b_ext,
-    input  logic [`MAT_MUL_SIZE*`DWIDTH-1:0] bram_wdata_b_ext,
-    input  logic [`MASK_WIDTH-1:0]           bram_we_b_ext,
-    input  logic [`AWIDTH-1:0]               bram_addr_c_ext,
-    output logic [`MAT_MUL_SIZE*`DWIDTH-1:0] bram_rdata_c_ext,
-    input  logic [`MAT_MUL_SIZE*`DWIDTH-1:0] bram_wdata_c_ext,
-    input  logic [`MASK_WIDTH-1:0]           bram_we_c_ext,
-
-    // APB signals
+    ram_read_if ram_a,
+    ram_read_if ram_b,
+    ram_write_if ram_c,
     apb_if apb
     );
 
-	wire [`AWIDTH-1:0] bram_addr_a;
-	wire [4*`DWIDTH-1:0] bram_rdata_a;
-	wire [4*`DWIDTH-1:0] bram_wdata_a;
-	wire [`MASK_WIDTH-1:0] bram_we_a;
-
-	wire [`AWIDTH-1:0] bram_addr_b;
-	wire [4*`DWIDTH-1:0] bram_rdata_b;
-	wire [4*`DWIDTH-1:0] bram_wdata_b;
-	wire [`MASK_WIDTH-1:0] bram_we_b;
-	
-	wire [`AWIDTH-1:0] bram_addr_c;
-	wire [4*`DWIDTH-1:0] bram_rdata_c;
-	wire [4*`DWIDTH-1:0] bram_wdata_c;
-	wire [`MASK_WIDTH-1:0] bram_we_c;
-	
-    logic [3:0] state;
-  
-    //We will utilize port 0 (addr0, d0, we0, q0) to interface with the matmul.
-    //Unused ports (port 1 signals addr1, d1, we1, q1) will be connected to the "external" signals i.e. signals that exposed to the external world.
-    //Signals that are external end in "_ext".
-    //addr is the address of the BRAM, d is the data to be written to the BRAM, we is write enable, and q is the data read from the BRAM. 
-    ////////////////////////////////////////////////////////////////
-    // RAM matrix A 
-    ////////////////////////////////////////////////////////////////
-    ram matrix_A (
-        .addr0(bram_addr_a), 
-        .d0(bram_wdata_a), 
-        .we0(bram_we_a), 
-        .q0(bram_rdata_a), 
-        .addr1(bram_addr_a_ext), 
-        .d1(bram_wdata_a_ext), 
-        .we1(bram_we_a_ext), 
-        .q1(bram_rdata_a_ext), 
-        .clk(clk)
-    );
-    
-    ////////////////////////////////////////////////////////////////
-    // RAM matrix B 
-    ////////////////////////////////////////////////////////////////
-    ram matrix_B (
-        .addr0(bram_addr_b), 
-        .d0(bram_wdata_b), 
-        .we0(bram_we_b), 
-        .q0(bram_rdata_b), 
-        .addr1(bram_addr_b_ext), 
-        .d1(bram_wdata_b_ext), 
-        .we1(bram_we_b_ext), 
-        .q1(bram_rdata_b_ext), 
-        .clk(clk)
-    );
-    
-    ////////////////////////////////////////////////////////////////
-    // RAM matrix C 
-    ////////////////////////////////////////////////////////////////
-    ram matrix_C (
-        .addr0(bram_addr_c), 
-        .d0(bram_wdata_c), 
-        .we0(bram_we_c), 
-        .q0(bram_rdata_c), 
-        .addr1(bram_addr_c_ext), 
-        .d1(bram_wdata_c_ext), 
-        .we1(bram_we_c_ext), 
-        .q1(bram_rdata_c_ext), 
-        .clk(clk)
-    );
 
     logic [`AWIDTH-1:0] address_mat_a, address_mat_b, address_mat_c;
     logic [`ADDR_STRIDE_WIDTH-1:0] address_stride_a, address_stride_b, address_stride_c;
@@ -111,33 +32,6 @@ module matrix_multiplication(
         .flags(flags)
     );
 
-    wire c_data_available;
-
-    //Connections for bram c (output matrix)
-    //bram_addr_c -> connected to u_matmul_4x4 block
-    //bram_rdata_c -> not used
-    //bram_wdata_c -> connected to u_matmul_4x4 block
-    //bram_we_c -> set to 1 when c_data is available
-
-    assign bram_we_c = (c_data_available) ? 4'b1111 : 4'b0000;  
-
-    //Connections for bram a (first input matrix)
-    //bram_addr_a -> connected to u_matmul_4x4
-    //bram_rdata_a -> connected to u_matmul_4x4
-    //bram_wdata_a -> hardcoded to 0 (this block only reads from bram a)
-    //bram_we_a -> hardcoded to 0 (this block only reads from bram a)
-
-    assign bram_wdata_a = 32'b0;
-    assign bram_we_a = 4'b0;
-  
-    //Connections for bram b (second input matrix)
-    //bram_addr_b -> connected to u_matmul_4x4
-    //bram_rdata_b -> connected to u_matmul_4x4
-    //bram_wdata_b -> hardcoded to 0 (this block only reads from bram b)
-    //bram_we_b -> hardcoded to 0 (this block only reads from bram b)
-
-    assign bram_wdata_b = 32'b0;
-    assign bram_we_b = 4'b0;
   
     //NC (not connected) wires 
     wire [`BB_MAT_MUL_SIZE*`DWIDTH-1:0] a_data_out_NC;
@@ -146,14 +40,15 @@ module matrix_multiplication(
     wire [`BB_MAT_MUL_SIZE*`DWIDTH-1:0] b_data_in_NC;
 
     wire reset;
-    assign reset = ~resetn;
-    assign pe_reset = ~pe_resetn;
+    assign reset = ~apb.PRESET_N;
 
     //matmul instance
     matmul_4x4_systolic u_matmul_4x4(
-        .clk(clk),
+        .a_mem_access(ram_a.en),
+        .b_mem_access(ram_b.en),
+        .clk(apb.PCLK),
         .reset(reset),
-        .pe_reset(pe_reset),
+        .pe_reset(reset),
         .is_fp8(is_fp8),
         .flags(flags),
         .start_mat_mul(start_mat_mul),
@@ -164,18 +59,18 @@ module matrix_multiplication(
         .address_stride_a(address_stride_a),
         .address_stride_b(address_stride_b),
         .address_stride_c(address_stride_c),
-        .a_data(bram_rdata_a),
-        .b_data(bram_rdata_b),
+        .a_data(ram_a.data),
+        .b_data(ram_b.data),
         .a_data_in(a_data_in_NC),
         .b_data_in(b_data_in_NC),
         .c_data_in({`BB_MAT_MUL_SIZE*`DWIDTH{1'b0}}),
-        .c_data_out(bram_wdata_c),
+        .c_data_out(ram_c.data),
         .a_data_out(a_data_out_NC),
         .b_data_out(b_data_out_NC),
-        .a_addr(bram_addr_a),
-        .b_addr(bram_addr_b),
-        .c_addr(bram_addr_c),
-        .c_data_available(c_data_available),
+        .a_addr(ram_a.addr),
+        .b_addr(ram_b.addr),
+        .c_addr(ram_c.addr),
+        .c_data_available(ram_c.en),
         .validity_mask_a_rows(4'b1111),
         .validity_mask_a_cols_b_rows(4'b1111),
         .validity_mask_b_cols(4'b1111),
