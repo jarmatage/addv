@@ -4,7 +4,6 @@ class memory_seq_item extends uvm_sequence_item;
     `uvm_object_utils(memory_seq_item)
 
     // Data members
-    typedef enum {READ, WRITE} mem_agent_mode_t;
     mem_agent_mode_t mode;
     bit [31:0] addr;
     bit [31:0] data;
