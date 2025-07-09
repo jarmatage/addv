@@ -10,7 +10,7 @@ class apb_env extends uvm_env;
 	apb_master_agent  master_agent;
 	apb_slave_agent  slave_agent;
 
-	virtual apb_if  if;
+	virtual apb_if vif;
 
 
 	function new (string name = "apb_env", uvm_component parent = null);
