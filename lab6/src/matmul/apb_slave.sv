@@ -39,7 +39,7 @@ module apb_slave (
     state_t state, next_state;
 
     // State transition logic
-    always_ff @(posedge apb.apb.PCLK) begin
+    always_ff @(posedge apb.PCLK) begin
         if (!apb.PRESET_N) begin
             state <= IDLE;
         end else begin 
@@ -100,7 +100,7 @@ module apb_slave (
     end
 
     // Read from CSRs
-    always_ff @(posedge apb.apb.PCLK) begin
+    always_ff @(posedge apb.PCLK) begin
         if (!apb.PRESET_N) begin
             apb.PRDATA <= '0;
         end else if (!apb.PWRITE && apb.PENABLE && next_state == READ_ACCESS) begin
