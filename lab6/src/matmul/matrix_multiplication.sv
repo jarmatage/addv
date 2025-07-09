@@ -19,13 +19,7 @@ module matrix_multiplication(
     input  logic [`MASK_WIDTH-1:0]           bram_we_c_ext,
 
     // APB signals
-    input  logic [`ADDR_WIDTH-1:0] PADDR,
-    input  logic                   PWRITE,
-    input  logic                   PSEL,
-    input  logic                   PENABLE,
-    input  logic [`DATA_WIDTH-1:0] PWDATA,
-    output logic [`DATA_WIDTH-1:0] PRDATA,
-    output logic                   PREADY
+    apb_if apb
     );
 
 	wire [`AWIDTH-1:0] bram_addr_a;
@@ -104,15 +98,7 @@ module matrix_multiplication(
 	
     // APB interface
     apb_slave apb_mm (
-        .PCLK(clk),
-        .PRESETn(resetn),
-        .PADDR(PADDR),
-        .PWRITE(PWRITE),
-        .PSEL(PSEL),
-        .PENABLE(PENABLE),
-        .PWDATA(PWDATA),
-        .PRDATA(PRDATA), 
-        .PREADY(PREADY),
+        .apb(apb),
         .start(start_mat_mul),
         .is_fp8(is_fp8),
         .address_mat_a(address_mat_a),

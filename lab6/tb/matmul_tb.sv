@@ -14,28 +14,15 @@ module matmul_tb;
     logic clk;
     logic resetn;
     logic pe_resetn;
-    logic [`AWIDTH-1:0]               bram_addr_a_ext;
-    logic [`MAT_MUL_SIZE*`DWIDTH-1:0] bram_rdata_a_ext;
-    logic [`MAT_MUL_SIZE*`DWIDTH-1:0] bram_wdata_a_ext;
-    logic [`MASK_WIDTH-1:0]           bram_we_a_ext;
-    logic [`AWIDTH-1:0]               bram_addr_b_ext;
-    logic [`MAT_MUL_SIZE*`DWIDTH-1:0] bram_rdata_b_ext;
-    logic [`MAT_MUL_SIZE*`DWIDTH-1:0] bram_wdata_b_ext;
-    logic [`MASK_WIDTH-1:0]           bram_we_b_ext;
-    logic [`AWIDTH-1:0]               bram_addr_c_ext;
-    logic [`MAT_MUL_SIZE*`DWIDTH-1:0] bram_rdata_c_ext;
-    logic [`MAT_MUL_SIZE*`DWIDTH-1:0] bram_wdata_c_ext;
-    logic [`MASK_WIDTH-1:0]           bram_we_c_ext;
-    logic [`ADDR_WIDTH-1:0]           PADDR;
-    logic                             PWRITE;
-    logic                             PSEL;
-    logic                             PENABLE;
-    logic [`DATA_WIDTH-1:0]           PWDATA;
-    logic [`DATA_WIDTH-1:0]           PRDATA;
-    logic                             PREADY;
+    apb_if apb(clk, resetn);
 
     // DUT
-    matrix_multiplication u_matmul(.*);
+    matrix_multiplication u_matmul(
+        .clk(clk),
+        .resetn(resetn),
+        .pe_resetn(pe_resetn),
+        .apb(apb.slave)
+    );
     
     // Save the output of the done register
     logic [15:0] status;
