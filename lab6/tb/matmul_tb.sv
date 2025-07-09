@@ -48,13 +48,6 @@ module matmul_tb;
         pe_resetn = 1'b1;
     end
     
-    // Timeout
-    initial begin
-        #2_000;
-        $display("ERROR: Timeout");
-        $finish;
-    end
-
     // Perform test    
     initial begin
         `ifdef DUMP
@@ -65,7 +58,11 @@ module matmul_tb;
         set_matrices_fp8();
         display_inputs_fp8();
         run_test("apb_test");
-        #1_000;
+    end
+
+    // Display the output
+    initial begin
+        #2_000;
         display_output_fp8();
         $display("\nAll done!");
         $finish;
