@@ -39,7 +39,7 @@ class apb_test extends uvm_test;
 
 	task run_phase (uvm_phase phase);
 		super.run_phase(phase);
-		master_seq = apb_master_seq::type_id::create("master_seq");
+		master_seq = apb_sequence::type_id::create("master_seq");
 			
 		phase.raise_objection(this, "Starting apb_test run phase");
 		master_seq.start(env.master_agent.m_sequencer);
