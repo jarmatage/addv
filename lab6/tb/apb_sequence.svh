@@ -40,7 +40,7 @@ class apb_sequence extends uvm_sequence #(apb_master_seq_item);
             read(0, 4'd7, done);
             poll_count++;
         end
-        `uvm_info(get_type_name(), $sformatf("DONE register indicated completion after %0d polls", poll_count), UVM_MEDIUM)
+        `uvm_info(get_type_name(), $sformatf("DONE register indicated completion after %0d polls, flags = %b", poll_count, done[5:1]), UVM_MEDIUM)
     endtask
 
 
