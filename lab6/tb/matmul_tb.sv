@@ -37,11 +37,11 @@ module matmul_tb;
     initial begin
         resetn = 1'b0;
         pe_resetn = 1'b0;
-        PADDR = '0;
-        PWRITE = 1'b0;
-        PSEL = 1'b0;
-        PENABLE = 1'b0;
-        PWDATA = '0;
+        apb.PADDR = '0;
+        apb.PWRITE = 1'b0;
+        apb.PSEL = 1'b0;
+        apb.PENABLE = 1'b0;
+        apb.PWDATA = '0;
         status = '0;
         #55;
         resetn = 1'b1;
@@ -93,18 +93,18 @@ module matmul_tb;
     ////////////////////////////////////////////
     task write(input [`ADDR_WIDTH-1:0] addr, input [`DATA_WIDTH-1:0] data);
         @(negedge clk);
-        PSEL = 1;
-        PWRITE = 1;
-        PADDR = addr;
-        PWDATA = data;
+        apb.PSEL = 1;
+        apb.PWRITE = 1;
+        apb.PADDR = addr;
+        apb.PWDATA = data;
         @(negedge clk);
-        PENABLE = 1;
+        apb.PENABLE = 1;
         @(negedge clk);
-        PSEL = 0;
-        PENABLE = 0;
-        PWRITE = 0;
-        PADDR = 0;
-        PWDATA = 0;
+        apb.PSEL = 0;
+        apb.PENABLE = 0;
+        apb.PWRITE = 0;
+        apb.PADDR = 0;
+        apb.PWDATA = 0;
         $display("%t: PADDR %h, PWDATA %h", $time, addr, data);
     endtask
 
@@ -113,16 +113,16 @@ module matmul_tb;
     ////////////////////////////////////////////
     task read(input [`ADDR_WIDTH-1:0] addr, output [`DATA_WIDTH-1:0] data);
         @(negedge clk);
-        PSEL = 1;
-        PWRITE = 0;
-        PADDR = addr;
+        apb.PSEL = 1;
+        apb.PWRITE = 0;
+        apb.PADDR = addr;
         @(negedge clk);
-        PENABLE = 1;
+        apb.PENABLE = 1;
         @(negedge clk);
-        PSEL = 0;
-        PENABLE = 0;
-        data = PRDATA;
-        PADDR = 0;
+        apb.PSEL = 0;
+        apb.PENABLE = 0;
+        data = apb.PRDATA;
+        apb.PADDR = 0;
         $display("%t: PADDR %h, PRDATA %h",$time, addr,data);
     endtask
 
@@ -131,21 +131,21 @@ module matmul_tb;
     ////////////////////////////////////////////
     task wait_done(input [`ADDR_WIDTH-1:0] addr);
         @(negedge clk);
-        PSEL = 1;
-        PWRITE = 0;
-        PADDR = addr;
+        apb.PSEL = 1;
+        apb.PWRITE = 0;
+        apb.PADDR = addr;
         @(negedge clk);
-        PENABLE = 1;
+        apb.PENABLE = 1;
 
         do begin
             @(negedge clk);
-            status = PRDATA;
+            status = apb.PRDATA;
             $display("%t: PADDR %h, PRDATA %b",$time, addr, status);
         end while (status[0] == 1'b0);
 
-        PSEL = 0;
-        PENABLE = 0;
-        PADDR = 0;
+        apb.PSEL = 0;
+        apb.PENABLE = 0;
+        apb.PADDR = 0;
     endtask
 
     ////////////////////////////////////////////
