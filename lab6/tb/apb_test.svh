@@ -1,5 +1,6 @@
 `include "uvm_macros.svh"
 `include "apb_env.svh"
+`include "apb_sequence.svh"
 
 class apb_test extends uvm_test;
 	`uvm_component_utils(apb_test)
@@ -10,9 +11,7 @@ class apb_test extends uvm_test;
 	apb_slave_config 	m_apb_slave_config;
 	
 	virtual apb_if vif;
-		
-	apb_master_seq master_seq;
-	apb_slave_seq  slave_seq;
+	apb_sequence master_seq;
 
 
 	function new (string name = "apb_test", uvm_component parent = null);
@@ -40,12 +39,11 @@ class apb_test extends uvm_test;
 
 	task run_phase (uvm_phase phase);
 		super.run_phase(phase);
-		
 		master_seq = apb_master_seq::type_id::create("master_seq");
-		slave_seq = apb_slave_seq::type_id::create("slave_seq");
 			
 		phase.raise_objection(this, "Starting apb_test run phase");
-		//phase.drop_objection(this, "Finished apb_test in run phase");
+		master_seq.start(env.apb_master_sequencer);
+		phase.drop_objection(this, "Finished apb_test in run phase");
 	endtask
 endclass
 

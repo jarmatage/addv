@@ -32,12 +32,6 @@ module matmul_tb;
         clk = 1'b0;
         forever #10 clk = ~clk;
     end
-    
-    // Start instruction test
-    initial begin
-        uvm_config_db#(virtual apb_if)::set(null, "*", "apb_vif", apb);
-        run_test("apb_test");
-    end
 
     // Reset
     initial begin
@@ -67,33 +61,16 @@ module matmul_tb;
             $display("Dumping to FSDB");
             $fsdbDumpvars();
         `endif
-
+        uvm_config_db#(virtual apb_if)::set(null, "*", "apb_vif", apb);
         set_matrices_fp8();
         display_inputs_fp8();
-
-        // Setup the control registers
-        #115;
-        $display("\nWriting to APB...");
-        write(4'd1, 16'd0);  // Mat A
-        write(4'd2, 16'd0);  // Mat B
-        write(4'd3, 16'd0);  // Mat C
-        write(4'd4, 16'd1);  // Stride A
-        write(4'd5, 16'd1);  // Stride B
-        write(4'd6, 16'd1);  // Stride C
-        write(4'd8, 16'd1);  // is_fp8
-        write(4'd0, 16'd1);  // Start
-
-        // Wait for the done flag
-        $display("\nListening for done signal...");
-        wait_done(4'd7);     // Done
-        write(4'd0, 16'd0);  // Start
-        #100;         
+        run_test("apb_test");
+        #100;
         display_output_fp8();
-
         $display("\nAll done!");
         $finish;
     end
-    
+
     ////////////////////////////////////////////
     // Task to write into the configuration block of the DUT
     ////////////////////////////////////////////
