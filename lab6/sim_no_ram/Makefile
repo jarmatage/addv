@@ -16,6 +16,7 @@ compile: clean
 		../src/common/apb_common_pkg.sv \
 		../src/master/apb_master_pkg.sv \
 		../src/slave/apb_slave_pkg.sv \
+		../src/memory/memory_pkg.sv \
 		../src/matmul_no_ram/*.sv \
 		../tb/matmul_tb_no_ram.sv \
 	-l compile.log
