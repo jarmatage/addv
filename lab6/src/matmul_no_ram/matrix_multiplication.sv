@@ -2,9 +2,9 @@
 // Top level with memories
 //////////////////////////////////////////////////////////////////////////
 module matrix_multiplication(
-    ram_read_if ram_a,
-    ram_read_if ram_b,
-    ram_write_if ram_c,
+    memory_if ram_a,
+    memory_if ram_b,
+    memory_if ram_c,
     apb_if apb
     );
 
