@@ -47,7 +47,7 @@ class apb_sequence extends uvm_sequence #(apb_master_seq_item);
     task write(input [`ADDR_WIDTH-1:0] addr, input [`DATA_WIDTH-1:0] data);
         apb_master_seq_item item;
         item = apb_master_seq_item::type_id::create("write_transaction");
-        item.apb_tr = WRITE;
+        item.apb_tr = 1; // WRITE transaction
         item.addr = addr;
         item.data = data;
         start_item(item);
@@ -58,7 +58,7 @@ class apb_sequence extends uvm_sequence #(apb_master_seq_item);
     task read(input [`ADDR_WIDTH-1:0] addr, output [`DATA_WIDTH-1:0] data);
         apb_master_seq_item item;
         item = apb_master_seq_item::type_id::create("read_transaction");
-        item.apb_tr = READ;
+        item.apb_tr = 0; // READ transaction
         item.addr = addr;
         start_item(item);
         finish_item(item);
