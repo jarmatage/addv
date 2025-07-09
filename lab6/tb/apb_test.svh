@@ -1,8 +1,4 @@
-import uvm_pkg::*;
 `include "uvm_macros.svh"
-
-import apb_master_pkg::*;
-import apb_slave_pkg::*;
 `include "apb_env.svh"
 
 class apb_test extends uvm_test;
