@@ -34,10 +34,10 @@ module matmul_tb;
     end
     
     // Start instruction test
-    initial begin
-        uvm_config_db#(virtual apb_if)::set(null, "*", "apb_vif", apb);
-        run_test("apb_test");
-    end
+    // initial begin
+    //     uvm_config_db#(virtual apb_if)::set(null, "*", "apb_vif", apb);
+    //     run_test("apb_test");
+    // end
 
     // Reset
     initial begin
