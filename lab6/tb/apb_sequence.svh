@@ -33,6 +33,7 @@ class apb_sequence extends uvm_sequence #(apb_master_seq_item);
         write(4'd0, 16'd1);
 
         // Poll done register until done
+        #40;
         `uvm_info(get_type_name(), "Polling the DONE register", UVM_MEDIUM)
         done = '0;
         poll_count = 0;

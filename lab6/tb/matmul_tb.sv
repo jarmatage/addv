@@ -69,66 +69,6 @@ module matmul_tb;
     end
 
     ////////////////////////////////////////////
-    // Task to write into the configuration block of the DUT
-    ////////////////////////////////////////////
-    task write(input [`ADDR_WIDTH-1:0] addr, input [`DATA_WIDTH-1:0] data);
-        @(negedge clk);
-        apb.PSEL = 1;
-        apb.PWRITE = 1;
-        apb.PADDR = addr;
-        apb.PWDATA = data;
-        @(negedge clk);
-        apb.PENABLE = 1;
-        @(negedge clk);
-        apb.PSEL = 0;
-        apb.PENABLE = 0;
-        apb.PWRITE = 0;
-        apb.PADDR = 0;
-        apb.PWDATA = 0;
-        $display("%t: PADDR %h, PWDATA %h", $time, addr, data);
-    endtask
-
-    ////////////////////////////////////////////
-    // Task to read from the configuration block of the DUT
-    ////////////////////////////////////////////
-    task read(input [`ADDR_WIDTH-1:0] addr, output [`DATA_WIDTH-1:0] data);
-        @(negedge clk);
-        apb.PSEL = 1;
-        apb.PWRITE = 0;
-        apb.PADDR = addr;
-        @(negedge clk);
-        apb.PENABLE = 1;
-        @(negedge clk);
-        apb.PSEL = 0;
-        apb.PENABLE = 0;
-        data = apb.PRDATA;
-        apb.PADDR = 0;
-        $display("%t: PADDR %h, PRDATA %h",$time, addr,data);
-    endtask
-
-    ////////////////////////////////////////////
-    // Task to listen for the done signal
-    ////////////////////////////////////////////
-    task wait_done(input [`ADDR_WIDTH-1:0] addr);
-        @(negedge clk);
-        apb.PSEL = 1;
-        apb.PWRITE = 0;
-        apb.PADDR = addr;
-        @(negedge clk);
-        apb.PENABLE = 1;
-
-        do begin
-            @(negedge clk);
-            status = apb.PRDATA;
-            $display("%t: PADDR %h, PRDATA %b",$time, addr, status);
-        end while (status[0] == 1'b0);
-
-        apb.PSEL = 0;
-        apb.PENABLE = 0;
-        apb.PADDR = 0;
-    endtask
-
-    ////////////////////////////////////////////
     // Fill the RAMs with FP8 values
     ////////////////////////////////////////////
     task automatic set_matrices_fp8();
