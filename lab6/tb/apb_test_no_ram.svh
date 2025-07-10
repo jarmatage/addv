@@ -6,8 +6,8 @@ class apb_test extends uvm_test;
 	`uvm_component_utils(apb_test)
 
     // Matrices
-    rand bit [31:0] mem_a[4];
-    rand bit [31:0] mem_b[4];
+    rand bit [31:0] mem_a[0:3];
+    rand bit [31:0] mem_b[0:3];
 
 	apb_env env;
 	

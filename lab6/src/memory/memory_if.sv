@@ -5,7 +5,7 @@ interface memory_if (
 
     logic [`AWIDTH-1:0]             addr;
     logic [`MASK_WIDTH*`DWIDTH-1:0] data;
-    logic [`MASK_WIDTH-1:0]         en;
+    logic en;
 
     modport TB_READ(
         input clk, resetn,
