@@ -50,13 +50,14 @@ class memory_driver extends uvm_driver#(memory_seq_item);
                     tr.data <= vif.data;
                     tr.addr <= vif.addr;
                     tr.mode <= WRITE;
+                    uvm_report_info("MEMORY WRITE", $sformatf("%s", tr.convert2string()));
                 end else begin
                     vif.data <= mem_model[vif.addr]; 
                     tr.data <= vif.data;
                     tr.addr <= vif.addr;
                     tr.mode <= READ;
+                    uvm_report_info("MEMORY READ", $sformatf("%s", tr.convert2string()));
                 end
-                uvm_report_info("MEMORY_DRIVER", $sformatf("%s", tr.convert2string()));
                 seq_item_port.item_done();
             end
         end
