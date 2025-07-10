@@ -73,6 +73,12 @@ class apb_test extends uvm_test;
 		mem_seq_c = memory_seq::type_id::create("mem_seq_c");
 
 		phase.raise_objection(this, "Starting apb_test run phase");
+
+		`uvm_info("INFO", "displaying matrix A", UVM_LOW);
+		env.ram_a.driver.display_row_major();
+		`uvm_info("INFO", "displaying matrix B", UVM_LOW);
+		env.ram_b.driver.display_col_major();
+
 		fork
 			master_seq.start(env.master_agent.m_sequencer);
 			mem_seq_a.start(env.ram_a.sequencer);
@@ -80,10 +86,6 @@ class apb_test extends uvm_test;
 			mem_seq_c.start(env.ram_c.sequencer);
 		join
 		
-		`uvm_info("INFO", "displaying matrix A", UVM_LOW);
-		env.ram_a.driver.display_row_major();
-		`uvm_info("INFO", "displaying matrix B", UVM_LOW);
-		env.ram_b.driver.display_col_major();
 		`uvm_info("INFO", "displaying matrix C", UVM_LOW);
 		env.ram_c.driver.display_row_major();
 
