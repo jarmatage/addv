@@ -18,6 +18,8 @@ class memory_driver extends uvm_driver#(memory_seq_item);
             `uvm_fatal("NOVIF", "Failed to get virtual interface")
         if (!uvm_config_db#(mem_agent_mode_t)::get(this, "", "mode", mode))
             `uvm_fatal("NOMODE", "Failed to get agent mode")
+        if (!uvm_config_db#(mem_array_t)::get(this, "", "mem_model", mem_model))
+            `uvm_fatal("NOMEMMODEL", "Failed to get memory model")
     endfunction
 
     // Main run task
