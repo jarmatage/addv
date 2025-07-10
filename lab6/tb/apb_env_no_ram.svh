@@ -44,10 +44,9 @@ class apb_env extends uvm_env;
 		uvm_config_db#(virtual memory_if)::set(this, "ram_a", "vif", ram_a_vif);
 		uvm_config_db#(virtual memory_if)::set(this, "ram_b", "vif", ram_b_vif);
 		uvm_config_db#(virtual memory_if)::set(this, "ram_c", "vif", ram_c_vif);
-
-		uvm_config_db#(virtual memory_if)::set(this, "ram_a", "mode", 0);
-		uvm_config_db#(virtual memory_if)::set(this, "ram_b", "mode", 0);
-		uvm_config_db#(virtual memory_if)::set(this, "ram_c", "mode", 1);
+		ram_a.mode = 0; // Read mode
+		ram_b.mode = 0; // Read mode
+		ram_c.mode = 1; // Write mode
 	endfunction
 endclass
 
