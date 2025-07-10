@@ -5,12 +5,9 @@
 class apb_test extends uvm_test;
 	`uvm_component_utils(apb_test)
 
-    // Matrix dimensions
-    localparam int N = 4;
-
     // Matrices
-    rand bit [31:0] mem_a[N];
-    rand bit [31:0] mem_b[N];
+    rand bit [31:0] mem_a[4];
+    rand bit [31:0] mem_b[4];
 
 	apb_env env;
 	
