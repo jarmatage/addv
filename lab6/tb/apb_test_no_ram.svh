@@ -6,8 +6,8 @@ class apb_test extends uvm_test;
 	`uvm_component_utils(apb_test)
 
     // Matrices
-    rand bit [31:0] mem_a[4];
-    rand bit [31:0] mem_b[4];
+    mem_array_t mem_a;
+    mem_array_t mem_b;
 
 	apb_env env;
 	
@@ -44,7 +44,10 @@ class apb_test extends uvm_test;
 		end
 
 		// Randomize A and B
-		assert(this.randomize());
+		for (int i = 0; i < 4; i++) begin
+			mem_a[i] = $urandom();
+			mem_b[i] = $urandom();
+		end
 
 		// TODO: Compute expected C
 
