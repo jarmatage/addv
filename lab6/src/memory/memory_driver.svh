@@ -41,22 +41,24 @@ class memory_driver extends uvm_driver#(memory_seq_item);
 
     task get_and_drive();
         forever begin
-            @(posedge vif.en);
-            tr = memory_seq_item::type_id::create("memory_seq_item");
-            seq_item_port.get_next_item(tr);
-            if (mode == WRITE) begin
-                mem_model[vif.addr] <= vif.data;
-                tr.data <= vif.data;
-                tr.addr <= vif.addr;
-                tr.mode <= WRITE;
-            end else begin
-                vif.data <= mem_model[vif.addr]; 
-                tr.data <= vif.data;
-                tr.addr <= vif.addr;
-                tr.mode <= READ;
+            @(posedge vif.clk);
+            if (vif.en) begin
+                tr = memory_seq_item::type_id::create("memory_seq_item");
+                seq_item_port.get_next_item(tr);
+                if (mode == WRITE) begin
+                    mem_model[vif.addr] <= vif.data;
+                    tr.data <= vif.data;
+                    tr.addr <= vif.addr;
+                    tr.mode <= WRITE;
+                end else begin
+                    vif.data <= mem_model[vif.addr]; 
+                    tr.data <= vif.data;
+                    tr.addr <= vif.addr;
+                    tr.mode <= READ;
+                end
+                uvm_report_info("MEMORY_DRIVER", $sformatf("%s", tr.convert2string()));
+                seq_item_port.item_done();
             end
-            uvm_report_info("MEMORY_DRIVER", $sformatf("%s", tr.convert2string()));
-            seq_item_port.item_done();
         end
     endtask
 
