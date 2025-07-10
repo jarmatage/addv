@@ -4,7 +4,7 @@ class memory_driver extends uvm_driver#(memory_seq_item);
     virtual memory_if vif;
     mem_agent_mode_t mode;
     bit [31:0] mem_model[*];
-    memory_seq_item item;
+    memory_seq_item tr;
 
     // Constructor
     function new (string name = "memory_driver", uvm_component parent = null);
@@ -20,44 +20,41 @@ class memory_driver extends uvm_driver#(memory_seq_item);
             `uvm_fatal("NOMODE", "Failed to get agent mode")
     endfunction
 
-
     // Main run task
     task run_phase(uvm_phase phase);
         super.run_phase(phase);
+        init_signals();
+        wait_for_reset();
+        get_and_drive();
+    endtask
 
+    task init_signals();
+        if (mode == READ)
+            vif.data = '0;
+    endtask
+
+    task wait_for_reset();
+        wait(!vif.resetn)
+    endtask
+
+    task get_and_drive();
         forever begin
-            @(posedge vif.clk);
-            if (vif.en) begin
-                if (mode == READ) begin
-                    read();
-                end else if (mode == WRITE) begin
-                    write();
-                end else begin
-                    `uvm_fatal("INVALID_MODE", $sformatf("Invalid mode: %s", mode.name()));
-                end
+            @(posedge vif.enable);
+            tr = memory_seq_item::type_id::create("memory_seq_item");
+            seq_item_port.get_next_item(tr);
+            if (mode == WRITE) begin
+                mem[vif.addr] <= vif.data;
+                tr.data <= vif.data;
+                tr.addr <= vif.addr;
+                tr.dir <= WRITE;
             end else begin
-                `uvm_info(get_type_name(), "Waiting for enable signal", UVM_LOW);
+                vif.data <= mem[vif.addr]; 
+                tr.data <= vif.data;
+                tr.addr <= vif.addr;
+                tr.dir <= READ;
             end
+            seq_item_port.item_done();
         end
-    endtask
-
-    task read();
-        item = memory_seq_item::type_id::create("mem_read");
-        item.mode = READ;
-        item.addr = vif.addr;
-        start_item(item);
-        item.data = mem_model[item.addr];
-        finish_item(item);
-    endtask
-
-    task write();
-        item = memory_seq_item::type_id::create("mem_write");
-        item.mode = WRITE;
-        item.addr = vif.addr;
-        item.data = vif.data;
-        start_item(item);
-        mem_model[item.addr] = item.data;
-        finish_item(item);
     endtask
 
     task display_row_major();
