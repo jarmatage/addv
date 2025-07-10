@@ -58,9 +58,6 @@ class memory_driver extends uvm_driver#(memory_seq_item);
     endtask
 
     task display_row_major();
-        $display("Displaying memory in row-major order:");
-        $display("%h", mem_model[0]);
-        
         for (int i = 0; i <= 24; i += 8) begin
             $write("|");
             for (int j = 0; j < 4; j++) begin
