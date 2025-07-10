@@ -34,7 +34,7 @@ class memory_driver extends uvm_driver#(memory_seq_item);
     endtask
 
     task wait_for_reset();
-        wait(!vif.resetn)
+        wait(!vif.resetn);
     endtask
 
     task get_and_drive();
