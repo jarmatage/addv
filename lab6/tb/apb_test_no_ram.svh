@@ -84,7 +84,7 @@ class apb_test extends uvm_test;
 			mem_seq_b.start(env.ram_b.sequencer);
 			mem_seq_c.start(env.ram_c.sequencer);
 			master_seq.start(env.master_agent.m_sequencer);
-		join
+		join_any
 		
 		`uvm_info("INFO", "displaying matrix C", UVM_LOW);
 		env.ram_c.driver.display_row_major();
