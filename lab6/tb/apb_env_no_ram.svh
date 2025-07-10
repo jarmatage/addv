@@ -40,6 +40,10 @@ class apb_env extends uvm_env;
 		if (!uvm_config_db#(virtual memory_if)::get(null, "", "ram_c_vif", ram_c_vif)) begin
 			`uvm_fatal(get_full_name(), "No virtual interface specified for RAM C")
 		end
+
+		uvm_config_db#(virtual memory_if)::set(this, "ram_a", "vif", ram_a_vif);
+		uvm_config_db#(virtual memory_if)::set(this, "ram_b", "vif", ram_b_vif);
+		uvm_config_db#(virtual memory_if)::set(this, "ram_c", "vif", ram_c_vif);
 	endfunction
 endclass
 
