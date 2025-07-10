@@ -49,8 +49,8 @@ class apb_test extends uvm_test;
 		// TODO: Compute expected C
 
 		// Set the matrices in the environment
-		uvm_config_db#(bit [31:0] [4])::set(this, "env.ram_a.driver", "mem_model", mem_a);
-		uvm_config_db#(bit [31:0] [4])::set(this, "env.ram_b.driver", "mem_model", mem_b);
+		uvm_config_db#(bit [31:0][0:3])::set(this, "env.ram_a.driver", "mem_model", mem_a);
+		uvm_config_db#(bit [31:0][0:3])::set(this, "env.ram_b.driver", "mem_model", mem_b);
 	endfunction
 
 
