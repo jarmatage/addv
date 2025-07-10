@@ -9,9 +9,8 @@ class apb_test extends uvm_test;
     localparam int N = 4;
 
     // Matrices
-    rand bit [7:0] matrix_a[N][N];
-    rand bit [7:0] matrix_b[N][N];
-    bit [7:0] matrix_c_expected[N][N];
+    rand bit [31:0] mem_a[N];
+    rand bit [31:0] mem_b[N];
 
 	apb_env env;
 	
@@ -20,6 +19,10 @@ class apb_test extends uvm_test;
 	
 	virtual apb_if vif;
 	apb_sequence master_seq;
+
+	memory_seq mem_seq_a;
+	memory_seq mem_seq_b;
+	memory_seq mem_seq_c;
 
 
 	function new (string name = "apb_test", uvm_component parent = null);
@@ -45,50 +48,52 @@ class apb_test extends uvm_test;
 
 		// Randomize A and B
 		assert(this.randomize());
-		foreach (matrix_c_expected[i, j]) begin
-			matrix_c_expected[i][j] = 0;
-			for (int k = 0; k < N; k++)
-				matrix_c_expected[i][j] += matrix_a[i][k] * matrix_b[k][j];
-		end
 
-		// Configure memory models
-		bit [31:0] mem_a[*], mem_b[*];
-		foreach (matrix_a[i][j])
-		mem_a[{i, j}] = matrix_a[i][j];
-		foreach (matrix_b[i][j])
-		mem_b[{i, j}] = matrix_b[i][j];
+		// TODO: Compute expected C
 
-		uvm_config_db#(typeof(mem_a))::set(this, "env.agent_a.drv", "mem_model", mem_a);
-		uvm_config_db#(typeof(mem_b))::set(this, "env.agent_b.drv", "mem_model", mem_b);
+		// Set the matrices in the environment
+		uvm_config_db#(typeof(ram_a))::set(this, "env.ram_a.driver", "mem_model", mem_a);
+		uvm_config_db#(typeof(ram_b))::set(this, "env.ram_b.driver", "mem_model", mem_b);
 	endfunction
 
 
 	task run_phase (uvm_phase phase);
 		super.run_phase(phase);
 		master_seq = apb_sequence::type_id::create("master_seq");
-			
+		mem_seq_a = memory_seq::type_id::create("mem_seq_a");
+		mem_seq_b = memory_seq::type_id::create("mem_seq_b");
+		mem_seq_c = memory_seq::type_id::create("mem_seq_c");
+
 		phase.raise_objection(this, "Starting apb_test run phase");
-		master_seq.start(env.master_agent.m_sequencer);
-		//phase.drop_objection(this, "Finished apb_test in run phase");
+		fork
+			master_seq.start(env.master_agent.m_sequencer);
+			mem_seq_a.start(env.ram_a.sequencer);
+			mem_seq_b.start(env.ram_b.sequencer);
+			mem_seq_c.start(env.ram_c.sequencer);
+		join
+		
+		`uvm_info("INFO", "displaying matrix A", UVM_LOW);
+		env.ram_a.driver.display_row_major();
+		`uvm_info("INFO", "displaying matrix B", UVM_LOW);
+		env.ram_b.driver.display_col_major();
+		`uvm_info("INFO", "displaying matrix C", UVM_LOW);
+		env.ram_c.driver.display_row_major();
+
+		phase.drop_objection(this, "Finished apb_test in run phase");
 	endtask
 
-	function real fp8_to_real(input logic [7:0] fp);
-        logic sign;
-        logic [2:0] exp;
-        logic [3:0] mant;
-        int unbiased_exp;
-        real r_mant;
 
-        sign = fp[7];
-        exp  = fp[6:4];
-        mant = fp[3:0];
+	function void end_of_elaboration_phase (uvm_phase phase);
+		super.end_of_elaboration_phase(phase);
 
-        if (exp == 0 && mant == 0) return 0.0;
+		// Print topology
+		`uvm_info("TOPOLOGY", "Printing UVM topology...", UVM_LOW)
+		uvm_top.print_topology();
 
-        unbiased_exp = exp - 3;
-        r_mant = 1.0 + mant / 16.0;
-        return (sign ? -1.0 : 1.0) * r_mant * (2.0 ** unbiased_exp);
-    endfunction
+		// Print env
+		`uvm_info("PRINT_ENV", "Printing ENV...", UVM_LOW)
+		env.print();
+  	endfunction
 endclass
 
 
