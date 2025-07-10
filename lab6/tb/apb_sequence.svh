@@ -42,6 +42,10 @@ class apb_sequence extends uvm_sequence #(apb_master_seq_item);
         end
         `uvm_info(get_type_name(), $sformatf(
             "\nDONE register indicated completion after %0d polls, fp8 status flags = %b", poll_count, done[5:1]), UVM_MEDIUM)
+
+        // Write to start register
+        `uvm_info(get_type_name(), "\nWriting to START", UVM_MEDIUM)
+        write(4'd0, 16'd0);
     endtask
 
 
