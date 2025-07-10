@@ -34,6 +34,19 @@ class apb_test extends uvm_test;
 		if (!uvm_config_db#(virtual apb_if)::get(this, "", "apb_vif", vif)) begin
 			`uvm_fatal(get_full_name(), "No virtual interface specified for this test instance")
 		end
+
+		// Enable config DB print
+		`uvm_info("CONFIG_DB", "Printing config DB...", UVM_LOW)
+		uvm_config_db#(int)::print();
+
+		// Enable phase tracing
+		uvm_phase::trace_phases = 1;
+
+		// Enable objection tracing
+		uvm_objection::print_objections = 1;
+
+		// Set verbosity to UVM_HIGH globally
+		uvm_top.set_report_verbosity_level(UVM_HIGH);
 	endfunction
 
 
@@ -45,6 +58,18 @@ class apb_test extends uvm_test;
 		master_seq.start(env.master_agent.m_sequencer);
 		//phase.drop_objection(this, "Finished apb_test in run phase");
 	endtask
+
+	function void end_of_elaboration_phase (uvm_phase phase);
+		super.end_of_elaboration_phase(phase);
+
+		// Print topology
+		`uvm_info("TOPOLOGY", "Printing UVM topology...", UVM_LOW)
+		uvm_top.print_topology();
+
+		// Print env
+		`uvm_info("PRINT_ENV", "Printing ENV...", UVM_LOW)
+		env.print();
+  	endfunction
 endclass
 
 
