@@ -93,6 +93,7 @@ class apb_test extends uvm_test;
 		`uvm_info("INFO", "displaying matrix B:", UVM_LOW);
 		env.ram_b.driver.display_col_major();
 		#55;
+		$display("HHHHHHHHHH: %s", env.ram_c.driver.mode)
 		`uvm_info("INFO", "displaying matrix C:", UVM_LOW);
 		env.ram_c.driver.display_row_major();
 
