@@ -22,8 +22,8 @@ class memory_slave_agent extends uvm_agent;
         if (!uvm_config_db#(mem_agent_mode_t)::get(this, "", "mode", mode))
             `uvm_fatal("NOMODE", "Mode not set in config_db")
 
-        driver = memory_driver::type_id::create("memory_driver", this);
-        sequencer = memory_sequencer::type_id::create("memory_sequencer", this);
+        driver = memory_driver::type_id::create("driver", this);
+        sequencer = memory_sequencer::type_id::create("sequencer", this);
 
         uvm_config_db#(virtual memory_if)::set(this, "driver", "vif", vif);
         uvm_config_db#(mem_agent_mode_t)::set(this, "driver", "mode", mode);
