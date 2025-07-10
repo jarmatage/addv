@@ -43,15 +43,15 @@ class memory_driver extends uvm_driver#(memory_seq_item);
             tr = memory_seq_item::type_id::create("memory_seq_item");
             seq_item_port.get_next_item(tr);
             if (mode == WRITE) begin
-                mem[vif.addr] <= vif.data;
+                mem_model[vif.addr] <= vif.data;
                 tr.data <= vif.data;
                 tr.addr <= vif.addr;
-                tr.dir <= WRITE;
+                tr.mode <= WRITE;
             end else begin
-                vif.data <= mem[vif.addr]; 
+                vif.data <= mem_model[vif.addr]; 
                 tr.data <= vif.data;
                 tr.addr <= vif.addr;
-                tr.dir <= READ;
+                tr.mode <= READ;
             end
             seq_item_port.item_done();
         end
