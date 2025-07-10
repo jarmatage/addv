@@ -6,6 +6,10 @@ compile: clean
 		-ntb_opts uvm \
 		+plusarg_save \
 		+define+DUMP=1 \
+		+UVM_CONFIG_DB_TRACE \
+		+UVM_PHASE_TRACE \
+		+UVM_OBJECTION_TRACE \
+		+UVM_VERBOSITY=UVM_HIGH \
 		+incdir+../src/common \
 		+incdir+../src/master \
 		+incdir+../src/slave \

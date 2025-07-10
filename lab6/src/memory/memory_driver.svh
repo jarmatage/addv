@@ -45,18 +45,20 @@ class memory_driver extends uvm_driver#(memory_seq_item);
             if (vif.en) begin
                 tr = memory_seq_item::type_id::create("memory_seq_item");
                 seq_item_port.get_next_item(tr);
+                tr.data 
+
                 if (mode == WRITE) begin
                     mem_model[vif.addr] <= vif.data;
                     tr.data <= vif.data;
                     tr.addr <= vif.addr;
                     tr.mode <= WRITE;
-                    uvm_report_info("MEMORY WRITE", $sformatf("%s", tr.convert2string()));
+                    uvm_report_info("MEMORY WRITE", $psprintf("%s", tr.convert2string()));
                 end else begin
                     vif.data <= mem_model[vif.addr]; 
                     tr.data <= vif.data;
                     tr.addr <= vif.addr;
                     tr.mode <= READ;
-                    uvm_report_info("MEMORY READ", $sformatf("%s", tr.convert2string()));
+                    uvm_report_info("MEMORY READ", $psprintf("%s", tr.convert2string()));
                 end
                 seq_item_port.item_done();
             end
