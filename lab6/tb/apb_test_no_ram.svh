@@ -6,8 +6,8 @@ class apb_test extends uvm_test;
 	`uvm_component_utils(apb_test)
 
     // Matrices
-    rand bit [31:0] mem_a[0:3];
-    rand bit [31:0] mem_b[0:3];
+    rand bit [31:0] mem_a[4];
+    rand bit [31:0] mem_b[4];
 
 	apb_env env;
 	
@@ -49,8 +49,8 @@ class apb_test extends uvm_test;
 		// TODO: Compute expected C
 
 		// Set the matrices in the environment
-		uvm_config_db#(bit [31:0]$[0:3])::set(this, "env.ram_a.driver", "mem_model", mem_a);
-		uvm_config_db#(bit [31:0]$[0:3])::set(this, "env.ram_b.driver", "mem_model", mem_b);
+		uvm_config_db#(bit [31:0][*])::set(this, "env.ram_a.driver", "mem_model", mem_a);
+		uvm_config_db#(bit [31:0][*])::set(this, "env.ram_b.driver", "mem_model", mem_b);
 	endfunction
 
 
