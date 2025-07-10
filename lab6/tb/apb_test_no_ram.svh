@@ -92,6 +92,7 @@ class apb_test extends uvm_test;
 		env.ram_a.driver.display_row_major();
 		`uvm_info("INFO", "displaying matrix B:", UVM_LOW);
 		env.ram_b.driver.display_col_major();
+		#55;
 		`uvm_info("INFO", "displaying matrix C:", UVM_LOW);
 		env.ram_c.driver.display_row_major();
 
