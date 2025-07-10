@@ -3,7 +3,7 @@ class memory_driver extends uvm_driver#(memory_seq_item);
 
     virtual memory_if vif;
     mem_agent_mode_t mode;
-    bit [31:0] mem_model[*];
+    mem_array_t mem_model;
     memory_seq_item tr;
 
     // Constructor
