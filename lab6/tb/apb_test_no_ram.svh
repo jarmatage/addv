@@ -166,9 +166,7 @@ class apb_test extends uvm_test;
 					expected_c[i][j] += A[i][k] * B[k][j];
 				end
 				
-				if (expected_c[i][j] < 0.0)
-					$write("-");
-				else
+				if (expected_c[i][j] > 0.0)
 					$write("+");
 
 				if (expected_c[i][j] == 0.0)
