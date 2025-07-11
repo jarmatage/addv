@@ -44,6 +44,6 @@ interface memory_if (
     endproperty
 
     assert property (invalid_addr) else
-        $error("[%0t] ERROR: addr is invalid (either unknown or less than 3)", $time);
+        $error("[%0t] ERROR: addr '%0h' is invalid (either unknown or less than 3)", $time, addr);
 
 endinterface
