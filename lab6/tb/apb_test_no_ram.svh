@@ -265,7 +265,7 @@ class apb_test extends uvm_test;
 		abs_val = (val < 0) ? -val : val;
 
 		// Calculate floor(log2(abs_val))
-		exp_unbiased = $clog2(abs_val);
+		exp_unbiased = int'($ln(abs_val) / $ln(2.0));
 		if (abs_val < 1.0) exp_unbiased -= 1;
 
 		// Bias the exponent
