@@ -271,7 +271,7 @@ class apb_test extends uvm_test;
 		exp_biased = exp_unbiased + 3;
 
 		// Handle underflow
-		if (exp_biased <= 0) return 8'b0;
+		if (exp_biased < 0) return {sign, 3'b000, 4'b0000};
 
 		// Handle overflow: return INF
 		if (exp_biased >= 7) return {sign, 3'b111, 4'b0000};
