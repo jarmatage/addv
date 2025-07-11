@@ -52,4 +52,33 @@ module matmul_tb;
         uvm_config_db#(virtual memory_if)::set(null, "*", "ram_c_vif", ram_c);
         run_test("apb_test");
     end
+
+    // Inject errors
+    initial begin
+        #55;
+        
+        $display("Injecting error: forcing bram_we_c = 0");
+        wait(dut.start_mat_mul)
+        force dut.ram_c.en = 1'b0;
+        #100;
+        release dut.ram_c.en;
+        #50;
+
+        $display("Injecting error: forcing write/read enable = 1 during reset");
+        resetn = 1'b0;
+        force dut.ram_c.en = 1'b1;
+        #20;
+        resetn = 1'b1;
+        release dut.ram_c.en;
+
+        $display("Injecting error: forcing addr to invalid value 0x1FF");
+        force dut.ram_a.addr = 9'h1FF;
+        #20;
+        release dut.ram_a.addr;
+
+        $display("Injecting error: forcing stride to 0");
+        force dut.address_stride_a = 1'b0;
+        #20;
+        release dut.address_stride_a;
+    end
 endmodule
