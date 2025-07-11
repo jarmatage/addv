@@ -63,9 +63,6 @@ class apb_test extends uvm_test;
         // mem_b[1]  = {8'b0_011_0000, 8'b1_011_0000, 8'b0_011_0100, 8'b0_011_0000};
         // mem_b[0]  = {8'b0_110_0100, 8'b0_001_0001, 8'b0_000_0000, 8'b0_011_0111};
 
-		// Compute expected C
-		//compute_expected_c();
-
 		// Set the matrices in the environment
 		uvm_config_db#(mem_array_t)::set(this, "env.ram_a.driver", "mem_model", mem_a);
 		uvm_config_db#(mem_array_t)::set(this, "env.ram_b.driver", "mem_model", mem_b);
@@ -97,7 +94,7 @@ class apb_test extends uvm_test;
 		`uvm_info("INFO", "displaying matrix C:", UVM_LOW);
 		display_row_major(mem_c);
 		`uvm_info("INFO", "displaying expected C:", UVM_LOW);
-		display_row_major(expected_c);
+		compute_expected_c(expected_c);
 
 		phase.drop_objection(this, "Finished apb_test in run phase");
 	endtask
@@ -217,37 +214,4 @@ class apb_test extends uvm_test;
         r_mant = 1.0 + mant / 16.0;
         return (sign ? -1.0 : 1.0) * r_mant * (2.0 ** unbiased_exp);
     endfunction
-
-
-	function automatic byte real_to_fp8(input real val);
-		bit sign;
-		int exp_unbiased;
-		bit [2:0] exp_biased;
-		real abs_val, normalized;
-		bit [3:0] mantissa;
-
-		// Handle zero
-		if (val == 0.0) return 8'b0;
-
-		// Sign bit
-		sign = (val < 0);
-		abs_val = (val < 0) ? -val : val;
-
-		// Calculate unbiased exponent
-		exp_unbiased = $clog2(abs_val);
-		if (abs_val < 1.0) exp_unbiased -= 1;
-
-		// Bias the exponent
-		exp_biased = exp_unbiased + 3;
-		if (exp_biased <= 0) return 8'b0; // zero
-		if (exp_biased >= 7) return {sign, 3'b111, 4'b0}; // INF
-
-		// Compute normalized mantissa
-		normalized = abs_val / (2.0 ** exp_unbiased);
-		normalized -= 1.0;  // remove implicit 1
-
-		// Quantize to 4-bit mantissa
-		mantissa = int'(normalized * 16.0 + 0.5);  // rounded
-  		return {sign, exp_biased, mantissa};
-	endfunction
 endclass
