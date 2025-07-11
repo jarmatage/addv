@@ -47,8 +47,8 @@ class apb_test extends uvm_test;
 
 		// Randomize A and B
 		for (int i = 0; i < 4; i++) begin
-			mem_a[i] = $urandom();
-			mem_b[i] = $urandom();
+			mem_a[i] = {rand_fp8(), rand_fp8(), rand_fp8(), rand_fp8()};
+			mem_b[i] = {rand_fp8(), rand_fp8(), rand_fp8(), rand_fp8()};
 		end
         // mem_a[3]  = {8'b1_011_0110, 8'b0_101_0001, 8'b0_001_0111, 8'b0_010_0110};
         // mem_a[2]  = {8'b1_100_1000, 8'b1_010_0010, 8'b0_010_0110, 8'b0_011_1100};
@@ -111,6 +111,23 @@ class apb_test extends uvm_test;
 		`uvm_info("PRINT_ENV", "Printing ENV...", UVM_LOW)
 		env.print();
   	endfunction
+
+	function automatic byte rand_fp8();
+		byte fp8;
+		bit [0:0] s;
+		bit [3:0] e;
+		bit [2:0] m;
+
+		// Randomize parts
+		s = $urandom_range(0, 1);
+		e = $urandom_range(0, 14); // exclude 15 (1111) to avoid INF/NaN
+		m = $urandom_range(0, 7);
+
+		// Compose final fp8
+		fp8 = {s, e, m}; // s is MSB
+		return fp8;
+	endfunction
+
 endclass
 
 
