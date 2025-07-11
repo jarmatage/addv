@@ -20,7 +20,7 @@ module matmul_tb;
     apb_if apb(clk, resetn);
 
     // DUT
-    matrix_multiplication u_matmul(
+    matrix_multiplication dut(
         .ram_a(ram_a.DUT_READ),
         .ram_b(ram_b.DUT_READ),
         .ram_c(ram_c.DUT_WRITE),
