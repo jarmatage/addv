@@ -40,8 +40,7 @@ class memory_driver extends uvm_driver#(memory_seq_item);
     endtask
 
     task get_and_drive();
-        forever begin
-            @(posedge vif.clk);
+        always @(posedge vif.clk) begin
             if (vif.en) begin
                 tr = memory_seq_item::type_id::create("memory_seq_item");
                 seq_item_port.get_next_item(tr);
