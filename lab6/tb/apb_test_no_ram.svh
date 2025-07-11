@@ -47,8 +47,8 @@ class apb_test extends uvm_test;
 
 		// Randomize A and B
 		for (int i = 0; i < 4; i++) begin
-			mem_a[i] = {rand_fp8(), rand_fp8(), rand_fp8(), rand_fp8()};
-			mem_b[i] = {rand_fp8(), rand_fp8(), rand_fp8(), rand_fp8()};
+			mem_a[i] = rand_row();
+			mem_b[i] = rand_row();
 		end
         // mem_a[3]  = {8'b1_011_0110, 8'b0_101_0001, 8'b0_001_0111, 8'b0_010_0110};
         // mem_a[2]  = {8'b1_100_1000, 8'b1_010_0010, 8'b0_010_0110, 8'b0_011_1100};
@@ -128,8 +128,12 @@ class apb_test extends uvm_test;
 		return fp8;
 	endfunction
 
+	function automatic [31:0] rand_row();
+		byte b0 = rand_fp8();
+		byte b1 = rand_fp8();
+		byte b2 = rand_fp8();
+		byte b3 = rand_fp8();
+		return {b0, b1, b2, b3};
+	endfunction
+
 endclass
-
-
-
-
