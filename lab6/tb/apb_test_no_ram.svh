@@ -140,14 +140,30 @@ class apb_test extends uvm_test;
 
 
 	function void compute_expected_c();
+		real A[4][4];
+		real B[4][4];
+
+		// Unpack mem_a and mem_b into real matrices A and B
+		for (int i = 0; i < 4; i++) begin
+			A[0][i] = fp8_to_real(mem_a[i][7:0]);
+			A[1][i] = fp8_to_real(mem_a[i][15:8]);
+			A[2][i] = fp8_to_real(mem_a[i][23:16]);
+			A[3][i] = fp8_to_real(mem_a[i][31:24]);
+
+			B[i][0] = fp8_to_real(mem_b[i][7:0]);
+			B[i][1] = fp8_to_real(mem_b[i][15:8]);
+			B[i][2] = fp8_to_real(mem_b[i][23:16]);
+			B[i][3] = fp8_to_real(mem_b[i][31:24]);
+		end
+
 		// Compute expected C = A * B
 		for (int i = 0; i < 4; i++) begin
 			$write("|");
 			for (int j = 0; j < 4; j++) begin
 				$write(" ");
 				expected_c[i][j] = 0.0;
-				for (int k = 0; k < 24; k += 8) begin
-					expected_c[i][j] += fp8_to_real(mem_a[i][k+:8]) * fp8_to_real(mem_b[j][k+:8]);
+				for (int k = 0; k < 4; k++) begin
+					expected_c[i][j] += A[i][k] * B[k][j];
 				end
 				$write("%f", expected_c[i][j]);
 			end
