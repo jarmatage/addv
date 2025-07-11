@@ -41,13 +41,11 @@ class memory_driver extends uvm_driver#(memory_seq_item);
 
     task get_and_drive();
         forever begin
-            if (vif.en) begin
-                create_transfer();
-                @(posedge vif.clk);
-                send_transfer();
-            end else begin
-                @(posedge vif.clk);
-            end
+            wait(vif.en);
+            #1;
+            create_transfer();
+            @(posedge vif.clk);
+            send_transfer();
         end
     endtask
 
