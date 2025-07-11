@@ -94,7 +94,7 @@ class apb_test extends uvm_test;
 		`uvm_info("INFO", "displaying matrix C:", UVM_LOW);
 		display_row_major(mem_c);
 		`uvm_info("INFO", "displaying expected C:", UVM_LOW);
-		compute_expected_c(expected_c);
+		compute_expected_c();
 
 		phase.drop_objection(this, "Finished apb_test in run phase");
 	endtask
