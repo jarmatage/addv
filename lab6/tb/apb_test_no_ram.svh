@@ -9,7 +9,7 @@ class apb_test extends uvm_test;
     mem_array_t mem_a;
     mem_array_t mem_b;
 	mem_array_t mem_c;
-	mem_array_t expected_c;
+	real expected_c[4][4];
 
 	apb_env env;
 	
@@ -48,7 +48,6 @@ class apb_test extends uvm_test;
 		// Randomize A and B
 		for (int i = 0; i < 4; i++) begin
 			mem_c[i] = 32'd0;
-			expected_c[i] = 32'd0;
 			mem_a[i] = rand_row();
 			mem_b[i] = rand_row();
 		end
@@ -143,11 +142,16 @@ class apb_test extends uvm_test;
 	function void compute_expected_c();
 		// Compute expected C = A * B
 		for (int i = 0; i < 4; i++) begin
+			$write("|");
 			for (int j = 0; j < 4; j++) begin
-				for (int k = 0; k < 4; k++) begin
-					expected_c[i] = 32'd0;
+				$write(" ");
+				expected_c[i][j] = 0.0;
+				for (int k = 0; k < 24; k += 8) begin
+					expected_c[i][j] += fp8_to_real(mem_a[i][k+:8]) * fp8_to_real(mem_b[j][k+:8]);
 				end
+				$write("%f", expected_c[i][j]);
 			end
+			$display(" |");
 		end
 	endfunction
 
