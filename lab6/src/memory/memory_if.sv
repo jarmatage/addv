@@ -40,7 +40,7 @@ interface memory_if (
 
     property invalid_addr;
         @(posedge clk)
-        (addr === 'x) || (addr < 3);
+        (addr === 'x) || (addr < 3) || (addr == 10'h3FF);
     endproperty
 
     assert property (invalid_addr) else
