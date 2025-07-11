@@ -254,10 +254,9 @@ class apb_test extends uvm_test;
 
 	function automatic byte real_to_fp8(real val);
 		bit sign;
-		int exp_unbiased;
-		bit [2:0] exp_biased;
+		int exp_unbiased, exp_biased;
 		real abs_val, normalized;
-		bit [3:0] mantissa;
+		bit [4:0] mantissa;
 
 		// Handle zero
 		if (val == 0.0) return 8'b0;
@@ -266,11 +265,8 @@ class apb_test extends uvm_test;
 		sign = (val < 0);
 		abs_val = (val < 0) ? -val : val;
 
-		// Calculate floor(log2(abs_val))
-		exp_unbiased = int'($ln(abs_val) / $ln(2.0));
-		if (abs_val < 1.0) exp_unbiased -= 1;
-
-		// Bias the exponent
+		// Calculate exponent
+		exp_unbiased = $floor($ln(abs_val) / $ln(2.0));
 		exp_biased = exp_unbiased + 3;
 
 		// Handle underflow
@@ -286,15 +282,13 @@ class apb_test extends uvm_test;
 		mantissa = int'(normalized * 16.0 + 0.5); // round to 4-bit mantissa
 
 		// Handle rounding overflow
-		if (mantissa == 16) begin
+		if (mantissa >= 16) begin
 			mantissa = 0;
 			exp_biased += 1;
-			if (exp_biased == 7) begin
-			return {sign, 3'b111, 4'b0000}; // INF due to rounding
-			end
+			if (exp_biased == 7) return {sign, 3'b111, 4'b0000}; // INF due to rounding
 		end
 
-		return {sign, exp_biased[2:0], mantissa};
+		return {sign, exp_biased[2:0], mantissa[3:0]};
 	endfunction
 
 	task check_results();
