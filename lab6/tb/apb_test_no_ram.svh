@@ -165,7 +165,18 @@ class apb_test extends uvm_test;
 				for (int k = 0; k < 4; k++) begin
 					expected_c[i][j] += A[i][k] * B[k][j];
 				end
-				$write("%f", expected_c[i][j]);
+				
+				if (expected_c[i][j] < 0.0)
+					$write("-");
+				else
+					$write("+");
+
+				if (expected_c[i][j] == 0.0)
+					$write("0.000000");
+				else if (expected_c[i][j] > 10.0)
+					$write("%0.5f", expected_c[i][j]);
+				else
+					$write("%0.6f", expected_c[i][j]);
 			end
 			$display(" |");
 		end
@@ -213,8 +224,10 @@ class apb_test extends uvm_test;
             $write("nan     ");
         else if (fp[6:0] == 7'b000_0000)
             $write("0.000000");
+		else if (abs_fp > 10.0)
+            $write("%0.5f", abs_fp);
         else
-            $write("%f", abs_fp);
+            $write("%0.6f", abs_fp);
     endtask
 
 
