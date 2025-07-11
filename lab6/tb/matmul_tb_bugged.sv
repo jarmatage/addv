@@ -77,9 +77,11 @@ module matmul_tb;
         release dut.ram_a.addr;
 
         $display("Injecting error: forcing stride to 0");
+        force dut.start_mat_mul = 1'b1;
         force dut.address_stride_a = 1'b0;
         #20;
         release dut.address_stride_a;
+        release dut.start_mat_mul;
         $display("Finished with errors");
         $finish;
     end

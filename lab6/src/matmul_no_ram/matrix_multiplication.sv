@@ -79,4 +79,32 @@ module matrix_multiplication(
         .b_loc(8'd0)
     );
 
+    // Assertions
+    property c_data_available_after_10_cycles;
+        @(posedge apb.PCLK)
+        disable iff (!apb.PRESET_N)
+        start_mat_mul |-> ##10 ram_c.en;
+    endproperty
+
+    assert property (c_data_available_after_10_cycles) else
+        $error("[%0t] ERROR: c_data_available not asserted after 10 cycles of start_mat_mul", $time);
+
+    property address_stride_a_valid;
+        @(posedge apb.PCLK)
+        disable iff (!apb.PRESET_N)
+        start_mat_mul |-> (address_stride_a != 0);
+    endproperty
+
+    assert property (address_stride_a_valid) else
+        $error("[%0t] ERROR: address_stride_a is 0 when start_mat_mul is asserted", $time);
+
+    property address_stride_b_valid;
+        @(posedge apb.PCLK)
+        disable iff (!apb.PRESET_N)
+        start_mat_mul |-> (address_stride_b != 0);
+    endproperty
+
+    assert property (address_stride_b_valid) else
+        $error("[%0t] ERROR: address_stride_b is 0 when start_mat_mul is asserted", $time);
+
 endmodule

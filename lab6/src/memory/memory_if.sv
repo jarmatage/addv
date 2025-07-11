@@ -28,4 +28,22 @@ interface memory_if (
         input clk, resetn,
         input addr, en, data
     );
+
+    // Assertions
+    property no_en_when_reset;
+        @(posedge clk)
+        !resetn |-> !en;
+    endproperty
+
+    assert property (no_en_when_reset) else
+        $error("[%0t] ERROR: en is high while resetn is low", $time);
+
+    property invalid_addr;
+        @(posedge clk)
+        (addr === 'x) || (addr < 3);
+    endproperty
+
+    assert property (invalid_addr) else
+        $error("[%0t] ERROR: addr is invalid (either unknown or less than 3)", $time);
+
 endinterface
