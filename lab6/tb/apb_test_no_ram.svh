@@ -173,6 +173,8 @@ class apb_test extends uvm_test;
 					$write("0.000000");
 				else if (expected_c[i][j] > 10.0)
 					$write("%0.5f", expected_c[i][j]);
+				else if (expected_c[i][j] < -10.0)
+					$write("%0.5f", expected_c[i][j]);
 				else
 					$write("%0.6f", expected_c[i][j]);
 			end
