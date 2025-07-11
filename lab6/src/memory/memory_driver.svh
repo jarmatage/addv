@@ -45,6 +45,7 @@ class memory_driver extends uvm_driver#(memory_seq_item);
             #1;
             create_transfer();
             @(posedge vif.clk);
+            #1;
             send_transfer();
         end
     endtask
