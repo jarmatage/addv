@@ -256,7 +256,7 @@ class apb_test extends uvm_test;
 		bit sign;
 		int exp_unbiased, exp_biased;
 		real abs_val, normalized;
-		bit [4:0] mantissa;
+		int mantissa;
 
 		// Handle zero
 		if (val == 0.0) return 8'b0;
@@ -275,11 +275,10 @@ class apb_test extends uvm_test;
 		// Handle overflow: return INF
 		if (exp_biased >= 7) return {sign, 3'b111, 4'b0000};
 
-		// Normalized number
+		// Calculate mantissa
 		normalized = abs_val / (2.0 ** exp_unbiased);
 		normalized -= 1.0; // remove implicit 1
-
-		mantissa = int'(normalized * 16.0); // round to 4-bit mantissa
+		mantissa = $floor(normalized * 16.0);
 
 		// Handle rounding overflow
 		if (mantissa >= 16) begin
@@ -287,7 +286,6 @@ class apb_test extends uvm_test;
 			exp_biased += 1;
 			if (exp_biased == 7) return {sign, 3'b111, 4'b0000}; // INF due to rounding
 		end
-
 		return {sign, exp_biased[2:0], mantissa[3:0]};
 	endfunction
 
