@@ -40,26 +40,34 @@ class memory_driver extends uvm_driver#(memory_seq_item);
     endtask
 
     task get_and_drive();
-        always_ff @(posedge vif.clk) begin
+        forever begin
             if (vif.en) begin
-                tr = memory_seq_item::type_id::create("memory_seq_item");
-                seq_item_port.get_next_item(tr);
-                if (mode == WRITE) begin
-                    mem_model[vif.addr] <= vif.data;
-                    tr.data <= vif.data;
-                    tr.addr <= vif.addr;
-                    tr.mode <= WRITE;
-                    uvm_report_info("MEMORY WRITE", $psprintf("%s", tr.convert2string()));
-                end else begin
-                    vif.data <= mem_model[vif.addr]; 
-                    tr.data <= vif.data;
-                    tr.addr <= vif.addr;
-                    tr.mode <= READ;
-                    uvm_report_info("MEMORY READ", $psprintf("%s", tr.convert2string()));
-                end
-                seq_item_port.item_done();
+                create_transfer();
+                @(posedge vif.clk);
+                send_transfer();
+            end else begin
+                @(posedge vif.clk);
             end
         end
+    endtask
+
+    task create_transfer();
+        tr = memory_seq_item::type_id::create("memory_seq_item");
+        seq_item_port.get_next_item(tr);
+        tr.addr <= vif.addr;
+        tr.data <= (mode == WRITE) ? vif.data : mem_model[vif.addr];
+        tr.mode <= mode;
+    endtask
+
+    task send_transfer();
+        if (mode == WRITE) begin
+            mem_model[vif.addr] <= tr.data;
+            uvm_report_info("MEMORY WRITE", tr.convert2string());
+        end else begin
+            vif.data <= mem_model[vif.addr];
+            uvm_report_info("MEMORY READ", tr.convert2string());
+        end
+        seq_item_port.item_done();
     endtask
 
     task display_row_major();
