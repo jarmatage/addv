@@ -80,5 +80,7 @@ module matmul_tb;
         force dut.address_stride_a = 1'b0;
         #20;
         release dut.address_stride_a;
+        $display("Finished with errors");
+        $finish;
     end
 endmodule
