@@ -305,7 +305,7 @@ class apb_test extends uvm_test;
 					diff = actual_fp8 - expected_fp8;
 
 				if (diff > 2)
-					`uvm_error("CHECK_RESULTS", $sformatf("Mismatch at C[%0d][%0d]: expected %b, got %b, diff = %0d", i, j, expected_fp8, actual_fp8, diff))
+					`uvm_error("CHECK_RESULTS", $sformatf("Mismatch at C[%0d][%0d]: expected %b, got %b, diff = %b", i, j, expected_fp8, actual_fp8, diff))
 				else
 					`uvm_info("CHECK_RESULTS", $sformatf("Match at C[%0d][%0d]: expected %b, got %b", i, j, expected_fp8, actual_fp8), UVM_LOW)
 			end
