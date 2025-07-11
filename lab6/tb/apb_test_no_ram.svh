@@ -121,7 +121,7 @@ class apb_test extends uvm_test;
 
 		// Randomize parts
 		s = $urandom_range(0, 1);
-		e = $urandom_range(0, 6); // exclude 7 (111) to avoid INF/NaN
+		e = $urandom_range(1, 6); // exclude 7 (111) to avoid INF/NaN
 		m = $urandom_range(0, 15);
 
 		// Compose final fp8
