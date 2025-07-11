@@ -279,7 +279,7 @@ class apb_test extends uvm_test;
 		normalized = abs_val / (2.0 ** exp_unbiased);
 		normalized -= 1.0; // remove implicit 1
 
-		mantissa = int'(normalized * 16.0 + 0.5); // round to 4-bit mantissa
+		mantissa = int'(normalized * 16.0); // round to 4-bit mantissa
 
 		// Handle rounding overflow
 		if (mantissa >= 16) begin
