@@ -60,7 +60,7 @@ module matmul_tb;
         $display("Injecting error: forcing bram_we_c = 0");
         wait(dut.start_mat_mul)
         force dut.ram_c.en = 1'b0;
-        #100;
+        #500;
         release dut.ram_c.en;
         #50;
 
