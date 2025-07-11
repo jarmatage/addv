@@ -95,6 +95,8 @@ class apb_test extends uvm_test;
 		`uvm_info("INFO", "displaying expected C:", UVM_LOW);
 		compute_expected_c();
 
+		check_results();
+
 		phase.drop_objection(this, "Finished apb_test in run phase");
 	endtask
 
@@ -250,7 +252,7 @@ class apb_test extends uvm_test;
     endfunction
 
 
-	function automatic byte real_to_fp8_e3m4_with_inf(real val);
+	function automatic byte real_to_fp8(real val);
 		bit sign;
 		int exp_unbiased;
 		bit [2:0] exp_biased;
@@ -294,4 +296,13 @@ class apb_test extends uvm_test;
 
 		return {sign, exp_biased[2:0], mantissa};
 	endfunction
+
+	task check_results();
+		byte expected_fp8;
+		
+		for (int i = 0; i < 4; i++) begin
+			expected_fp8 = real_to_fp8(expected_c[i][0]);
+			$display("expected C[%0d][0] = %b, actual = %b", i, expected_fp8, env.ram_c.driver.mem_model[i][7:0]);
+		end
+	endtask
 endclass
