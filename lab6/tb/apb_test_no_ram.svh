@@ -49,7 +49,11 @@ class apb_test extends uvm_test;
 		for (int i = 0; i < 4; i++) begin
 			mem_a[i] = rand_row();
 			mem_b[i] = rand_row();
+			mem_c[i] = 32'd0;
+			expected_c[i] = 32'd0;
 		end
+
+		// Fixed value for class bringup
         // mem_a[3]  = {8'b1_011_0110, 8'b0_101_0001, 8'b0_001_0111, 8'b0_010_0110};
         // mem_a[2]  = {8'b1_100_1000, 8'b1_010_0010, 8'b0_010_0110, 8'b0_011_1100};
         // mem_a[1]  = {8'b0_011_0011, 8'b1_001_0100, 8'b1_011_0110, 8'b0_101_0111};
@@ -58,12 +62,9 @@ class apb_test extends uvm_test;
         // mem_b[2]  = {8'b0_000_1000, 8'b0_010_0100, 8'b0_010_0110, 8'b1_100_1000};
         // mem_b[1]  = {8'b0_011_0000, 8'b1_011_0000, 8'b0_011_0100, 8'b0_011_0000};
         // mem_b[0]  = {8'b0_110_0100, 8'b0_001_0001, 8'b0_000_0000, 8'b0_011_0111};
-		mem_c[3]  = 32'd0;
-        mem_c[2]  = 32'd0;
-        mem_c[1]  = 32'd0;
-        mem_c[0]  = 32'd0;
 
-		// TODO: Compute expected C
+		// Compute expected C
+		//compute_expected_c();
 
 		// Set the matrices in the environment
 		uvm_config_db#(mem_array_t)::set(this, "env.ram_a.driver", "mem_model", mem_a);
@@ -89,12 +90,14 @@ class apb_test extends uvm_test;
 		join_any
 		
 		`uvm_info("INFO", "displaying matrix A:", UVM_LOW);
-		env.ram_a.driver.display_row_major();
+		display_row_major(mem_a);
 		`uvm_info("INFO", "displaying matrix B:", UVM_LOW);
-		env.ram_b.driver.display_col_major();
+		display_col_major(mem_b);
 		#55;
 		`uvm_info("INFO", "displaying matrix C:", UVM_LOW);
-		env.ram_c.driver.display_row_major();
+		display_row_major(mem_c);
+		`uvm_info("INFO", "displaying expected C:", UVM_LOW);
+		display_row_major(expected_c);
 
 		phase.drop_objection(this, "Finished apb_test in run phase");
 	endtask
@@ -112,6 +115,7 @@ class apb_test extends uvm_test;
 		env.print();
   	endfunction
 
+
 	function automatic byte rand_fp8();
 		byte fp8;
 		bit [0:0] s;
@@ -128,6 +132,7 @@ class apb_test extends uvm_test;
 		return fp8;
 	endfunction
 
+
 	function automatic [31:0] rand_row();
 		byte b0 = rand_fp8();
 		byte b1 = rand_fp8();
@@ -136,4 +141,113 @@ class apb_test extends uvm_test;
 		return {b0, b1, b2, b3};
 	endfunction
 
+
+	function void compute_expected_c();
+		// Compute expected C = A * B
+		for (int i = 0; i < 4; i++) begin
+			for (int j = 0; j < 4; j++) begin
+				for (int k = 0; k < 4; k++) begin
+					expected_c[i] = 32'd0;
+				end
+			end
+		end
+	endfunction
+
+
+    task display_row_major(input mem_array_t mem);
+        for (int i = 0; i <= 24; i += 8) begin
+            $write("|");
+            for (int j = 0; j < 4; j++) begin
+                $write(" ");
+                display_fp8(mem[j][i+:8]);
+            end
+            $display(" |");
+        end
+    endtask
+    
+	
+	task display_col_major(input mem_array_t mem);
+        for (int i = 0; i < 4; i++) begin
+            $write("|");
+            for (int j = 0; j <= 24; j += 8) begin
+                $write(" ");
+                display_fp8(mem[i][j+:8]);
+            end
+            $display(" |");
+        end
+    endtask
+
+
+    task display_fp8(input logic [7:0] fp);
+        real abs_fp;
+
+        if (fp[7]) begin
+            abs_fp = -fp8_to_real(fp);
+            $write("-");
+        end else begin
+            abs_fp = fp8_to_real(fp);
+            $write("+");
+        end
+
+        if (fp[6:0] == 7'b111_0000)
+            $write("inf     ");
+        else if (fp[6:4] == 3'b111)
+            $write("nan     ");
+        else if (fp[6:0] == 7'b000_0000)
+            $write("0.000000");
+        else
+            $write("%f", abs_fp);
+    endtask
+
+
+	function real fp8_to_real(input logic [7:0] fp);
+        logic sign;
+        logic [2:0] exp;
+        logic [3:0] mant;
+        int unbiased_exp;
+        real r_mant;
+
+        sign = fp[7];
+        exp  = fp[6:4];
+        mant = fp[3:0];
+
+        if (exp == 0 && mant == 0) return 0.0;
+
+        unbiased_exp = exp - 3;
+        r_mant = 1.0 + mant / 16.0;
+        return (sign ? -1.0 : 1.0) * r_mant * (2.0 ** unbiased_exp);
+    endfunction
+
+
+	function automatic byte real_to_fp8(input real val);
+		bit sign;
+		int exp_unbiased;
+		bit [2:0] exp_biased;
+		real abs_val, normalized;
+		bit [3:0] mantissa;
+
+		// Handle zero
+		if (val == 0.0) return 8'b0;
+
+		// Sign bit
+		sign = (val < 0);
+		abs_val = (val < 0) ? -val : val;
+
+		// Calculate unbiased exponent
+		exp_unbiased = $clog2(abs_val);
+		if (abs_val < 1.0) exp_unbiased -= 1;
+
+		// Bias the exponent
+		exp_biased = exp_unbiased + 3;
+		if (exp_biased <= 0) return 8'b0; // zero
+		if (exp_biased >= 7) return {sign, 3'b111, 4'b0}; // INF
+
+		// Compute normalized mantissa
+		normalized = abs_val / (2.0 ** exp_unbiased);
+		normalized -= 1.0;  // remove implicit 1
+
+		// Quantize to 4-bit mantissa
+		mantissa = int'(normalized * 16.0 + 0.5);  // rounded
+  		return {sign, exp_biased, mantissa};
+	endfunction
 endclass
