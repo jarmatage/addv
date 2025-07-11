@@ -121,11 +121,12 @@ class apb_test extends uvm_test;
 
 		// Randomize parts
 		s = $urandom_range(0, 1);
-		e = $urandom_range(5, 6); // exclude 7 (111) to avoid INF/NaN
+		e = $urandom_range(0, 6); // exclude 7 (111) to avoid INF/NaN
 		m = $urandom_range(0, 15);
 
 		// Compose final fp8
 		fp8 = {s, e, m}; // s is MSB
+		$display("rand_fp8: %b", fp8);
 		return fp8;
 	endfunction
 
