@@ -72,9 +72,11 @@ module matmul_tb;
         release dut.ram_c.en;
 
         $display("Injecting error: forcing addr to invalid value 0x1FF");
-        force dut.ram_a.addr = 9'h1FF;
+        force dut.ram_a.addr = 10'd8;
+        force dut.ram_a.en = 1'b1;
         #20;
         release dut.ram_a.addr;
+        release dut.ram_a.en;
 
         $display("Injecting error: forcing stride to 0");
         force dut.start_mat_mul = 1'b1;
