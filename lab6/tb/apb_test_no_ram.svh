@@ -47,10 +47,10 @@ class apb_test extends uvm_test;
 
 		// Randomize A and B
 		for (int i = 0; i < 4; i++) begin
-			mem_a[i] = rand_row();
-			mem_b[i] = rand_row();
 			mem_c[i] = 32'd0;
 			expected_c[i] = 32'd0;
+			mem_a[i] = rand_row();
+			mem_b[i] = rand_row();
 		end
 
 		// Fixed value for class bringup
