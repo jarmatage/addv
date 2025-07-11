@@ -301,8 +301,10 @@ class apb_test extends uvm_test;
 		byte expected_fp8;
 		
 		for (int i = 0; i < 4; i++) begin
-			expected_fp8 = real_to_fp8(expected_c[i][0]);
-			$display("expected C[%0d][0] = %b, actual = %b", i, expected_fp8, env.ram_c.driver.mem_model[i][7:0]);
+			for (int j = 0; j < 4; j++) begin
+				expected_fp8 = real_to_fp8(expected_c[i][j]);
+				$display("expected C[%0d][%0d] = %b, actual = %b", i, j, expected_fp8, env.ram_c.driver.mem_model[j][i*8 +: 8]);
+			end
 		end
 	endtask
 endclass
