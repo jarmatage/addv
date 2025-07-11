@@ -115,9 +115,9 @@ class apb_test extends uvm_test;
 
 	function automatic byte rand_fp8();
 		byte fp8;
-		bit [0:0] s;
-		bit [3:0] e;
-		bit [2:0] m;
+		bit       s;
+		bit [2:0] e;
+		bit [3:0] m;
 
 		// Randomize parts
 		s = $urandom_range(0, 1);
