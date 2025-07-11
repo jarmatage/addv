@@ -299,11 +299,17 @@ class apb_test extends uvm_test;
 
 	task check_results();
 		byte expected_fp8;
+		byte actual_fp8;
 		
 		for (int i = 0; i < 4; i++) begin
 			for (int j = 0; j < 4; j++) begin
 				expected_fp8 = real_to_fp8(expected_c[i][j]);
-				$display("expected C[%0d][%0d] = %b, actual = %b", i, j, expected_fp8, env.ram_c.driver.mem_model[j][i*8 +: 8]);
+				actual_fp8 = env.ram_c.driver.mem_model[j][i*8 +: 8];
+				
+				if (expected_fp8 !== actual_fp8)
+					`uvm_error("CHECK_RESULTS", $sformatf("Mismatch at C[%0d][%0d]: expected %b, got %b", i, j, expected_fp8, actual_fp8));
+				else
+					`uvm_info("CHECK_RESULTS", $sformatf("Match at C[%0d][%0d]: expected %b, got %b", i, j, expected_fp8, actual_fp8), UVM_LOW);
 			end
 		end
 	endtask
