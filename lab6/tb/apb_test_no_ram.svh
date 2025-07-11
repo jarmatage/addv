@@ -165,7 +165,7 @@ class apb_test extends uvm_test;
 				$write(" ");
 				expected_c[i][j] = 0.0;
 				for (int k = 0; k < 4; k++) begin
-					expected_c[i][j] += A[i][k] * B[k][j];
+					expected_c[i][j] += fp8_to_real(real_to_fp8(A[i][k] * B[k][j]));
 				end
 				
 				if (expected_c[i][j] > 0.0)
