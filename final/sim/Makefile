@@ -1,4 +1,4 @@
-UVM_VERBOSITY ?= UVM_MEDIUM
+UVM_VERBOSITY ?= UVM_LOW
 SEED ?= 1
 
 # Common compile flags
@@ -16,6 +16,7 @@ COMP_FLAGS := \
 	+UVM_PHASE_TRACE \
 	+UVM_OBJECTION_TRACE \
 	+UVM_VERBOSITY=$(UVM_VERBOSITY) \
+
 	+vcs+fsdbon \
 	+incdir+../tb
 
