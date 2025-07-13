@@ -24,8 +24,8 @@ class fifo_test extends uvm_test;
     alternating_read_write();
     `uvm_info(get_type_name(), "Starting Random Sequential Bursts", UVM_LOW)
     random_sequential_burts();
-    // `uvm_info(get_type_name(), "Starting Random Simultaneous Bursts", UVM_LOW)
-    // random_simultaneous_burts();
+    `uvm_info(get_type_name(), "Starting Random Simultaneous Bursts", UVM_LOW)
+    random_simultaneous_burts();
     phase.drop_objection(this);
   endtask
 
@@ -63,19 +63,28 @@ class fifo_test extends uvm_test;
   endtask
 
   task random_simultaneous_burts();
-    int rcnt = 1024;
-    int wcnt = 1024;
+    fork
+      random_writes();
+      random_reads();
+    join
+  endtask
 
-    while (rcnt > 0 && wcnt > 0) begin
+  task random_writes();
+    int wcnt = 1024;
+    while (wcnt > 0) begin
       wr_seq = fifo_write_seq::type_id::create("wr_seq");
-      rd_seq = fifo_read_seq::type_id::create("rd_seq");
       assert(wr_seq.randomize() with { burst_len < wcnt; });
-      assert(rd_seq.randomize() with { burst_len < rcnt; });
-      fork
-        wr_seq.start(m_env.w_ag.m_seqr);
-        rd_seq.start(m_env.r_ag.m_seqr);
-      join
+      wr_seq.start(m_env.w_ag.m_seqr);
       wcnt -= wr_seq.burst_len;
+    end
+  endtask
+
+  task random_reads();
+    int rcnt = 1024;
+    while (rcnt > 0) begin
+      rd_seq = fifo_read_seq::type_id::create("rd_seq");
+      assert(rd_seq.randomize() with { burst_len < rcnt; });
+      rd_seq.start(m_env.r_ag.m_seqr);
       rcnt -= rd_seq.burst_len;
     end
   endtask
