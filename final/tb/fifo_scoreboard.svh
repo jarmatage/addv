@@ -30,7 +30,7 @@ class fifo_scoreboard extends uvm_component;
           if (exp.data !== txn.data)
             `uvm_error("SCOREBOARD", $sformatf("read data '%0d' does not match expected data '%0d'", txn.data, exp.data))
           else
-            `uvm_info("SCOREBOARD", $sformatf("read data '%0d' matches expected data", txn.data))
+            `uvm_info("SCOREBOARD", $sformatf("read data '%0d' matches expected data", txn.data), UVM_MEDIUM)
         end
       end
     end
