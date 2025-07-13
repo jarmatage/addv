@@ -74,8 +74,8 @@ verdi:
 	${VERDI_HOME}/bin/verdi -dbdir ./simv.daidir -ssf novas.fsdb -nologo &
 
 cov:
-	@k=0; \
-	@for i in 5 10 15 20; do \
+	k=0; \
+	for i in 5 10 15 20; do \
 		for j in 5 10 15 20; do \
 			$(MAKE) sim SEED=$$k WCLK_T=$$i RCLK_T=$$j; \
 			k=$$((k + 5)); \
