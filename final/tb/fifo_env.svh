@@ -24,7 +24,7 @@ class fifo_env extends uvm_env;
 
   function new(string n, uvm_component p);
     super.new(n,p);
-    rcg = new();
+    clock_periods = new();
   endfunction
 
   function void build_phase(uvm_phase phase);
