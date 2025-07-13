@@ -12,6 +12,7 @@ package fifo_uvm_pkg;
   `include "read_driver.svh"
   `include "read_agent.svh"
   `include "fifo_env.svh"
+  `include "fifo_read_seq.svh"
   `include "fifo_write_seq.svh"
   `include "fifo_tests.svh"
 endpackage : fifo_uvm_pkg 
