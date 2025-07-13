@@ -7,11 +7,6 @@ module tb_async_fifo_uvm;
   import uvm_pkg::*;
   import fifo_uvm_pkg::*;
 
-  // Set verbosity levels
-  uvm_top.set_report_id_verbosity("CONFIG_DB", UVM_MEDIUM);
-  uvm_top.set_report_id_verbosity("PHASE", UVM_MEDIUM);
-
-
   // parameters identical to RTL
   localparam DATA_WIDTH = 8;
   localparam ADDR_WIDTH = 4;
