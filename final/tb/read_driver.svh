@@ -20,6 +20,7 @@ class read_driver extends uvm_driver #(fifo_seq_item);
       vif.en <= 0;
       item.is_write = 0;
       item.data     = vif.data;
+      `uvm_info("READ_DRIVER", $sformatf("data=%0d, addr=%0d, empty=%b, almost_empty=%b", item.data, vif.addr, vif.empty, vif.almost_empty), UVM_HIGH)
       seq_item_port.item_done();
     end
   endtask
