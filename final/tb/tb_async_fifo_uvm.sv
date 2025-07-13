@@ -7,11 +7,6 @@ module tb_async_fifo_uvm;
   import uvm_pkg::*;
   import fifo_uvm_pkg::*;
 
-  // parameters identical to RTL
-  localparam DATA_WIDTH = 8;
-  localparam ADDR_WIDTH = 4;
-  localparam int DATA_DEPTH = 1 << ADDR_WIDTH;
-
   // clock + reset
   logic wclk = 0, rclk = 0, rst_n = 0;
 
@@ -26,12 +21,11 @@ module tb_async_fifo_uvm;
   always #(rd_delay) rclk = ~rclk;         // variable read clock
 
   // interfaces
-  write_if #(DATA_WIDTH,ADDR_WIDTH) w_if (.clk(wclk), .rst_n(rst_n));
-  read_if  #(DATA_WIDTH,ADDR_WIDTH) r_if (.clk(rclk), .rst_n(rst_n));
+  write_if #(`DWIDTH, `AWIDTH) w_if(.clk(wclk), .rst_n(rst_n));
+  read_if  #(`DWIDTH, `AWIDTH) r_if(.clk(rclk), .rst_n(rst_n));
 
   // DUT
-  async_fifo #(.DATA_WIDTH(DATA_WIDTH), .ADDR_WIDTH(ADDR_WIDTH))
-             dut ( .write(w_if), .read(r_if) );
+  async_fifo #(.DATA_WIDTH(`DWIDTH), .ADDR_WIDTH(`AWIDTH)) dut(.write(w_if), .read(r_if));
 
   // reset sequence (no run command!)
   initial begin

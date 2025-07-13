@@ -2,6 +2,8 @@ UVM_VERBOSITY ?= UVM_MEDIUM
 SEED ?= 1
 DB_TRACE ?= 0
 PHASE_TRACE ?= 0
+DWIDTH ?= 8
+AWIDTH ?= 4
 
 # Common compile flags
 COMP_FLAGS := \
@@ -17,6 +19,8 @@ COMP_FLAGS := \
 	+UVM_OBJECTION_TRACE \
 	+UVM_VERBOSITY=$(UVM_VERBOSITY) \
 	+vcs+fsdbon \
+	+define+DWIDTH=$(DWIDTH) \
+	+define+AWIDTH=$(AWIDTH) \
 	+incdir+../tb
 
 # Conditionally add trace flags
