@@ -1,10 +1,11 @@
 module tb_async_fifo_uvm;
-  import uvm_pkg::*;
-  import fifo_uvm_pkg::*;
-
   // Set the timescale
   timeunit 1ns;
   timeprecision 100ps;
+
+  // Import packages
+  import uvm_pkg::*;
+  import fifo_uvm_pkg::*;
 
   // parameters identical to RTL
   localparam DATA_WIDTH = 8;
