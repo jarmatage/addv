@@ -57,10 +57,10 @@ class fifo_monitor extends uvm_monitor;
 
   task monitor_read();
     forever begin
-      #1;
       wait(r_vif.en && !r_vif.empty);
       #1;
       txn = fifo_seq_item::type_id::create("read_item");
+      @(negedge r_vif.clk);
       txn.is_write = 1'b0;
       @(posedge r_vif.clk);
       txn.data = r_vif.data;
