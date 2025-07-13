@@ -15,7 +15,10 @@ class fifo_base_test extends uvm_test;
   task run_phase(uvm_phase phase);
     fifo_write_seq wr_seq = fifo_write_seq::type_id::create("wr_seq");
     phase.raise_objection(this);
-      wr_seq.start(m_env.w_ag.m_seqr); // start random writes
+
+    assert(wr_seq.randomize());
+
+    wr_seq.start(m_env.w_ag.m_seqr); // start random writes
     phase.drop_objection(this);
   endtask
 endclass
