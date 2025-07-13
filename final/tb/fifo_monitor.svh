@@ -49,6 +49,7 @@ class fifo_monitor extends uvm_monitor;
       @(negedge w_vif.clk);
       txn.data = w_vif.data;
       @(posedge w_vif.clk);
+      $display("writing data %0d to scoreboard", txn.data);
       ap.write(txn);
     end
   endtask
