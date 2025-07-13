@@ -10,13 +10,16 @@ class fifo_env extends uvm_env;
   virtual write_if w_vif;
   virtual read_if  r_vif;
 
-  int WR_PER_RD;
-  covergroup rcg;
-    cp_ratio: coverpoint WR_PER_RD {
-      bins syn      = {1};
-      bins fast_wr  = {2,3,4};
-      bins fast_rd  = {0};
+  covergroup clock_periods;
+    wperiod: coverpoint (`WCLK_T) {
+      bins wt_vals[] = {5, 10, 15, 20};
     }
+
+    rperiod: coverpoint (`RCLK_T) {
+      bins rt_vals[] = {5, 10, 15, 20};
+    }
+
+    cross wperiod, rperiod;
   endgroup
 
   function new(string n, uvm_component p);
@@ -31,8 +34,6 @@ class fifo_env extends uvm_env;
     mon  = fifo_monitor     ::type_id::create("mon" , this);
     sb   = fifo_scoreboard  ::type_id::create("sb"  , this);
     chk  = fifo_checker     ::type_id::create("chk" , this);
-
-    if(!uvm_config_db#(int)::get(this,"","WR_PER_RD", WR_PER_RD)) WR_PER_RD = 1;
 
     // Get the virtual interfaces from the config-db
     if(!uvm_config_db#(virtual write_if)::get(this, "", "w_vif", w_vif)) begin
