@@ -73,7 +73,7 @@ class fifo_test extends uvm_test;
     int wcnt = 1024;
     while (wcnt > 0) begin
       wr_seq = fifo_write_seq::type_id::create("wr_seq");
-      assert(wr_seq.randomize() with { burst_len < wcnt; });
+      assert(wr_seq.randomize() with { burst_len <= wcnt; });
       wr_seq.start(m_env.w_ag.m_seqr);
       wcnt -= wr_seq.burst_len;
     end
@@ -83,7 +83,7 @@ class fifo_test extends uvm_test;
     int rcnt = 1024;
     while (rcnt > 0) begin
       rd_seq = fifo_read_seq::type_id::create("rd_seq");
-      assert(rd_seq.randomize() with { burst_len < rcnt; });
+      assert(rd_seq.randomize() with { burst_len <= rcnt; });
       rd_seq.start(m_env.r_ag.m_seqr);
       rcnt -= rd_seq.burst_len;
     end
