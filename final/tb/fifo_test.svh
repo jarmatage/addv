@@ -18,13 +18,14 @@ class fifo_test extends uvm_test;
 
   task run_phase(uvm_phase phase);
     phase.raise_objection(this);
-    // `uvm_info(get_type_name(), "Starting Fill For Loop", UVM_LOW)
-    // fill_for_loop();
-    // `uvm_info(get_type_name(), "Starting Alternating Read/Write", UVM_LOW)
-    // alternating_read_write();
-    // `uvm_info(get_type_name(), "Starting Random Sequential Bursts", UVM_LOW)
-    // random_sequential_burts();
+    `uvm_info(get_type_name(), "Starting Fill For Loop", UVM_LOW)
+    fill_for_loop();
+    `uvm_info(get_type_name(), "Starting Alternating Read/Write", UVM_LOW)
+    alternating_read_write();
+    `uvm_info(get_type_name(), "Starting Random Sequential Bursts", UVM_LOW)
+    random_sequential_burts();
     `uvm_info(get_type_name(), "Starting Random Simultaneous Bursts", UVM_LOW)
+    reset_dut();
     random_simultaneous_burts();
     phase.drop_objection(this);
   endtask
@@ -76,6 +77,7 @@ class fifo_test extends uvm_test;
       assert(wr_seq.randomize() with { burst_len <= wcnt; });
       wr_seq.start(m_env.w_ag.m_seqr);
       wcnt -= wr_seq.burst_len;
+      #(`WCLK_T * 6);
     end
   endtask
 
@@ -86,7 +88,16 @@ class fifo_test extends uvm_test;
       assert(rd_seq.randomize() with { burst_len <= rcnt; });
       rd_seq.start(m_env.r_ag.m_seqr);
       rcnt -= rd_seq.burst_len;
+      #(`RCLK_T * 6);
     end
+  endtask
+
+  task reset_dut();
+    m_env.w_if.rst_n = 0;
+    m_env.r_if.rst_n = 0;
+    repeat(4) @(posedge m_env.w_if.clk);
+    m_env.w_if.rst_n = 1;
+    m_env.r_if.rst_n = 1;
   endtask
 
 endclass
