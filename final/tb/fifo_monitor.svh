@@ -57,6 +57,7 @@ class fifo_monitor extends uvm_monitor;
 
   task monitor_read();
     forever begin
+      #1;
       wait(r_vif.en && !r_vif.empty);
       #1;
       txn = fifo_seq_item::type_id::create("read_item");
