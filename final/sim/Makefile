@@ -16,7 +16,6 @@ COMP_FLAGS := \
 	+UVM_PHASE_TRACE \
 	+UVM_OBJECTION_TRACE \
 	+UVM_VERBOSITY=$(UVM_VERBOSITY) \
-
 	+vcs+fsdbon \
 	+incdir+../tb
 
