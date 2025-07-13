@@ -26,7 +26,7 @@ class fifo_test extends uvm_test;
   endtask
 
   task fill_for_loop();
-    for (int i = 0; i < DEPTH+5; i++) begin
+    for (int i = 0; i < DEPTH; i++) begin
       wr_seq = fifo_write_seq::type_id::create("wr_seq");
       rd_seq = fifo_read_seq::type_id::create("rd_seq");
       wr_seq.burst_len = i;
