@@ -39,7 +39,7 @@ class fifo_monitor extends uvm_monitor;
     cp_waddr: coverpoint w_vif.addr {
       bins wad_vals[] = {[0:15]};
     }
-    cross cp_full, cp_almost_full, cp_waddr;
+    cross cp_full, cp_almost_full, cp_waddr iff (!(full == 1 && almost_full == 0));
 
     cp_empty: coverpoint r_vif.empty {
       bins empty_vals[] = {0, 1};
@@ -50,7 +50,7 @@ class fifo_monitor extends uvm_monitor;
     cp_raddr: coverpoint r_vif.addr {
       bins rad_vals[] = {[0:15]};
     }
-    cross cp_empty, cp_almost_empty, cp_raddr;
+    cross cp_empty, cp_almost_empty, cp_raddr iff (!(empty == 1 && almost_empty == 0));
   endgroup
 
   function new(string name, uvm_component parent);
