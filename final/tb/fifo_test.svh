@@ -25,7 +25,6 @@ class fifo_test extends uvm_test;
     `uvm_info(get_type_name(), "Starting Random Sequential Bursts", UVM_LOW)
     random_sequential_burts();
     `uvm_info(get_type_name(), "Starting Random Simultaneous Bursts", UVM_LOW)
-    #100;
     random_simultaneous_burts();
     phase.drop_objection(this);
   endtask
