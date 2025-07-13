@@ -2,6 +2,8 @@ class write_driver extends uvm_driver #(fifo_seq_item);
   virtual write_if #(8,4) vif;
   `uvm_component_utils(write_driver)
 
+  fifo_seq_item item;
+
   function new(string n, uvm_component p); super.new(n,p); endfunction
 
   function void build_phase(uvm_phase phase);
@@ -14,7 +16,8 @@ class write_driver extends uvm_driver #(fifo_seq_item);
     super.run_phase(phase);
     init_signals();
     wait_for_reset();
-    fifo_seq_item item;
+    
+    item = fifo_seq_item::type_id::create("write_item");
     forever begin
       seq_item_port.get_next_item(item);
       @(negedge vif.clk);
