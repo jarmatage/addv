@@ -43,9 +43,8 @@ class fifo_monitor extends uvm_monitor;
   task monitor_write();
     forever begin
       @(negedge w_vif.clk);
-      if (w_vif.full) begin
-        continue;
-      end else if (w_vif.en) begin
+      #1;
+      if (!w_vif.full && w_vif.en) begin
         txn = fifo_seq_item::type_id::create("write_item");
         txn.is_write = 1'b1;
         txn.data = w_vif.data;
@@ -59,9 +58,8 @@ class fifo_monitor extends uvm_monitor;
   task monitor_read();
     forever begin
       @(negedge r_vif.clk);
-      if (r_vif.empty) begin
-        continue;
-      end else if (r_vif.en) begin
+      #1;
+      if (!r_vif.empty && r_vif.en) begin
         txn = fifo_seq_item::type_id::create("read_item");
         txn.is_write = 1'b0;
         @(posedge r_vif.clk);
