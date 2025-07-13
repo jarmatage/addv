@@ -25,6 +25,7 @@ class write_driver extends uvm_driver #(fifo_seq_item);
         vif.data = item.data;
         vif.en   = 1;
         @(posedge vif.clk);
+        #2;
         vif.en   <= 0;
         `uvm_info("WRITE_DRIVER", $sformatf("data=%0d, addr=%0d, full=%b, almost_full=%b", item.data, vif.addr, vif.full, vif.almost_full), UVM_HIGH)
         seq_item_port.item_done();
