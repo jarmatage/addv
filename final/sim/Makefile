@@ -81,6 +81,9 @@ cov:
 			k=$$((k + 5)); \
 		done; \
 	done
+	for k in {1000..1200..5}; do \
+		$(MAKE) sim SEED=$$k; \
+	done
 	${VCS_HOME}/bin/urg -dir seeds/*.vdb -dbname merged.vdb
 	${VERDI_HOME}/bin/verdi -cov -covdir merged.vdb &
 
