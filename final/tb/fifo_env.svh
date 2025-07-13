@@ -53,6 +53,6 @@ class fifo_env extends uvm_env;
   endfunction
 
   function void end_of_elaboration_phase(uvm_phase phase);
-    rcg.sample();
+    clock_periods.sample();
   endfunction
 endclass 
