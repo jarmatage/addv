@@ -19,16 +19,16 @@ class write_driver extends uvm_driver #(fifo_seq_item);
     
     item = fifo_seq_item::type_id::create("write_item");
     forever begin
-      seq_item_port.get_next_item(item);
       @(negedge vif.clk);
-      vif.en   <= 1;
-      vif.data <= item.data;
-      wait(!vif.full); // Wait for FIFO to not be full
-      #1;
-      @(posedge vif.clk);
-      vif.en   <= 0;
-      `uvm_info("WRITE_DRIVER", $sformatf("data=%0d, addr=%0d, full=%b, almost_full=%b", item.data, vif.addr, vif.full, vif.almost_full), UVM_HIGH)
-      seq_item_port.item_done();
+      if (!vif.full) begin
+        seq_item_port.get_next_item(item);
+        vif.data = item.data;
+        vif.en   = 1;
+        @(posedge vif.clk);
+        vif.en   <= 0;
+        `uvm_info("WRITE_DRIVER", $sformatf("data=%0d, addr=%0d, full=%b, almost_full=%b", item.data, vif.addr, vif.full, vif.almost_full), UVM_HIGH)
+        seq_item_port.item_done();
+      end
     end
   endtask
 
