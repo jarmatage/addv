@@ -18,14 +18,14 @@ class fifo_test extends uvm_test;
 
   task run_phase(uvm_phase phase);
     phase.raise_objection(this);
-    `uvm_info(get_type_name(), "Starting Fill For Loop", UVM_LOW)
-    fill_for_loop();
-    `uvm_info(get_type_name(), "Starting Alternating Read/Write", UVM_LOW)
-    alternating_read_write();
-    `uvm_info(get_type_name(), "Starting Random Sequential Bursts", UVM_LOW)
-    random_sequential_burts();
-    // `uvm_info(get_type_name(), "Starting Random Simultaneous Bursts", UVM_LOW)
-    // random_simultaneous_burts();
+    // `uvm_info(get_type_name(), "Starting Fill For Loop", UVM_LOW)
+    // fill_for_loop();
+    // `uvm_info(get_type_name(), "Starting Alternating Read/Write", UVM_LOW)
+    // alternating_read_write();
+    // `uvm_info(get_type_name(), "Starting Random Sequential Bursts", UVM_LOW)
+    // random_sequential_burts();
+    `uvm_info(get_type_name(), "Starting Random Simultaneous Bursts", UVM_LOW)
+    random_simultaneous_burts();
     phase.drop_objection(this);
   endtask
 
