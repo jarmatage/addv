@@ -20,10 +20,10 @@ class fifo_monitor extends uvm_monitor;
   endgroup
 
   covergroup pointer_cg;
-    cp_wptr: coverpoint w_vif.wptr {
+    cp_wptr: coverpoint w_vif.ptr {
       bins wptr_vals[] = {[0:15]};
     }
-    cp_rptr: coverpoint r_vif.rptr {
+    cp_rptr: coverpoint r_vif.ptr {
       bins rptr_vals[] = {[0:15]};
     }
     cross cp_wptr, cp_rptr;
@@ -36,7 +36,7 @@ class fifo_monitor extends uvm_monitor;
     cp_almost_full: coverpoint w_vif.almost_full {
       bins almost_full_vals[] = {0, 1};
     }
-    cp_waddr: coverpoint w_vif.waddr {
+    cp_waddr: coverpoint w_vif.addr {
       bins wad_vals[] = {[0:15]};
     }
     cross cp_full, cp_almost_full, cp_waddr;
@@ -47,7 +47,7 @@ class fifo_monitor extends uvm_monitor;
     cp_almost_empty: coverpoint r_vif.almost_empty {
       bins almost_empty_vals[] = {0, 1};
     }
-    cp_raddr: coverpoint r_vif.raddr {
+    cp_raddr: coverpoint r_vif.addr {
       bins rad_vals[] = {[0:15]};
     }
     cross cp_empty, cp_almost_empty, cp_raddr;
