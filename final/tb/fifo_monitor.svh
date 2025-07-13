@@ -40,12 +40,12 @@ class fifo_monitor extends uvm_monitor;
 
   task monitor_write();
     forever begin
-      wait(vwrite.en && !vwrite.full);
+      wait(w_vif.en && !w_vif.full);
       #1;
       txn = fifo_seq_item::type_id::create("write_item");
       txn.is_write = 1'b1;
-      txn.data = vwrite.data;
-      @(posedge vwrite.clk);
+      txn.data = w_vif.data;
+      @(posedge w_vif.clk);
       ap.write(txn);
     end
   endtask
@@ -53,12 +53,12 @@ class fifo_monitor extends uvm_monitor;
 
   task monitor_read();
     forever begin
-      wait(vread.en && !vread.empty);
+      wait(r_vif.en && !r_vif.empty);
       #1;
       txn = fifo_seq_item::type_id::create("read_item");
       txn.is_write = 1'b0;
-      @(posedge vread.clk);
-      txn.data = vread.data;
+      @(posedge r_vif.clk);
+      txn.data = r_vif.data;
       ap.write(txn);
     end
   endtask
