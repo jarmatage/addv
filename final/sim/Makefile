@@ -4,6 +4,8 @@ DB_TRACE ?= 0
 PHASE_TRACE ?= 0
 DWIDTH ?= 8
 AWIDTH ?= 4
+WCLK_T ?= 10
+RCLK_T ?= 10
 
 # Common compile flags
 COMP_FLAGS := \
@@ -21,6 +23,8 @@ COMP_FLAGS := \
 	+vcs+fsdbon \
 	+define+DWIDTH=$(DWIDTH) \
 	+define+AWIDTH=$(AWIDTH) \
+	+define+WCLK_T=$(WCLK_T) \
+	+define+RCLK_T=$(RCLK_T) \
 	+incdir+../tb
 
 # Conditionally add trace flags

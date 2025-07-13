@@ -10,15 +10,9 @@ module tb_async_fifo_uvm;
   // clock + reset
   logic wclk = 0, rclk = 0, rst_n = 0;
 
-  // programmable ratio from +WR_PER_RD
-  int WR_PER_RD;
-  time rd_delay;
-  initial begin
-    if(!$value$plusargs("WR_PER_RD=%d", WR_PER_RD)) WR_PER_RD = 1;
-    rd_delay = WR_PER_RD * 5; // timescale 1ns ⇒ 5 ns base
-  end
-  always #5  wclk = ~wclk;                 // base 100 MHz
-  always #(rd_delay) rclk = ~rclk;         // variable read clock
+  // Clock generation (programmable clock periods)
+  always #(`WCLK_T) wclk = ~wclk;
+  always #(`RCLK_T) rclk = ~rclk;
 
   // interfaces
   write_if #(`DWIDTH, `AWIDTH) w_if(.clk(wclk), .rst_n(rst_n));
