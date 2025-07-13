@@ -1,5 +1,7 @@
 UVM_VERBOSITY ?= UVM_LOW
 SEED ?= 1
+DB_TRACE ?= 0
+PHASE_TRACE ?= 0
 
 # Common compile flags
 COMP_FLAGS := \
@@ -8,16 +10,22 @@ COMP_FLAGS := \
 	-kdb \
 	-ntb_opts uvm \
 	-debug_access+all \
-    -timescale=1ns/1ps \
+	-timescale=1ns/1ps \
 	-cm line+tgl+cond+fsm+branch+assert \
 	-cm_dir seeds/simv_$(SEED).vdb \
 	+plusarg_save \
-	+UVM_CONFIG_DB_TRACE \
-	+UVM_PHASE_TRACE \
 	+UVM_OBJECTION_TRACE \
 	+UVM_VERBOSITY=$(UVM_VERBOSITY) \
 	+vcs+fsdbon \
 	+incdir+../tb
+
+# Conditionally add trace flags
+ifeq ($(DB_TRACE), 1)
+	COMP_FLAGS += +UVM_CONFIG_DB_TRACE
+endif
+ifeq ($(PHASE_TRACE), 1)
+	COMP_FLAGS += +UVM_PHASE_TRACE
+endif
 
 # Source files
 SRC_RTL  = ../src/*.sv
