@@ -1,6 +1,8 @@
 class fifo_monitor extends uvm_monitor;
   `uvm_component_utils(fifo_monitor)
 
+  fifo_seq_item txn; // transaction item
+
   // virtual interface comes from config-db
   virtual write_if #(8,4) w_vif;
   virtual read_if  #(8,4) r_vif;
