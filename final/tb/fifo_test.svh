@@ -93,11 +93,11 @@ class fifo_test extends uvm_test;
   endtask
 
   task reset_dut();
-    m_env.w_if.rst_n = 0;
-    m_env.r_if.rst_n = 0;
-    repeat(4) @(posedge m_env.w_if.clk);
-    m_env.w_if.rst_n = 1;
-    m_env.r_if.rst_n = 1;
+    m_env.w_vif.rst_n = 0;
+    m_env.r_vif.rst_n = 0;
+    repeat(4) @(posedge m_env.w_vif.clk);
+    m_env.w_vif.rst_n = 1;
+    m_env.r_vif.rst_n = 1;
   endtask
 
 endclass
