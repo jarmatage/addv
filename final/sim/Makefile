@@ -72,7 +72,14 @@ verdi:
 	@echo "=== Launching Verdi ==="
 	${VERDI_HOME}/bin/verdi -dbdir ./simv.daidir -ssf novas.fsdb -nologo &
 
+cov:
+	@for i in {0..150..5}; do \
+		$(MAKE) sim SEED=$$i; \
+	done
+	${VCS_HOME}/bin/urg -dir seeds/*.vdb -dbname merged.vdb
+	${VERDI_HOME}/bin/verdi -cov -covdir merged.vdb &
+
 clean:
 	rm -rf simv csrc simv.daidir *.fsdb novas* *.key *.log verdi*
 
-.PHONY: all clean compile compile_bug sim sim_bug verdi
+.PHONY: all clean compile compile_bug cov sim sim_bug verdi
