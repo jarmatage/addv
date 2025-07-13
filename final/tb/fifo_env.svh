@@ -7,6 +7,9 @@ class fifo_env extends uvm_env;
   fifo_scoreboard   sb;
   fifo_checker      chk;
 
+  virtual write_if w_vif;
+  virtual read_if  r_vif;
+
   int WR_PER_RD;
   covergroup rcg;
     cp_ratio: coverpoint WR_PER_RD {
@@ -30,6 +33,18 @@ class fifo_env extends uvm_env;
     chk  = fifo_checker     ::type_id::create("chk" , this);
 
     if(!uvm_config_db#(int)::get(this,"","WR_PER_RD", WR_PER_RD)) WR_PER_RD = 1;
+
+    // Get the virtual interfaces from the config-db
+    if(!uvm_config_db#(virtual write_if)::get(this, "", "w_vif", w_vif)) begin
+      `uvm_fatal("NOVIF", "No virtual interface specified for fifo environment")
+    end
+    if(!uvm_config_db#(virtual read_if)::get(this, "", "r_vif", r_vif)) begin
+      `uvm_fatal("NOVIF", "No virtual interface specified for fifo environment")
+    end
+
+    // Pass the virtual interfaces to the agents
+    uvm_config_db#(virtual write_if)::set(this, "w_ag", "vif", w_vif);
+    uvm_config_db#(virtual read_if)::set(this, "r_ag", "vif", r_vif);
   endfunction
 
   function void connect_phase(uvm_phase phase);

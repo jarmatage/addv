@@ -4,12 +4,22 @@ class read_agent extends uvm_agent;
   read_driver      m_drv;
   uvm_sequencer #(fifo_seq_item) m_seqr;
 
+  virtual read_if vif;
+
   function new(string n, uvm_component p); super.new(n,p); endfunction
 
   function void build_phase(uvm_phase phase);
     super.build_phase(phase);
     m_drv  = read_driver::type_id::create("m_drv", this);
     m_seqr = uvm_sequencer#(fifo_seq_item)::type_id::create("m_seqr", this);
+
+    // Get the virtual interface from the configuration database
+    if(!uvm_config_db#(virtual read_if)::get(this, "", "vif", vif)) begin
+      `uvm_fatal("NOVIF", "No virtual interface specified for read agent")
+    end
+
+    // Pass the virtual interface to the driver
+    uvm_config_db#(virtual read_if)::set(this, "m_drv", "vif", vif);
   endfunction
 
   function void connect_phase(uvm_phase phase);

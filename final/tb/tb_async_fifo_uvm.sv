@@ -40,11 +40,8 @@ module tb_async_fifo_uvm;
 
   // push interfaces into UVM config-db
   initial begin
-    uvm_config_db#(virtual write_if #(DATA_WIDTH,ADDR_WIDTH))::set(null,"*","w_vif", w_if);
-    uvm_config_db#(virtual read_if  #(DATA_WIDTH,ADDR_WIDTH))::set(null,"*","r_vif", r_if);
-    // also publish generic key used by drivers
-    uvm_config_db#(virtual write_if #(DATA_WIDTH,ADDR_WIDTH))::set(null,"*","vif", w_if);
-    uvm_config_db#(virtual read_if  #(DATA_WIDTH,ADDR_WIDTH))::set(null,"*","vif", r_if);
+    uvm_config_db#(virtual write_if)::set(null,"*","w_vif", w_if);
+    uvm_config_db#(virtual read_if)::set(null,"*","r_vif", r_if);
   end
 
   // kick UVM (default to fifo_base_test if +UVM_TESTNAME not supplied)
