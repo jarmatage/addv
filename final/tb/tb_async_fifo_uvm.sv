@@ -1,11 +1,15 @@
-`timescale 1ns/1ps
 module tb_async_fifo_uvm;
   import uvm_pkg::*;
   import fifo_uvm_pkg::*;
 
+  // Set the timescale
+  timeunit 1ns;
+  timeprecision 100ps;
+
   // parameters identical to RTL
   localparam DATA_WIDTH = 8;
   localparam ADDR_WIDTH = 4;
+  localparam int DATA_DEPTH = 1 << ADDR_WIDTH;
 
   // clock + reset
   logic wclk = 0, rclk = 0, rst_n = 0;
