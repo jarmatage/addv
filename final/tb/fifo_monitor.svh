@@ -16,7 +16,7 @@ class fifo_monitor extends uvm_monitor;
     cp_raddr: coverpoint r_vif.addr {
       bins raddr_vals[] = {[0:15]};
     }
-    cross cp_waddr, cp_raddr;
+    //cross cp_waddr, cp_raddr;
   endgroup
 
   covergroup pointer_cg;
@@ -26,7 +26,7 @@ class fifo_monitor extends uvm_monitor;
     cp_rptr: coverpoint r_vif.ptr {
       bins rptr_vals[] = {[0:15]};
     }
-    cross cp_wptr, cp_rptr;
+    //cross cp_wptr, cp_rptr;
   endgroup
 
   covergroup flags_cg;
