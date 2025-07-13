@@ -21,6 +21,14 @@ module tb_async_fifo_uvm;
   // DUT
   async_fifo #(`DWIDTH, `AWIDTH) dut(.write(w_if), .read(r_if));
 
+  // FSDB dump
+  initial begin
+    `ifdef DUMP
+      $display("Dumping to FSDB");
+      $fsdbDumpvars();
+    `endif
+  end
+
   // reset sequence (no run command!)
   initial begin
     rst_n = 0; repeat(4) @(posedge wclk); rst_n = 1;
