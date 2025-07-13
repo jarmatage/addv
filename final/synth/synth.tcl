@@ -1,5 +1,11 @@
 # Async Fifo Design Compiler Run Script
-proc setup_clocks {{wperiod 1.0} {rperiod 1.0}} {
+proc run_design {{wperiod 1.0} {rperiod 1.0}} {
+    setup_clocks $wperiod $rperiod
+    compile_design
+    report_design $wperiod $rperiod
+}
+
+proc setup_clocks {wperiod rperiod} {
     # Remove existing clocks
     remove_clock -all
 
@@ -15,6 +21,25 @@ proc setup_clocks {{wperiod 1.0} {rperiod 1.0}} {
     set outputs [all_outputs]
     set_output_delay 0.1 -clock write.clk [filter_collection $outputs {name=~write.*}]
     set_output_delay 0.1 -clock read.clk  [filter_collection $outputs {name=~read.*}]
+}
+
+proc compile_design {} {
+    compile -ungroup_all -map_effort high
+    compile_ultra -incremental
+}
+
+proc report_design {wperiod rperiod} {
+    set rpt [file join rpt "${wperiod}_$rperiod"]
+    file mkdir $rpt
+
+    # Generate reports
+    redirect [file join $rpt check.rpt]      {check_design}
+    redirect [file join $rpt constraint.rpt] {report_constraint -sig 6 -all_violators}
+    redirect [file join $rpt timing.rpt]     {report_timing}
+    redirect [file join $rpt cell.rpt]       {report_cell}
+    redirect [file join $rpt power.rpt]      {report_power}
+    redirect [file join $rpt area.rpt]       {report_area}
+    redirect [file join $rpt qor.rpt]        {report_qor}
 }
 
 # Set libraries
@@ -41,20 +66,10 @@ set_optimize_registers true
 # Set the driving cell for all input ports
 set_driving_cell -lib_cell INVX1 [all_inputs]
 
-setup_clocks 0.8 0.8
-
-# Compile
-compile_ultra -timing_high_effort_script
-
-# Validate
-check_design
-
-# Generate reports
-file mkdir rpt
-redirect [file join rpt constraint.rpt] { report_constraint -sig 6 -all_violators }
-redirect [file join rpt timing.rpt]     { report_timing }
-redirect [file join rpt cell.rpt]       { report_cell }
-redirect [file join rpt power.rpt]      { report_power }
-redirect [file join rpt area.rpt]       { report_area }
-
+# Perform frequency sweep
+for {set i 0.5} {$i <= 2.0} {set i [expr $i + 0.1]} {
+    for {set j 0.5} {$j <= 2.0} {set j [expr $j + 0.1]} {
+        run_design $i $j
+    }
+}
 exit
