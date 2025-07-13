@@ -46,8 +46,11 @@ class fifo_test extends uvm_test;
       rd_seq = fifo_read_seq::type_id::create("rd_seq");
       wr_seq.burst_len = 1;
       rd_seq.burst_len = 1;
-      wr_seq.start(m_env.w_ag.m_seqr);
-      rd_seq.start(m_env.r_ag.m_seqr);
+
+      fork
+        wr_seq.start(m_env.w_ag.m_seqr);
+        rd_seq.start(m_env.r_ag.m_seqr);
+      join
     end
   endtask
 
@@ -57,8 +60,11 @@ class fifo_test extends uvm_test;
       rd_seq = fifo_read_seq::type_id::create("rd_seq");
       assert(wr_seq.randomize() with { burst_len < DEPTH; });
       rd_seq.burst_len = wr_seq.burst_len;
-      wr_seq.start(m_env.w_ag.m_seqr);
-      rd_seq.start(m_env.r_ag.m_seqr);
+
+      fork
+        wr_seq.start(m_env.w_ag.m_seqr);
+        rd_seq.start(m_env.r_ag.m_seqr);
+      join
     end
   endtask
 
