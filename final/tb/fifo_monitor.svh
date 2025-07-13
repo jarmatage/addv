@@ -9,9 +9,56 @@ class fifo_monitor extends uvm_monitor;
 
   uvm_analysis_port #(fifo_seq_item) ap;
 
+  covergroup address_cg;
+    cp_waddr: coverpoint w_vif.addr {
+      bins waddr_vals[] = {[0:15]};
+    }
+    cp_raddr: coverpoint r_vif.addr {
+      bins raddr_vals[] = {[0:15]};
+    }
+    cross cp_waddr, cp_raddr;
+  endgroup
+
+  covergroup pointer_cg;
+    cp_wptr: coverpoint w_vif.wptr {
+      bins wptr_vals[] = {[0:15]};
+    }
+    cp_rptr: coverpoint r_vif.rptr {
+      bins rptr_vals[] = {[0:15]};
+    }
+    cross cp_wptr, cp_rptr;
+  endgroup
+
+  covergroup flags_cg;
+    cp_full: coverpoint w_vif.full {
+      bins full_vals[] = {0, 1};
+    }
+    cp_almost_full: coverpoint w_vif.almost_full {
+      bins almost_full_vals[] = {0, 1};
+    }
+    cp_waddr: coverpoint w_vif.waddr {
+      bins wad_vals[] = {[0:15]};
+    }
+    cross cp_full, cp_almost_full, cp_waddr;
+
+    cp_empty: coverpoint r_vif.empty {
+      bins empty_vals[] = {0, 1};
+    }
+    cp_almost_empty: coverpoint r_vif.almost_empty {
+      bins almost_empty_vals[] = {0, 1};
+    }
+    cp_raddr: coverpoint r_vif.raddr {
+      bins rad_vals[] = {[0:15]};
+    }
+    cross cp_empty, cp_almost_empty, cp_raddr;
+  endgroup
+
   function new(string name, uvm_component parent);
     super.new(name, parent);
     ap = new("ap", this);
+    address_cg = new();
+    pointer_cg = new();
+    flags_cg = new();
   endfunction
 
   virtual function void build_phase(uvm_phase phase);
@@ -21,17 +68,6 @@ class fifo_monitor extends uvm_monitor;
     if(!uvm_config_db#(virtual read_if#(8,4))::get(this,"","r_vif", r_vif))
       `uvm_fatal("NOVIF","Read interface not set")
   endfunction
-
-  // coverage group inside the monitor
-  covergroup fifo_cg;
-    cp_depth  : coverpoint (w_vif.full  ? 16 :
-                             r_vif.empty ? 0  :
-                             8 ) { bins empty = {0};
-                                   bins mid[] = {[1:15]};
-                                   bins full  = {16}; }
-    cp_flags  : coverpoint {w_vif.full,r_vif.empty};
-    cross cp_depth, cp_flags;
-  endgroup
 
   task run();
     fork
@@ -49,6 +85,9 @@ class fifo_monitor extends uvm_monitor;
         txn.data = w_vif.data;
         ap.write(txn);
       end
+      address_cg.sample();
+      pointer_cg.sample();
+      flags_cg.sample();
     end
   endtask
 
@@ -62,6 +101,9 @@ class fifo_monitor extends uvm_monitor;
         txn.data = r_vif.data;
         ap.write(txn);
       end
+      address_cg.sample();
+      pointer_cg.sample();
+      flags_cg.sample();
     end
   endtask
 endclass
