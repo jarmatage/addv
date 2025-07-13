@@ -12,15 +12,15 @@ COMP_FLAGS := \
 	-full64 \
 	-sverilog \
 	-kdb \
-	-ntb_opts uvm \
 	-debug_access+all \
 	-timescale=1ns/1ps \
+	-ntb_opts uvm \
 	-cm line+tgl+cond+fsm+branch+assert \
 	-cm_dir seeds/simv_$(SEED).vdb \
 	+plusarg_save \
+	+define+DUMP=1 \
 	+UVM_OBJECTION_TRACE \
 	+UVM_VERBOSITY=$(UVM_VERBOSITY) \
-	+vcs+fsdbon \
 	+define+DWIDTH=$(DWIDTH) \
 	+define+AWIDTH=$(AWIDTH) \
 	+define+WCLK_T=$(WCLK_T) \
