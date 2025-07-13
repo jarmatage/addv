@@ -19,20 +19,60 @@ class fifo_test extends uvm_test;
   task run_phase(uvm_phase phase);
     phase.raise_objection(this);
     fill_for_loop();
-    //alternating_read_write();
-    //random_sequential_burts();
-    //random_simultaneous_burts();
+    alternating_read_write();
+    random_sequential_burts();
+    random_simultaneous_burts();
     phase.drop_objection(this);
   endtask
 
   task fill_for_loop();
-    for (int i = 0; i < DEPTH; i++) begin
+    for (int i = 0; i < DEPTH+5; i++) begin
       wr_seq = fifo_write_seq::type_id::create("wr_seq");
       rd_seq = fifo_read_seq::type_id::create("rd_seq");
       wr_seq.burst_len = i;
       rd_seq.burst_len = i;
       wr_seq.start(m_env.w_ag.m_seqr);
       rd_seq.start(m_env.r_ag.m_seqr);
+    end
+  endtask
+
+  task alternating_read_write();
+    for (int i = 0; i < 512; i++) begin
+      wr_seq = fifo_write_seq::type_id::create("wr_seq");
+      rd_seq = fifo_read_seq::type_id::create("rd_seq");
+      wr_seq.burst_len = 1;
+      rd_seq.burst_len = 1;
+      wr_seq.start(m_env.w_ag.m_seqr);
+      rd_seq.start(m_env.r_ag.m_seqr);
+    end
+  endtask
+
+  task random_sequential_burts();
+    for (int i = 0; i < 512; i++) begin
+      wr_seq = fifo_write_seq::type_id::create("wr_seq");
+      rd_seq = fifo_read_seq::type_id::create("rd_seq");
+      assert(wr_seq.randomize() with { burst_len < DEPTH; });
+      rd_seq.burst_len = wr_seq.burst_len;
+      wr_seq.start(m_env.w_ag.m_seqr);
+      rd_seq.start(m_env.r_ag.m_seqr);
+    end
+  endtask
+
+  task random_simultaneous_burts();
+    int rcnt = 1024;
+    int wcnt = 1024;
+
+    while (rcnt > 0 && wcnt > 0) begin
+      wr_seq = fifo_write_seq::type_id::create("wr_seq");
+      rd_seq = fifo_read_seq::type_id::create("rd_seq");
+      assert(wr_seq.randomize() with { burst_len < wcnt; });
+      assert(rd_seq.randomize() with { burst_len < rcnt; });
+      fork
+        wr_seq.start(m_env.w_ag.m_seqr);
+        rd_seq.start(m_env.r_ag.m_seqr);
+      join
+      wcnt -= wr_seq.burst_len;
+      rcnt -= rd_seq.burst_len;
     end
   endtask
 
