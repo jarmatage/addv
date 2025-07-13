@@ -31,28 +31,35 @@ class fifo_monitor extends uvm_monitor;
     cross cp_depth, cp_flags;
   endgroup
 
-  task run_phase(uvm_phase phase);
-    fifo_seq_item txn;
-    forever begin
-      // --- write side ------------------------------------------------------
-      @(posedge w_vif.clk);
-      if (w_vif.en && !w_vif.full) begin
-        txn = fifo_seq_item::type_id::create("txn");
-        txn.is_write = 1;
-        txn.data     = w_vif.data;
-        txn.timestamp= $time;
-        ap.write(txn);
-      end
+  task run();
+    fork
+      monitor_write();
+      monitor_read();
+    join
+  endtask
 
-      // --- read side -------------------------------------------------------
-      @(posedge r_vif.clk);
-      if (r_vif.en && !r_vif.empty) begin
-        txn = fifo_seq_item::type_id::create("txn");
-        txn.is_write = 0;
-        txn.data     = r_vif.data;
-        txn.timestamp= $time;
-        ap.write(txn);
-      end
+  task monitor_write();
+    forever begin
+      wait(vwrite.en && !vwrite.full);
+      #1;
+      txn = fifo_seq_item::type_id::create("write_item");
+      txn.is_write = 1'b1;
+      txn.data = vwrite.data;
+      @(posedge vwrite.clk);
+      ap.write(txn);
     end
   endtask
-endclass 
+
+
+  task monitor_read();
+    forever begin
+      wait(vread.en && !vread.empty);
+      #1;
+      txn = fifo_seq_item::type_id::create("read_item");
+      txn.is_write = 1'b0;
+      @(posedge vread.clk);
+      txn.data = vread.data;
+      ap.write(txn);
+    end
+  endtask
+endclass
