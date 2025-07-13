@@ -17,6 +17,7 @@ COMP_FLAGS := \
 	-ntb_opts uvm \
 	-cm line+tgl+cond+fsm+branch+assert \
 	-cm_dir seeds/simv_$(SEED).vdb \
+	+ntb_random_seed=$(SEED) \
 	+plusarg_save \
 	+define+DUMP=1 \
 	+UVM_OBJECTION_TRACE \
