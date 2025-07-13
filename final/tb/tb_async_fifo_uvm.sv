@@ -32,6 +32,5 @@ module tb_async_fifo_uvm;
     uvm_config_db#(virtual read_if)::set(null,"*","r_vif", r_if);
   end
 
-  // kick UVM (default to fifo_base_test if +UVM_TESTNAME not supplied)
-  initial run_test("fifo_base_test");
+  initial run_test("fifo_test");
 endmodule 

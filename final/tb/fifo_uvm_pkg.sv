@@ -14,5 +14,5 @@ package fifo_uvm_pkg;
   `include "fifo_env.svh"
   `include "fifo_read_seq.svh"
   `include "fifo_write_seq.svh"
-  `include "fifo_tests.svh"
+  `include "fifo_test.svh"
 endpackage : fifo_uvm_pkg 
