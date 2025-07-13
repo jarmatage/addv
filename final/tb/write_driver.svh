@@ -11,6 +11,9 @@ class write_driver extends uvm_driver #(fifo_seq_item);
   endfunction
 
   task run_phase(uvm_phase phase);
+    super.run_phase(phase);
+    init_signals();
+    wait_for_reset();
     fifo_seq_item item;
     forever begin
       seq_item_port.get_next_item(item);
@@ -21,5 +24,15 @@ class write_driver extends uvm_driver #(fifo_seq_item);
       vif.en   <= 0;
       seq_item_port.item_done();
     end
+  endtask
+
+  task init_signals();
+    vif.en = 0;
+    vif.data = '0;
+  endtask
+
+  task wait_for_reset();
+    wait(!vif.rst_n); // Wait for reset to be asserted
+    wait(vif.rst_n);  // Wait for reset to be released
   endtask
 endclass
