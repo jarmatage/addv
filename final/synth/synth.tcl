@@ -6,7 +6,7 @@ proc setup_clocks {{wperiod 1.0} {rperiod 1.0}} {
     # Create new clocks with specified periods
     create_clock -period $wperiod write.clk
     create_clock -period $rperiod read.clk
-    set clock_uncertainty 0.1 [get_clocks]
+    set_clock_uncertainty 0.1 [get_clocks]
 
     # Set delay on the ports
     set inputs [all_inputs -exclude_clock_ports]
