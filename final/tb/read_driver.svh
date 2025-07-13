@@ -14,15 +14,15 @@ class read_driver extends uvm_driver #(fifo_seq_item);
     fifo_seq_item item;
     forever begin
       @(negedge vif.clk);
-      wait(!vif.empty); // Wait for FIFO to not be empty
-      #1;
-      seq_item_port.get_next_item(item);
-      vif.en <= 1;
-      @(posedge vif.clk);
-      vif.en <= 0;
-      item.data = vif.data;
-      `uvm_info("READ_DRIVER", $sformatf("data=%0d, addr=%0d, empty=%b, almost_empty=%b", item.data, vif.addr, vif.empty, vif.almost_empty), UVM_HIGH)
-      seq_item_port.item_done();
+      if (!vif.empty) begin
+        seq_item_port.get_next_item(item);
+        vif.en = 1;
+        @(posedge vif.clk);
+        vif.en = 0;
+        item.data = vif.data;
+        `uvm_info("READ_DRIVER", $sformatf("data=%0d, addr=%0d, empty=%b, almost_empty=%b", item.data, vif.addr, vif.empty, vif.almost_empty), UVM_HIGH)
+        seq_item_port.item_done();
+      end
     end
   endtask
 endclass
