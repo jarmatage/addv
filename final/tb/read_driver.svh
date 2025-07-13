@@ -13,6 +13,7 @@ class read_driver extends uvm_driver #(fifo_seq_item);
   task run_phase(uvm_phase phase);
     fifo_seq_item item;
     forever begin
+      @(negedge vif.clk);
       wait(!vif.empty); // Wait for FIFO to not be empty
       #1;
       seq_item_port.get_next_item(item);
