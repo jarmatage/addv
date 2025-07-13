@@ -1,5 +1,5 @@
 UVM_VERBOSITY ?= UVM_MEDIUM
-SEED ?= 1
+SEED ?= 0
 DB_TRACE ?= 0
 PHASE_TRACE ?= 0
 DWIDTH ?= 8
@@ -54,7 +54,7 @@ compile: clean
 
 sim: compile
 	@echo "=== Running simulation ==="
-	./simv |& tee sim.log
+	./simv -cm line+tgl+cond+fsm+branch+assert |& tee sim.log
 
 compile_bug: clean
 	@echo "=== Compiling (BUGGED) ==="
