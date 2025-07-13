@@ -24,11 +24,13 @@ class fifo_scoreboard extends uvm_component;
         exp_q.push_back(txn);
       else begin
         if (exp_q.size() == 0)
-          `uvm_error("SCOREBOARD","Read with no matching write")
+          `uvm_error("SCOREBOARD","read transaction received with no matching write transaction")
         else begin
           fifo_seq_item exp = exp_q.pop_front();
           if (exp.data !== txn.data)
-            `uvm_error("SCOREBOARD", $sformatf("Data mismatch exp=%0d got=%0d", exp.data, txn.data))
+            `uvm_error("SCOREBOARD", $sformatf("read data '%0d' does not match expected data '%0d'", txn.data, exp.data))
+          else
+            `uvm_info("SCOREBOARD", $sformatf("read data '%0d' matches expected data", txn.data))
         end
       end
     end
