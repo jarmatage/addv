@@ -2,7 +2,7 @@
 proc run_design {{wperiod 1.0} {rperiod 1.0}} {
     setup_clocks $wperiod $rperiod
     compile_design
-    report_design $wperiod $rperiod
+    get_reports $wperiod $rperiod
 }
 
 proc setup_clocks {wperiod rperiod} {
@@ -28,7 +28,7 @@ proc compile_design {} {
     compile_ultra -incremental
 }
 
-proc report_design {wperiod rperiod} {
+proc get_reports {wperiod rperiod} {
     set rpt [file join rpt "${wperiod}_$rperiod"]
     file mkdir $rpt
 
