@@ -46,6 +46,7 @@ class fifo_monitor extends uvm_monitor;
       #1;
       txn = fifo_seq_item::type_id::create("write_item");
       txn.is_write = 1'b1;
+      @(negedge w_vif.clk);
       txn.data = w_vif.data;
       @(posedge w_vif.clk);
       ap.write(txn);
