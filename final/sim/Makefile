@@ -79,7 +79,7 @@ cov:
 		for j in 5 10 15 20; do \
 			$(MAKE) sim SEED=$$k WCLK_T=$$i RCLK_T=$$j; \
 			k=$$((k + 5)); \
-		done \
+		done; \
 	done
 	${VCS_HOME}/bin/urg -dir seeds/*.vdb -dbname merged.vdb
 	${VERDI_HOME}/bin/verdi -cov -covdir merged.vdb &
