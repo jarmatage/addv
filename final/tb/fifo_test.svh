@@ -22,8 +22,8 @@ class fifo_test extends uvm_test;
     fill_for_loop();
     `uvm_info(get_type_name(), "Starting Alternating Read/Write", UVM_LOW)
     alternating_read_write();
-    // `uvm_info(get_type_name(), "Starting Random Sequential Bursts", UVM_LOW)
-    // random_sequential_burts();
+    `uvm_info(get_type_name(), "Starting Random Sequential Bursts", UVM_LOW)
+    random_sequential_burts();
     // `uvm_info(get_type_name(), "Starting Random Simultaneous Bursts", UVM_LOW)
     // random_simultaneous_burts();
     phase.drop_objection(this);
@@ -46,11 +46,8 @@ class fifo_test extends uvm_test;
       rd_seq = fifo_read_seq::type_id::create("rd_seq");
       wr_seq.burst_len = 1;
       rd_seq.burst_len = 1;
-
-      fork
-        wr_seq.start(m_env.w_ag.m_seqr);
-        rd_seq.start(m_env.r_ag.m_seqr);
-      join
+      wr_seq.start(m_env.w_ag.m_seqr);
+      rd_seq.start(m_env.r_ag.m_seqr);
     end
   endtask
 
@@ -60,11 +57,8 @@ class fifo_test extends uvm_test;
       rd_seq = fifo_read_seq::type_id::create("rd_seq");
       assert(wr_seq.randomize() with { burst_len < DEPTH; });
       rd_seq.burst_len = wr_seq.burst_len;
-
-      fork
-        wr_seq.start(m_env.w_ag.m_seqr);
-        rd_seq.start(m_env.r_ag.m_seqr);
-      join
+      wr_seq.start(m_env.w_ag.m_seqr);
+      rd_seq.start(m_env.r_ag.m_seqr);
     end
   endtask
 
