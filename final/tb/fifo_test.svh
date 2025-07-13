@@ -102,6 +102,6 @@ class fifo_test extends uvm_test;
 
 		// Print env
 		`uvm_info("PRINT_ENV", "Printing ENV...", UVM_LOW)
-		env.print();
+		m_env.print();
   endfunction
 endclass
