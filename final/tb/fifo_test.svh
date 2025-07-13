@@ -93,4 +93,15 @@ class fifo_test extends uvm_test;
     end
   endtask
 
+	function void end_of_elaboration_phase (uvm_phase phase);
+		super.end_of_elaboration_phase(phase);
+
+		// Print topology
+		`uvm_info("TOPOLOGY", "Printing UVM topology...", UVM_LOW)
+		uvm_top.print_topology();
+
+		// Print env
+		`uvm_info("PRINT_ENV", "Printing ENV...", UVM_LOW)
+		env.print();
+  endfunction
 endclass
